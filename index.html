@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python Lab – Fase 3 · Supabase</title>
+<style>
+:root{--bg:#f3f5fa;--panel:#fff;--ink:#182238;--muted:#65718a;--line:#e0e5ef;--blue:#315efb;--green:#168653;--red:#bd3948;--navy:#17243a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}header{background:var(--navy);color:#fff;padding:16px max(18px,calc((100% - 1180px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:21px;font-weight:800}.brand span{color:#9db2ff}.status{font-size:12px;color:#d6def0}
+main{max-width:1180px;margin:25px auto;padding:0 18px}.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:19px;box-shadow:0 4px 18px #1d315008}h1{font-size:27px;margin:0 0 5px}h2{font-size:20px;margin:0 0 10px}h3{font-size:16px;margin:0 0 8px}.muted{color:var(--muted)}.small{font-size:13px}
+button,input,select,textarea{font:inherit}button{border:0;border-radius:9px;padding:9px 13px;background:var(--blue);color:#fff;font-weight:650;cursor:pointer}button.secondary{background:#edf1ff;color:#2949c9}button.ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}button.danger{background:#fff0f1;color:var(--red)}button:disabled{opacity:.5;cursor:wait}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}textarea{min-height:100px;resize:vertical}label{display:block;font-weight:650;font-size:13px;margin:10px 0 5px}
+.layout{display:grid;grid-template-columns:245px 1fr;gap:18px}.stack{display:grid;gap:10px}.row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.between{justify-content:space-between}.nav{width:100%;text-align:left;margin:4px 0;background:transparent;color:var(--ink)}.nav.active{background:#edf1ff;color:#2949c9}
+.tag{display:inline-block;background:#edf1ff;color:#2949c9;border-radius:99px;padding:3px 8px;font-size:12px;font-weight:700}.cardtask{border:1px solid var(--line);border-radius:11px;padding:13px}.code,.output{background:#101b2d;color:#e4ecff;border-radius:10px;padding:13px;white-space:pre-wrap;overflow:auto;font:13px/1.65 ui-monospace,Consolas,monospace}.editor{width:100%;min-height:180px;background:#101b2d;color:#e4ecff;border:1px solid #263854;border-radius:10px;padding:13px;font:13px/1.65 ui-monospace,Consolas,monospace;tab-size:4}.output{min-height:70px}.output.err{color:#ffb8bd}.feedback{padding:10px 12px;border-radius:9px;margin-top:10px}.ok{background:#e8f7ef;color:#12633e}.bad{background:#fff0f1;color:#a52d3a}.hint{background:#fff6df;color:#765400}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.progress{height:7px;background:#edf0f5;border-radius:20px;overflow:hidden}.progress div{height:100%;background:var(--green)}.hidden{display:none!important}.option{display:block;border:1px solid var(--line);border-radius:9px;padding:9px;margin:7px 0}.option input{width:auto;margin-right:7px}.pill{padding:5px 9px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--muted);font-size:12px;cursor:pointer}.pill.sel{background:#edf1ff;color:#2949c9;border-color:#cbd5ff}
+footer{text-align:center;color:var(--muted);font-size:12px;margin:25px}
+@media(max-width:780px){.layout{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}
+</style></head><body>
+<header><div class="brand">🐍 Python <span>Lab</span> <small style="font-size:12px;font-weight:500;color:#d6def0">Fase 3</small></div><div class="status" id="runtimeStatus">Motore Python: in attesa</div></header>
+<main>
+<section id="login" class="panel" style="max-width:520px;margin:7vh auto">
+<h1>Benvenuto in Python Lab</h1><p class="muted">Una raccolta di esercizi per imparare Python, a scuola e a casa.</p>
+<label>Codice classe</label><input id="classCode" placeholder="Inserisci il codice della classe" autocomplete="off"><label>Nome o nickname</label><input id="studentName" placeholder="Il tuo nickname" maxlength="24" autocomplete="nickname">
+<button style="width:100%;margin-top:15px" onclick="enter()">Entra nella piattaforma</button><button class="ghost" style="width:100%;margin-top:8px" onclick="openTeacherFromLogin()">Accesso docente</button>
+<p id="loginError" class="small" style="color:var(--red);margin-top:12px" role="alert"></p><p class="small muted" style="margin-top:8px">I progressi vengono salvati online. Usa il codice ricevuto dal docente.</p>
+</section>
+<section id="app" class="hidden">
+<div class="row between" style="margin-bottom:16px"><div><h1>Area di apprendimento</h1><div class="muted small" id="hello"></div></div><button class="ghost" onclick="logout()">Esci</button></div>
+<div class="layout">
+<aside class="panel">
+<h3>Menu</h3><button class="nav active" id="nBank" onclick="showBank()">📚 Raccolta esercizi</button><button class="nav" id="nLab" onclick="showLab()">⌨️ Laboratorio Python</button><button class="nav" id="nTeacher" onclick="showTeacher()">🛠 Area docente</button>
+<hr style="border:0;border-top:1px solid var(--line);margin:15px 0"><b>Il tuo percorso</b><div class="progress" style="margin:9px 0"><div id="pbar" style="width:0%"></div></div><div class="small muted" id="ptext">0 esercizi completati</div>
+<div class="small muted" style="margin-top:17px">I tuoi progressi sono sincronizzati con il database della classe.</div>
+</aside>
+<section class="panel" id="view"></section>
+</div></section></main><footer>Python Lab · Database online Supabase · Laboratorio Python tramite Pyodide</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
+<script>
+const typeLabel = t => ({fill:'Completa il codice',quiz:'Quiz',debug:'Correggi il codice',write:'Scrivi un programma',lab:'Laboratorio: scrivi ed esegui'})[t] || t;
+const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const validExercise = e => e && typeof e.id==='string' && ['fill','quiz','debug','write','lab'].includes(e.type);
+
+// Project URL normalizzato: non includere /rest/v1.
+const SUPABASE_URL = 'https://dpehdxrsovtfrhsctjje.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jO2n3bZrS0IR3pOlYGNRUA_-vypcPfZ';
+if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+  throw new Error('La libreria Supabase non è stata caricata. Controlla la connessione Internet.');
+}
+const createSupabaseClient = window.supabase.createClient;
+// Sessioni distinte: lo studente resta autenticato anche mentre il docente accede all’area riservata.
+const studentSb = createSupabaseClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:false, storageKey:'pythonlab_student_auth' }
+});
+const teacherSb = createSupabaseClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:false, storageKey:'pythonlab_teacher_auth' }
+});
+
+let exercises=[];
+let done=[];
+let attempts={};
+let py=null, pyLoading=null, student='';
+let studentId=null, studentClassId=null, studentClassName='';
+let teacherUser=null, teacherProfile=null, teacherClasses=[];
+let activeRole=null;
+function persist(){} // I dati risiedono su Supabase; non copiare soluzioni o progressi in localStorage.
+function saveAttempts(){} // Gli errori sono salvati dal database via RPC submit_exercise.
+function showLoginError(message){const el=document.getElementById('loginError');if(el)el.textContent=message||'';}
+function isAnonymousSession(session){const user=session?.user;if(user&&(user.is_anonymous===true||user.app_metadata?.provider==='anonymous'))return true;try{const part=session?.access_token?.split('.')[1];if(!part)return false;const payload=JSON.parse(atob(part.replace(/-/g,'+').replace(/_/g,'/')));return payload.is_anonymous===true;}catch(_){return false;}}
+function fromDatabaseExercise(row, keyContent={}){
+  const content=row.content||{};
+  return {id:row.id,topic:row.topic,title:row.title,type:row.exercise_type,prompt:row.prompt,
+    class_id:row.class_id||null,sort_order:Number(row.sort_order||0),is_published:row.is_published!==false,
+    ...content,...keyContent};
+}
+function toDatabaseExercise(e, ownerId){
+  const content={
+    hint:e.hint||'',
+    code:e.code||'',
+    options:Array.isArray(e.options)?e.options:[],
+    starter:e.starter||'',
+    stdin:e.stdin||''
+  };
+  const keys={
+    answers:Array.isArray(e.answers)?e.answers:[],
+    correct:Number.isInteger(Number(e.correct))?Number(e.correct):0,
+    required:Array.isArray(e.required)?e.required:[],
+    solution:e.solution||'',
+    expectedOutput:e.expectedOutput||'',
+    explain:e.explain||''
+  };
+  return {
+    exercise:{id:e.id,class_id:e.class_id||null,created_by:ownerId,topic:e.topic,title:e.title,
+      exercise_type:e.type,prompt:e.prompt,content,sort_order:Number(e.sort_order||0),is_published:e.is_published!==false,updated_at:new Date().toISOString()},
+    key:{exercise_id:e.id,content:keys}
+  };
+}
+function showConnectionError(message){
+  login.classList.remove('hidden'); app.classList.add('hidden');
+  showLoginError(message);
+}
+async function enter(){
+  const code=document.getElementById('classCode').value.trim();
+  const nickname=document.getElementById('studentName').value.trim();
+  const button=login.querySelector('button');
+  showLoginError('');
+  if(!code){showLoginError('Inserisci il codice della classe.');return;}
+  if(nickname.length<2 || nickname.length>24){showLoginError('Il nickname deve contenere da 2 a 24 caratteri.');return;}
+  button.disabled=true; button.textContent='Accesso…';
+  try{
+    const {data:sessionData,error:sessionError}=await studentSb.auth.getSession();
+    if(sessionError)throw sessionError;
+    let session=sessionData.session;
+    if(!session || !isAnonymousSession(session)){
+      if(session) await studentSb.auth.signOut();
+      const {data,error}=await studentSb.auth.signInAnonymously();
+      if(error)throw error;
+      session=data.session;
+    }
+    studentId=session.user.id;
+    const {data:joined,error:joinError}=await studentSb.rpc('join_class',{p_join_code:code,p_nickname:nickname});
+    if(joinError)throw joinError;
+    const membership=Array.isArray(joined)?joined[0]:joined;
+    if(!membership?.class_id)throw new Error('Supabase non ha restituito i dati della classe.');
+    student=membership.student_nickname||nickname;
+    studentClassId=membership.class_id;
+    studentClassName=membership.class_name||'Classe';
+    activeRole='student';
+    await loadStudentExercises();
+    await loadStudentProgress();
+    login.classList.add('hidden'); app.classList.remove('hidden');
+    hello.textContent='Ciao '+student+' · '+studentClassName;
+    showBank(); initPy();
+  }catch(err){
+    showLoginError('Accesso non riuscito: '+(err.message||String(err))+' Se il problema continua, controlla che lo schema SQL sia stato eseguito e che Anonymous Sign-Ins sia attivo.');
+  }finally{button.disabled=false;button.textContent='Entra nella piattaforma';}
+}
+async function loadStudentExercises(){
+  const {data,error}=await studentSb.from('exercises')
+    .select('id,class_id,sort_order,topic,title,exercise_type,prompt,content,is_published')
+    .eq('is_published',true).order('sort_order').order('id');
+  if(error)throw error;
+  exercises=(data||[]).map(row=>fromDatabaseExercise(row));
+}
+async function loadStudentProgress(){
+  const {data,error}=await studentSb.from('student_progress')
+    .select('exercise_id,attempts,completed,best_score,hints_used')
+    .eq('student_id',studentId);
+  if(error)throw error;
+  done=[];attempts={};
+  (data||[]).forEach(row=>{attempts[row.exercise_id]=row.attempts||0;if(row.completed)done.push(row.exercise_id);});
+  updateProgress();
+}
+function logout(){if(activeRole==='teacher'){teacherLogout();return;}activeRole=null;app.classList.add('hidden');login.classList.remove('hidden');showLoginError('');}
+function openTeacherFromLogin(){login.classList.add('hidden');app.classList.remove('hidden');hello.textContent='Accesso riservato al docente';showTeacher();}
+function nav(which){['Bank','Lab','Teacher'].forEach(x=>document.getElementById('n'+x).classList.toggle('active',x.toLowerCase()===which));}
+function updateProgress(){ptext.textContent=done.filter(id=>exercises.some(e=>e.id===id)).length+' di '+exercises.length+' esercizi completati';pbar.style.width=Math.min(100,done.filter(id=>exercises.some(e=>e.id===id)).length/Math.max(1,exercises.length)*100)+'%';}
+function showBank(){nav('bank');let topics=['Tutti',...new Set(exercises.map(e=>e.topic))];view.innerHTML=`<span class="tag">Percorso Python · esercizi online</span><h2 style="margin-top:10px">Raccolta esercizi</h2><p class="muted">Esercizi graduati, ripassi dello stesso concetto in forme diverse e prove di laboratorio eseguibili.</p><label>Filtra per argomento</label><select id="filter" onchange="renderBank()">${topics.map(t=>`<option>${esc(t)}</option>`).join('')}</select><div class="row" style="margin-top:10px"><span class="tag">${exercises.length} esercizi</span><span class="tag">${exercises.filter(e=>e.type==='lab').length} laboratori</span><span class="tag">${done.length} completati</span></div><div id="bankList" class="stack" style="margin-top:12px"></div>`;renderBank();updateProgress();}
+function renderBank(){let f=document.getElementById('filter')?.value||'Tutti',list=exercises.filter(e=>f==='Tutti'||e.topic===f);bankList.innerHTML=list.map(e=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><span class="tag">${done.includes(e.id)?'Completato':'Da fare'}</span><button onclick="openExercise('${e.id}')">Apri</button></div></div>`).join('')||'<p class="muted">Nessun esercizio pubblicato. Chiedi al docente di importare la raccolta dal file JSON.</p>';}
+function completionHtml(id){const i=exercises.findIndex(x=>x.id===id),hasNext=i>=0&&i<exercises.length-1;return `<div class="row" style="margin-top:12px"><button onclick="nextExercise('${id}')">${hasNext?'Prossimo esercizio →':'Fine percorso · Torna alla raccolta'}</button><button class="ghost" onclick="showBank()">Raccolta esercizi</button></div>`;}
+function nextExercise(id){const i=exercises.findIndex(x=>x.id===id);if(i>=0&&i<exercises.length-1){openExercise(exercises[i+1].id);return;}showBank();}
+function markDone(id){if(!done.includes(id)){done.push(id);persist();updateProgress();}}
+function openExercise(id){
+ const e=exercises.find(x=>x.id===id);if(!e)return;let body='';
+ if(e.type==='fill'){const blanks=(String(e.code||'').match(/\[\d+\]/g)||[]).length;body=`<div class="code">${esc(e.code)}</div>${Array.from({length:blanks},(_,i)=>`<label>Spazio ${i+1}</label><input id="a${i}" autocomplete="off" placeholder="Completa il codice">`).join('')}`;}
+ if(e.type==='quiz')body=(e.options||[]).map((o,i)=>`<label class="option"><input type="radio" name="q" value="${i}"> ${esc(o)}</label>`).join('');
+ if(e.type==='debug')body=`<div class="code">${esc(e.code)}</div><label>Scrivi il codice corretto</label><textarea id="debugAnswer" rows="3" placeholder="Riscrivi la riga o il blocco corretto"></textarea>`;
+ if(e.type==='write')body=`<label>Il tuo programma</label><textarea id="studentCode" class="editor">${esc(e.starter||'')}</textarea><p class="small muted">Puoi aprire il laboratorio per eseguire il programma. La verifica iniziale controlla la presenza degli elementi richiesti.</p>`;
+ if(e.type==='lab')body=`<label>Codice Python</label><textarea id="labCode" class="editor" spellcheck="false">${esc(e.starter||'')}</textarea><label>Valori per input() (uno per riga, se necessari)</label><textarea id="labStdin" rows="2" placeholder="Facoltativo">${esc(e.stdin||'')}</textarea><div class="row" style="margin-top:10px"><button id="labRunCheck" onclick="checkLabExercise('${e.id}')">▶ Esegui e verifica</button><button class="secondary" onclick="runLabPreview('${e.id}')">Esegui soltanto</button></div><label>Output / errori</label><div id="labOutput" class="output">L’output apparirà qui.</div><p class="small muted">Per completare l’esercizio, l’output deve corrispondere al risultato atteso. Gli spazi finali non vengono considerati.</p>`;
+ const verify=e.type==='lab'?'':`<button id="verifyExercise">Verifica</button>`;
+ const labButton=e.type==='write'?`<button class="ghost" id="openInLab">Apri nel laboratorio</button>`:'';
+ view.innerHTML=`<button class="ghost" id="backBank">← Torna alla raccolta</button><div class="small muted" style="margin-top:12px">Esercizio ${exercises.findIndex(x=>x.id===id)+1} di ${exercises.length}</div><div class="tag" style="margin-top:7px">${esc(e.topic)} · ${typeLabel(e.type)}</div><h2 style="margin-top:9px">${esc(e.title)}</h2><p>${esc(e.prompt)}</p>${body}<div class="row" style="margin-top:14px">${verify}<button class="secondary" id="hintExercise">Suggerimento</button>${labButton}</div><div id="feedback">${done.includes(id)?`<div class="feedback ok">Questo esercizio risulta già completato.</div>${completionHtml(id)}`:''}</div>`;
+ document.getElementById('backBank').onclick=showBank;
+ if(e.type!=='lab')document.getElementById('verifyExercise').onclick=()=>checkExercise(id);
+ document.getElementById('hintExercise').onclick=()=>hint(id);
+ if(e.type==='write')document.getElementById('openInLab').onclick=()=>showLab(document.getElementById('studentCode').value);
+}
+async function hint(id){
+  const e=exercises.find(x=>x.id===id); if(!e)return;
+  feedback.innerHTML=`<div class="feedback hint">💡 ${esc(e.hint||'Rileggi la consegna e prova a scomporre il problema.')}</div>`+(done.includes(id)?completionHtml(id):'');
+  try{await studentSb.rpc('register_exercise_hint',{p_exercise_id:id});}catch(err){console.warn('Conteggio suggerimento non aggiornato:',err.message);}
+}
+function wrongAnswer(id,count){
+  attempts[id]=Number(count||attempts[id]||0);
+  const n=attempts[id];
+  feedback.innerHTML=`<div class="feedback bad">Non ancora. Tentativo ${n} di 5.</div>`+
+    (n>=5?`<button class="secondary" style="margin-top:9px" onclick="revealSolution('${id}')">Mostra la soluzione</button>`:'');
+}
+async function submitExercise(id,submission){
+  const {data,error}=await studentSb.rpc('submit_exercise',{p_exercise_id:id,p_submission:submission});
+  if(error)throw error;
+  const result=Array.isArray(data)?data[0]:data;
+  if(!result || typeof result.correct!=='boolean')throw new Error('Risposta del database non valida.');
+  attempts[id]=Number(result.attempts||0);
+  if(result.completed && !done.includes(id))done.push(id);
+  updateProgress();
+  if(result.correct){
+    feedback.innerHTML=`<div class="feedback ok">✓ Corretto! Ottimo lavoro.</div>${completionHtml(id)}`;
+  }else wrongAnswer(id,result.attempts);
+  return result;
+}
+async function checkExercise(id){
+  const e=exercises.find(x=>x.id===id);if(!e)return;
+  let submission={};
+  if(e.type==='fill')submission.answers=Array.from({length:(String(e.code||'').match(/\[\d+\]/g)||[]).length},(_,i)=>document.getElementById('a'+i)?.value.trim()||'');
+  if(e.type==='quiz'){const r=document.querySelector('input[name=q]:checked');if(!r){feedback.innerHTML='<div class="feedback bad">Seleziona una risposta.</div>';return;}submission.choice=Number(r.value);}
+  if(e.type==='debug')submission.answer=document.getElementById('debugAnswer').value.trim();
+  if(e.type==='write')submission.code=document.getElementById('studentCode').value;
+  const button=document.getElementById('verifyExercise');if(button)button.disabled=true;
+  try{await submitExercise(id,submission);}catch(err){feedback.innerHTML=`<div class="feedback bad">Non è stato possibile verificare la risposta online: ${esc(err.message||String(err))}</div>`;}
+  finally{if(button)button.disabled=false;}
+}
+async function revealSolution(id){
+  try{
+    const {data,error}=await studentSb.rpc('reveal_exercise_solution',{p_exercise_id:id});
+    if(error)throw error;
+    const key=Array.isArray(data)?data[0]:data;
+    if(!key)throw new Error('La soluzione non è disponibile. Servono almeno cinque tentativi registrati.');
+    const e=exercises.find(x=>x.id===id);let solution='';
+    if(e.type==='fill'){solution=e.code;(key.answers||[]).forEach((a,i)=>{solution=solution.replace('['+(i+1)+']',a);});}
+    else if(e.type==='quiz')solution=(e.options||[])[Number(key.correct)]||'Risposta non configurata';
+    else if(e.type==='debug')solution=(key.answers||[]).join('\noppure\n');
+    else solution=key.solution||('Requisiti da includere: '+(key.required||[]).join(', '));
+    feedback.innerHTML=`<div class="feedback hint"><b>Soluzione</b><pre style="white-space:pre-wrap;font:13px/1.5 ui-monospace,monospace">${esc(solution)}</pre><div>${esc(key.explain||'Rivedi la soluzione e prova a risolvere un esercizio simile.')}</div></div>`+(done.includes(id)?completionHtml(id):'');
+  }catch(err){feedback.innerHTML=`<div class="feedback bad">${esc(err.message||String(err))}</div>`;}
+}
+function showLab(prefill=''){nav('lab');view.innerHTML=`<span class="tag">Python 3 nel browser · Pyodide</span><h2 style="margin-top:10px">Laboratorio Python</h2><p class="muted">Scrivi codice Python, inserisci eventuali dati di input (uno per riga) e premi Esegui. Il codice viene eseguito nel browser.</p><textarea id="code" class="editor" spellcheck="false">${esc(prefill||'nome = input("Come ti chiami? ")\nprint("Ciao", nome)')}</textarea><div class="row" style="margin-top:10px"><button id="run" onclick="runPy()">▶ Esegui Python</button><button class="secondary" onclick="showLab()">Ripristina esempio</button><button class="ghost" onclick="document.getElementById('out').textContent='Output pulito'">Pulisci output</button></div><label>Valori per input() (uno per riga)</label><textarea id="stdin" rows="3" placeholder="Ada\n18"></textarea><label>Output / errori</label><div class="output" id="out">Il risultato apparirà qui.</div><p class="small muted">Per più chiamate a input(), inserisci un valore per riga. Pyodide viene caricato una sola volta.</p>`;}
+async function initPy(){if(py)return py;if(pyLoading)return pyLoading;runtimeStatus.textContent='Caricamento Pyodide…';pyLoading=(async()=>{try{if(typeof loadPyodide!=='function')throw new Error('Libreria Pyodide non caricata. Controlla la connessione Internet.');py=await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.27.7/full/'});runtimeStatus.textContent='● Python pronto';return py;}catch(e){runtimeStatus.textContent='Motore Python non disponibile';pyLoading=null;return null;}})();return pyLoading;}
+async function executePython(code,inputText=''){
+ const p=await initPy();if(!p)throw new Error('Pyodide non è disponibile. Verifica la connessione Internet e ricarica la pagina.');
+ let captured='';p.setStdout({batched:s=>captured+=s});p.setStderr({batched:s=>captured+=s});
+ p.globals.set('pl_input_text',String(inputText??''));
+ const setup=[
+  'import builtins',
+  '_pl_original_input = builtins.input',
+  '_pl_input_values = iter(pl_input_text.split("\\n"))',
+  'def _pl_input(prompt=""):',
+  '    if prompt:',
+  '        print(prompt, end="", flush=True)',
+  '    try:',
+  '        return next(_pl_input_values)',
+  '    except StopIteration:',
+  '        raise EOFError("Nessun altro valore disponibile nel campo input")',
+  'builtins.input = _pl_input'
+ ].join('\n');
+ p.runPython(setup);
+ try{await p.runPythonAsync(String(code));}
+ finally{p.runPython('builtins.input = _pl_original_input');}
+ return captured;
+}
+async function runPy(){const b=document.getElementById('run'),o=document.getElementById('out');b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const output=await executePython(document.getElementById('code').value,document.getElementById('stdin').value);o.textContent=output||'Eseguito senza output.';}catch(e){o.className='output err';o.textContent=String(e);}finally{b.disabled=false;}}
+async function runLabPreview(id){const e=exercises.find(x=>x.id===id),b=document.getElementById('labRunCheck'),o=document.getElementById('labOutput');b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const out=await executePython(document.getElementById('labCode').value,document.getElementById('labStdin').value);o.textContent=out||'Eseguito senza output.';}catch(err){o.className='output err';o.textContent=String(err);}finally{b.disabled=false;}}
+async function checkLabExercise(id){
+ const b=document.getElementById('labRunCheck'),o=document.getElementById('labOutput');
+ b.disabled=true;o.className='output';o.textContent='Esecuzione e verifica…';
+ try{
+  const out=await executePython(document.getElementById('labCode').value,document.getElementById('labStdin').value);
+  o.textContent=out||'Eseguito senza output.';
+  await submitExercise(id,{output:out});
+ }catch(err){
+  o.className='output err';o.textContent=String(err);
+  if(feedback)feedback.innerHTML=`<div class="feedback bad">${esc(err.message||String(err))}</div>`;
+ }finally{b.disabled=false;}
+}
+// Area docente: autenticazione reale Supabase, separata dalla sessione anonima degli studenti.
+async function showTeacher(){
+ nav('teacher');
+ const {data:{session}}=await teacherSb.auth.getSession();
+ if(!session){renderTeacherLogin();return;}
+ const {data:profile,error}=await teacherSb.from('teacher_profiles').select('user_id,display_name').eq('user_id',session.user.id).maybeSingle();
+ if(error || !profile){await teacherSb.auth.signOut();teacherUser=null;teacherProfile=null;renderTeacherLogin(error?.message||'Questo account non è autorizzato come docente.');return;}
+ teacherUser=session.user;teacherProfile=profile;activeRole='teacher';
+ await loadTeacherDashboard();
+}
+function renderTeacherLogin(message=''){
+ view.innerHTML=`<div style="max-width:480px;margin:20px auto"><span class="tag">Area riservata</span><h2 style="margin-top:12px">Accesso docenti</h2><p class="muted">Accedi con l’email e la password del tuo account docente Supabase.</p><label>Email docente</label><input id="teacherEmail" type="email" autocomplete="username" placeholder="docente@scuola.it"><label>Password</label><input id="teacherPass" type="password" autocomplete="current-password" placeholder="Password" onkeydown="if(event.key==='Enter')teacherSignIn()"><button id="teacherLoginButton" style="width:100%;margin-top:12px" onclick="teacherSignIn()">Accedi</button><p id="teacherLoginError" class="small" style="color:var(--red);margin-top:9px">${esc(message)}</p><p class="small muted">La verifica dei permessi viene eseguita dal database: la vecchia password locale non viene più utilizzata.</p></div>`;
+}
+async function teacherSignIn(){
+ const email=document.getElementById('teacherEmail').value.trim(),password=document.getElementById('teacherPass').value;
+ const errorEl=document.getElementById('teacherLoginError'),button=document.getElementById('teacherLoginButton');
+ if(!email||!password){errorEl.textContent='Inserisci email e password.';return;}
+ button.disabled=true;button.textContent='Accesso…';errorEl.textContent='';
+ try{
+  const {data,error}=await teacherSb.auth.signInWithPassword({email,password});
+  if(error)throw error;
+  const {data:profile,error:profileError}=await teacherSb.from('teacher_profiles').select('user_id,display_name').eq('user_id',data.user.id).maybeSingle();
+  if(profileError)throw profileError;
+  if(!profile){await teacherSb.auth.signOut();throw new Error('Account autenticato ma non autorizzato. Aggiungi il suo UUID a teacher_profiles.');}
+  teacherUser=data.user;teacherProfile=profile;activeRole='teacher';await loadTeacherDashboard();
+ }catch(err){errorEl.textContent=err.message||String(err);}
+ finally{button.disabled=false;button.textContent='Accedi';}
+}
+async function teacherLogout(){await teacherSb.auth.signOut();teacherUser=null;teacherProfile=null;const {data:{session}}=await studentSb.auth.getSession();if(session&&isAnonymousSession(session)){activeRole='student';studentId=session.user.id;try{await loadStudentExercises();await loadStudentProgress();showBank();}catch(err){showConnectionError(err.message||String(err));}}else{activeRole=null;exercises=[];done=[];attempts={};app.classList.add('hidden');login.classList.remove('hidden');}}
+async function loadTeacherExercises(){
+ const {data:rows,error}=await teacherSb.from('exercises').select('id,class_id,sort_order,created_by,topic,title,exercise_type,prompt,content,is_published').order('sort_order').order('id');
+ if(error)throw error;
+ const {data:keyRows,error:keyError}=await teacherSb.from('exercise_keys').select('exercise_id,content');
+ if(keyError)throw keyError;
+ const keyMap=new Map((keyRows||[]).map(k=>[k.exercise_id,k.content||{}]));
+ exercises=(rows||[]).map(r=>fromDatabaseExercise(r,keyMap.get(r.id)||{}));
+}
+async function loadTeacherDashboard(){
+ view.innerHTML='<p class="muted">Caricamento dati della classe…</p>';
+ try{
+  const [classRes,studentRes,progressRes]=await Promise.all([
+   teacherSb.from('classes').select('id,name,is_active,created_at').order('created_at'),
+   teacherSb.from('student_profiles').select('user_id,class_id,nickname,created_at').order('nickname'),
+   teacherSb.from('student_progress').select('student_id,exercise_id,attempts,completed,best_score,hints_used,updated_at')
+  ]);
+  if(classRes.error)throw classRes.error;if(studentRes.error)throw studentRes.error;if(progressRes.error)throw progressRes.error;
+  await loadTeacherExercises();
+  teacherClasses=classRes.data||[];
+  const students=studentRes.data||[],progress=progressRes.data||[];
+  const total=exercises.filter(e=>e.is_published!==false).length;
+  const classCards=teacherClasses.map(c=>{
+   const classTotal=exercises.filter(e=>e.is_published!==false&&(!e.class_id||e.class_id===c.id)).length;
+   const members=students.filter(s=>s.class_id===c.id);
+   const memberRows=members.map(s=>{
+    const rows=progress.filter(p=>p.student_id===s.user_id),completed=rows.filter(p=>p.completed).length;
+    const attemptsTotal=rows.reduce((n,p)=>n+(p.attempts||0),0);
+    const pct=classTotal?Math.round(completed/classTotal*100):0;
+    return `<tr><td>${esc(s.nickname)}</td><td>${completed}/${classTotal}</td><td>${pct}%</td><td>${attemptsTotal}</td></tr>`;
+   }).join('');
+   return `<div class="cardtask"><div class="row between"><div><b>${esc(c.name)}</b><div class="small muted">${members.length} studenti · ${c.is_active?'Attiva':'Disattivata'}</div></div><span class="tag">${classTotal} esercizi</span></div><div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th align="left">Nickname</th><th align="left">Completati</th><th align="left">Progresso</th><th align="left">Tentativi</th></tr></thead><tbody>${memberRows||'<tr><td colspan="4" class="muted">Nessuno studente iscritto.</td></tr>'}</tbody></table></div></div>`;
+  }).join('');
+  view.innerHTML=`<div class="row between"><div><span class="tag">Area docente · ${esc(teacherProfile?.display_name||'Docente')}</span><h2 style="margin-top:9px">Gestione classi e progressi</h2></div><button class="ghost" onclick="teacherLogout()">Esci dall’area docente</button></div>
+  <div class="grid2" style="margin:14px 0"><div class="cardtask"><b>${teacherClasses.length}</b><div class="small muted">Classi</div></div><div class="cardtask"><b>${students.length}</b><div class="small muted">Studenti registrati</div></div><div class="cardtask"><b>${total}</b><div class="small muted">Esercizi pubblicati</div></div><div class="cardtask"><b>${progress.filter(p=>p.completed).length}</b><div class="small muted">Completamenti registrati</div></div></div>
+  <div class="cardtask"><h3>Crea una classe</h3><div class="grid2"><div><label>Nome classe</label><input id="newClassName" placeholder="Es. 3A Informatica"></div><div><label>Codice di accesso (6–32 caratteri)</label><input id="newClassCode" placeholder="Es. 3AINF26" maxlength="32"></div></div><button style="margin-top:10px" onclick="createClass()">Crea classe</button><p id="classCreateMessage" class="small muted"></p></div>
+  <div class="cardtask" style="margin-top:12px"><h3>Libreria esercizi</h3><p class="small muted">${exercises.length} esercizi caricati. Importa il file JSON dei 200 esercizi: le soluzioni saranno memorizzate in una tabella non leggibile dagli studenti.</p><div class="row"><button onclick="document.getElementById('importFile').click()">Importa JSON dei 200 esercizi</button><button class="secondary" onclick="exportData()">Esporta raccolta</button><input id="importFile" type="file" accept=".json,application/json" class="hidden" onchange="importData(event)"></div><p class="small muted">Non pubblicare il file JSON della libreria nel repository GitHub pubblico.</p></div>
+  <h3 style="margin-top:18px">Statistiche per classe</h3><div class="stack">${classCards||'<p class="muted">Non hai ancora creato classi. Usa il modulo qui sopra.</p>'}</div>
+  <h3 style="margin-top:18px">Gestione esercizi</h3><div class="row"><button class="secondary" onclick="manualForm()">Crea esercizio</button></div><div class="stack" style="margin-top:10px">${exercises.map(e=>`<div class="row between cardtask"><div><b>${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><button class="secondary" onclick="editExercise('${e.id}')">Modifica</button><button class="danger" onclick="deleteExercise('${e.id}')">Elimina</button></div></div>`).join('')}</div>`;
+ }catch(err){view.innerHTML=`<div class="feedback bad">Errore nel caricamento dei dati: ${esc(err.message||String(err))}</div><button class="secondary" onclick="showTeacher()">Riprova</button>`;}
+}
+async function createClass(){
+ const name=document.getElementById('newClassName').value.trim(),code=document.getElementById('newClassCode').value.trim();
+ const msg=document.getElementById('classCreateMessage');
+ if(name.length<2||code.length<6||code.length>32){msg.textContent='Inserisci un nome e un codice di 6–32 caratteri.';return;}
+ try{
+  const {data,error}=await teacherSb.rpc('create_class',{p_name:name,p_join_code:code});if(error)throw error;
+  alert('Classe creata. Codice da comunicare agli studenti: '+code);
+  await loadTeacherDashboard();
+ }catch(err){msg.textContent='Errore: '+(err.message||String(err));}
+}
+async function saveExerciseToSupabase(e){
+ const records=toDatabaseExercise(e,teacherUser.id);
+ const {error}=await teacherSb.from('exercises').upsert(records.exercise,{onConflict:'id'});if(error)throw error;
+ const {error:keyError}=await teacherSb.from('exercise_keys').upsert(records.key,{onConflict:'exercise_id'});if(keyError)throw keyError;
+}
+async function importExercisesToSupabase(items){
+ const valid=items.filter(validExercise).map((e,index)=>({...e,sort_order:e.sort_order||index+1}));
+ if(!valid.length)throw new Error('Il file non contiene esercizi validi.');
+ for(let i=0;i<valid.length;i+=40){
+  const batch=valid.slice(i,i+40).map(e=>toDatabaseExercise(e,teacherUser.id));
+  const {error}=await teacherSb.from('exercises').upsert(batch.map(x=>x.exercise),{onConflict:'id'});if(error)throw error;
+  const {error:keyError}=await teacherSb.from('exercise_keys').upsert(batch.map(x=>x.key),{onConflict:'exercise_id'});if(keyError)throw keyError;
+  view.innerHTML=`<p class="muted">Importazione in corso: ${Math.min(i+40,valid.length)} di ${valid.length} esercizi…</p>`;
+ }
+ await loadTeacherDashboard();
+ alert('Importazione completata: '+valid.length+' esercizi sincronizzati con Supabase.');
+}
+function manualForm(existing=null){
+ if(activeRole!=='teacher'||!teacherUser){showTeacher();return;}
+ let e=existing||{id:'',type:'fill',topic:'Nuovo argomento',title:'',prompt:'',code:'print([1])',answers:['"Ciao"'],options:['Opzione A','Opzione B'],correct:0,hint:'',explain:'',starter:'',required:['print'],expectedOutput:'',solution:'',class_id:null};
+ view.innerHTML=`<button class="ghost" onclick="loadTeacherDashboard()">← Area docente</button><h2 style="margin-top:12px">${existing?'Modifica esercizio':'Nuovo esercizio'}</h2><label>Argomento</label><input id="mTopic" value="${esc(e.topic)}"><label>Titolo</label><input id="mTitle" value="${esc(e.title)}"><label>Tipologia</label><select id="mType" onchange="manualFields()"><option value="fill">Completa il codice</option><option value="quiz">Quiz</option><option value="debug">Correggi il codice</option><option value="write">Scrivi un programma</option><option value="lab">Laboratorio eseguibile</option></select><label>Disponibilità</label><select id="mClass"><option value="">Tutte le classi</option>${teacherClasses.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select><div id="mFields"></div><label>Consegna</label><textarea id="mPrompt">${esc(e.prompt)}</textarea><label>Suggerimento</label><input id="mHint" value="${esc(e.hint||'')}"><label>Spiegazione per dopo la soluzione</label><textarea id="mExplain">${esc(e.explain||'')}</textarea><button style="margin-top:14px" onclick="saveManual('${existing?existing.id:''}')">Salva esercizio online</button><p id="manualMessage" class="small muted"></p>`;
+ mType.value=e.type;mClass.value=e.class_id||'';manualFields(e);
+}
+function manualFields(e={}){let t=mType.value,f=document.getElementById('mFields');if(t==='fill'||t==='debug')f.innerHTML=`<label>${t==='fill'?'Codice con segnaposto [1], [2]…':'Codice da correggere'}</label><textarea id="mCode">${esc(e.code||'print([1])')}</textarea><label>Risposte corrette (separate da virgola)</label><input id="mAnswers" value="${esc((e.answers||['']).join(','))}">`;else if(t==='quiz')f.innerHTML=`<label>Opzioni (una per riga)</label><textarea id="mOptions">${esc((e.options||[]).join('\n'))}</textarea><label>Numero risposta corretta (da 1)</label><input id="mCorrect" type="number" min="1" value="${Number(e.correct||0)+1}">`;else if(t==='write')f.innerHTML=`<label>Codice iniziale</label><textarea id="mStarter">${esc(e.starter||'')}</textarea><label>Elementi richiesti (separati da virgola)</label><input id="mRequired" value="${esc((e.required||[]).join(','))}"><label>Soluzione modello</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;else if(t==='lab')f.innerHTML=`<label>Codice iniziale</label><textarea id="mStarter" class="editor">${esc(e.starter||'')}</textarea><label>Valori iniziali per input() (uno per riga)</label><textarea id="mStdin">${esc(e.stdin||'')}</textarea><label>Output atteso</label><textarea id="mExpected">${esc(e.expectedOutput||'')}</textarea><label>Soluzione modello</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;}
+async function saveManual(id){
+ if(activeRole!=='teacher'||!teacherUser){showTeacher();return;}
+ let t=mType.value,e={id:id||'custom_'+Date.now(),topic:mTopic.value.trim(),title:mTitle.value.trim(),type:t,prompt:mPrompt.value.trim(),hint:mHint.value,explain:mExplain.value,class_id:mClass.value||null,sort_order:existing?.sort_order||((exercises.reduce((m,x)=>Math.max(m,Number(x.sort_order||0)),0))+1)};
+ if(!e.topic||!e.title||!e.prompt){alert('Compila argomento, titolo e consegna.');return;}
+ if(t==='fill'||t==='debug'){e.code=mCode.value;e.answers=mAnswers.value.split(',').map(x=>x.trim()).filter(Boolean);}
+ if(t==='quiz'){e.options=mOptions.value.split('\n').map(x=>x.trim()).filter(Boolean);e.correct=Number(mCorrect.value)-1;if(!e.options.length||e.correct<0||e.correct>=e.options.length){alert('Controlla le opzioni e la risposta corretta.');return;}}
+ if(t==='write'){e.starter=mStarter.value;e.required=mRequired.value.split(',').map(x=>x.trim()).filter(Boolean);e.solution=mSolution.value;}
+ if(t==='lab'){e.starter=mStarter.value;e.stdin=mStdin.value;e.expectedOutput=mExpected.value;e.solution=mSolution.value;}
+ const button=view.querySelector('button[onclick^="saveManual"]');if(button){button.disabled=true;button.textContent='Salvataggio…';}
+ try{await saveExerciseToSupabase(e);const i=exercises.findIndex(x=>x.id===id);if(i>=0)exercises[i]=e;else exercises.push(e);persist();await loadTeacherDashboard();alert('Esercizio salvato nel database online.');}
+ catch(err){const m=document.getElementById('manualMessage');if(m)m.textContent='Errore di salvataggio: '+(err.message||String(err));if(button){button.disabled=false;button.textContent='Salva esercizio online';}}
+}
+function editExercise(id){if(activeRole!=='teacher')return;const e=exercises.find(x=>x.id===id);if(e)manualForm(e);}
+async function deleteExercise(id){if(activeRole!=='teacher')return;if(!confirm('Eliminare questo esercizio dal database?'))return;try{const {error}=await teacherSb.from('exercises').delete().eq('id',id);if(error)throw error;exercises=exercises.filter(x=>x.id!==id);await loadTeacherDashboard();}catch(err){alert('Errore durante l’eliminazione: '+(err.message||String(err)));}}
+function exportData(){if(activeRole!=='teacher')return;let blob=new Blob([JSON.stringify({version:4,exercises},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='python-lab-esercizi-backup.json';a.click();URL.revokeObjectURL(url);}
+function importData(ev){if(activeRole!=='teacher')return;let file=ev.target.files[0];if(!file)return;let r=new FileReader();r.onload=async()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.exercises))throw Error('Formato non valido: serve un JSON con un array exercises.');if(confirm('Importare '+d.exercises.length+' esercizi in Supabase? Gli ID già presenti verranno aggiornati.'))await importExercisesToSupabase(d.exercises);}catch(e){alert('Importazione non riuscita: '+(e.message||String(e)));}finally{ev.target.value='';}};r.readAsText(file);}
+</script></body></html>
