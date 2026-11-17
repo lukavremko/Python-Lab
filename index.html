@@ -57,7 +57,7 @@ let exercises=[];
 let done=[];
 let attempts={};
 let py=null, pyLoading=null, student='';
-let studentId=null, studentClassId=null, studentClassName='';
+let studentId=null, studentClassId=null, studentClassName='', studentClassType='python';
 let teacherUser=null, teacherProfile=null, teacherClasses=[];
 let activeRole=null;
 function persist(){} // I dati risiedono su Supabase; non copiare soluzioni o progressi in localStorage.
@@ -122,6 +122,11 @@ async function enter(){
     student=membership.student_nickname||nickname;
     studentClassId=membership.class_id;
     studentClassName=membership.class_name||'Classe';
+    studentClassType=membership.course_type||'python';
+    if(studentClassType==='sql'){
+      window.location.replace('./sql_lab.html');
+      return;
+    }
     activeRole='student';
     await loadStudentExercises();
     await loadStudentProgress();
@@ -135,9 +140,12 @@ async function enter(){
 async function loadStudentExercises(){
   const {data,error}=await studentSb.from('exercises')
     .select('id,class_id,sort_order,topic,title,exercise_type,prompt,content,is_published')
-    .eq('is_published',true).order('sort_order').order('id');
+    .eq('is_published',true)
+    .or(`class_id.is.null,class_id.eq.${studentClassId}`)
+    .order('sort_order').order('id');
   if(error)throw error;
-  exercises=(data||[]).map(row=>fromDatabaseExercise(row));
+  // Python Lab non carica mai la raccolta SQL, anche in caso di record configurati male.
+  exercises=(data||[]).filter(row=>!String(row.id).toLowerCase().startsWith('sql')).map(row=>fromDatabaseExercise(row));
 }
 async function loadStudentProgress(){
   const {data,error}=await studentSb.from('student_progress')
@@ -300,7 +308,7 @@ async function loadTeacherDashboard(){
  view.innerHTML='<p class="muted">Caricamento dati della classe…</p>';
  try{
   const [classRes,studentRes,progressRes]=await Promise.all([
-   teacherSb.from('classes').select('id,name,is_active,created_at').order('created_at'),
+   teacherSb.from('classes').select('id,name,course_type,is_active,created_at').order('created_at'),
    teacherSb.from('student_profiles').select('user_id,class_id,nickname,created_at').order('nickname'),
    teacherSb.from('student_progress').select('student_id,exercise_id,attempts,completed,best_score,hints_used,updated_at')
   ]);
@@ -308,33 +316,40 @@ async function loadTeacherDashboard(){
   await loadTeacherExercises();
   teacherClasses=classRes.data||[];
   const students=studentRes.data||[],progress=progressRes.data||[];
-  const total=exercises.filter(e=>e.is_published!==false).length;
+  const pythonExercises=exercises.filter(e=>!String(e.id).toLowerCase().startsWith('sql'));
+  const total=pythonExercises.filter(e=>e.is_published!==false).length;
   const classCards=teacherClasses.map(c=>{
-   const classTotal=exercises.filter(e=>e.is_published!==false&&(!e.class_id||e.class_id===c.id)).length;
+   const isSql=c.course_type==='sql';
+   const classExercises=exercises.filter(e=>e.is_published!==false && (isSql
+      ? String(e.id).toLowerCase().startsWith('sql') && e.class_id===c.id
+      : !String(e.id).toLowerCase().startsWith('sql') && (!e.class_id||e.class_id===c.id)));
+   const classIds=new Set(classExercises.map(e=>e.id));
+   const classTotal=classExercises.length;
    const members=students.filter(s=>s.class_id===c.id);
    const memberRows=members.map(s=>{
-    const rows=progress.filter(p=>p.student_id===s.user_id),completed=rows.filter(p=>p.completed).length;
+    const rows=progress.filter(p=>p.student_id===s.user_id&&classIds.has(p.exercise_id)),completed=rows.filter(p=>p.completed).length;
     const attemptsTotal=rows.reduce((n,p)=>n+(p.attempts||0),0);
     const pct=classTotal?Math.round(completed/classTotal*100):0;
     return `<tr><td>${esc(s.nickname)}</td><td>${completed}/${classTotal}</td><td>${pct}%</td><td>${attemptsTotal}</td></tr>`;
    }).join('');
-   return `<div class="cardtask"><div class="row between"><div><b>${esc(c.name)}</b><div class="small muted">${members.length} studenti · ${c.is_active?'Attiva':'Disattivata'}</div></div><span class="tag">${classTotal} esercizi</span></div><div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th align="left">Nickname</th><th align="left">Completati</th><th align="left">Progresso</th><th align="left">Tentativi</th></tr></thead><tbody>${memberRows||'<tr><td colspan="4" class="muted">Nessuno studente iscritto.</td></tr>'}</tbody></table></div></div>`;
+   return `<div class="cardtask"><div class="row between"><div><b>${esc(c.name)}</b><div class="small muted">${isSql?'Laboratorio SQL':'Python Lab'} · ${members.length} studenti · ${c.is_active?'Attiva':'Disattivata'}</div></div><span class="tag">${classTotal} esercizi</span></div><div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th align="left">Nickname</th><th align="left">Completati</th><th align="left">Progresso</th><th align="left">Tentativi</th></tr></thead><tbody>${memberRows||'<tr><td colspan="4" class="muted">Nessuno studente iscritto.</td></tr>'}</tbody></table></div></div>`;
   }).join('');
   view.innerHTML=`<div class="row between"><div><span class="tag">Area docente · ${esc(teacherProfile?.display_name||'Docente')}</span><h2 style="margin-top:9px">Gestione classi e progressi</h2></div><button class="ghost" onclick="teacherLogout()">Esci dall’area docente</button></div>
   <div class="grid2" style="margin:14px 0"><div class="cardtask"><b>${teacherClasses.length}</b><div class="small muted">Classi</div></div><div class="cardtask"><b>${students.length}</b><div class="small muted">Studenti registrati</div></div><div class="cardtask"><b>${total}</b><div class="small muted">Esercizi pubblicati</div></div><div class="cardtask"><b>${progress.filter(p=>p.completed).length}</b><div class="small muted">Completamenti registrati</div></div></div>
-  <div class="cardtask"><h3>Crea una classe</h3><div class="grid2"><div><label>Nome classe</label><input id="newClassName" placeholder="Es. 3A Informatica"></div><div><label>Codice di accesso (6–32 caratteri)</label><input id="newClassCode" placeholder="Es. 3AINF26" maxlength="32"></div></div><button style="margin-top:10px" onclick="createClass()">Crea classe</button><p id="classCreateMessage" class="small muted"></p></div>
+  <div class="cardtask"><h3>Crea una classe</h3><div class="grid2"><div><label>Nome classe</label><input id="newClassName" placeholder="Es. 3A Informatica"></div><div><label>Codice di accesso (6–32 caratteri)</label><input id="newClassCode" placeholder="Es. 3AINF26" maxlength="32"></div><div><label>Tipo di laboratorio</label><select id="newClassType"><option value="python">Python</option><option value="sql">SQL</option></select></div></div><button style="margin-top:10px" onclick="createClass()">Crea classe</button><p id="classCreateMessage" class="small muted"></p></div>
   <div class="cardtask" style="margin-top:12px"><h3>Libreria esercizi</h3><p class="small muted">${exercises.length} esercizi caricati. Importa il file JSON dei 200 esercizi: le soluzioni saranno memorizzate in una tabella non leggibile dagli studenti.</p><div class="row"><button onclick="document.getElementById('importFile').click()">Importa JSON dei 200 esercizi</button><button class="secondary" onclick="exportData()">Esporta raccolta</button><input id="importFile" type="file" accept=".json,application/json" class="hidden" onchange="importData(event)"></div><p class="small muted">Non pubblicare il file JSON della libreria nel repository GitHub pubblico.</p></div>
   <h3 style="margin-top:18px">Statistiche per classe</h3><div class="stack">${classCards||'<p class="muted">Non hai ancora creato classi. Usa il modulo qui sopra.</p>'}</div>
-  <h3 style="margin-top:18px">Gestione esercizi</h3><div class="row"><button class="secondary" onclick="manualForm()">Crea esercizio</button></div><div class="stack" style="margin-top:10px">${exercises.map(e=>`<div class="row between cardtask"><div><b>${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><button class="secondary" onclick="editExercise('${e.id}')">Modifica</button><button class="danger" onclick="deleteExercise('${e.id}')">Elimina</button></div></div>`).join('')}</div>`;
+  <h3 style="margin-top:18px">Gestione esercizi</h3><div class="row"><button class="secondary" onclick="manualForm()">Crea esercizio</button></div><div class="stack" style="margin-top:10px">${exercises.filter(e=>!String(e.id).toLowerCase().startsWith('sql')).map(e=>`<div class="row between cardtask"><div><b>${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><button class="secondary" onclick="editExercise('${e.id}')">Modifica</button><button class="danger" onclick="deleteExercise('${e.id}')">Elimina</button></div></div>`).join('')}</div>`;
  }catch(err){view.innerHTML=`<div class="feedback bad">Errore nel caricamento dei dati: ${esc(err.message||String(err))}</div><button class="secondary" onclick="showTeacher()">Riprova</button>`;}
 }
 async function createClass(){
  const name=document.getElementById('newClassName').value.trim(),code=document.getElementById('newClassCode').value.trim();
+ const courseType=document.getElementById('newClassType').value;
  const msg=document.getElementById('classCreateMessage');
  if(name.length<2||code.length<6||code.length>32){msg.textContent='Inserisci un nome e un codice di 6–32 caratteri.';return;}
  try{
-  const {data,error}=await teacherSb.rpc('create_class',{p_name:name,p_join_code:code});if(error)throw error;
-  alert('Classe creata. Codice da comunicare agli studenti: '+code);
+  const {data,error}=await teacherSb.rpc('create_class',{p_name:name,p_join_code:code,p_course_type:courseType});if(error)throw error;
+  alert('Classe '+(courseType==='sql'?'SQL':'Python')+' creata. Codice da comunicare agli studenti: '+code);
   await loadTeacherDashboard();
  }catch(err){msg.textContent='Errore: '+(err.message||String(err));}
 }
