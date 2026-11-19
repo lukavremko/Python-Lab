@@ -8,7 +8,16 @@ main{max-width:1180px;margin:25px auto;padding:0 18px}.panel{background:white;bo
 button,input,select,textarea{font:inherit}button{border:0;border-radius:9px;padding:9px 13px;background:var(--blue);color:#fff;font-weight:650;cursor:pointer}button.secondary{background:#edf1ff;color:#2949c9}button.ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}button.danger{background:#fff0f1;color:var(--red)}button:disabled{opacity:.5;cursor:wait}
 input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}textarea{min-height:100px;resize:vertical}label{display:block;font-weight:650;font-size:13px;margin:10px 0 5px}
 .layout{display:grid;grid-template-columns:245px 1fr;gap:18px}.stack{display:grid;gap:10px}.row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.between{justify-content:space-between}.nav{width:100%;text-align:left;margin:4px 0;background:transparent;color:var(--ink)}.nav.active{background:#edf1ff;color:#2949c9}
-.tag{display:inline-block;background:#edf1ff;color:#2949c9;border-radius:99px;padding:3px 8px;font-size:12px;font-weight:700}.cardtask{border:1px solid var(--line);border-radius:11px;padding:13px}.code,.output{background:#101b2d;color:#e4ecff;border-radius:10px;padding:13px;white-space:pre-wrap;overflow:auto;font:13px/1.65 ui-monospace,Consolas,monospace}.live-preview{margin-top:12px;border:1px solid var(--line);border-radius:11px;padding:12px;background:#f8faff}.live-preview-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.live-preview-head strong{font-size:13px}.live-preview-head span{font-size:12px;color:var(--muted)}.live-preview .code{margin:0;min-height:48px}.editor{width:100%;min-height:180px;background:#101b2d;color:#e4ecff;border:1px solid #263854;border-radius:10px;padding:13px;font:13px/1.65 ui-monospace,Consolas,monospace;tab-size:4}.output{min-height:70px}.output.err{color:#ffb8bd}.feedback{padding:10px 12px;border-radius:9px;margin-top:10px}.ok{background:#e8f7ef;color:#12633e}.bad{background:#fff0f1;color:#a52d3a}.hint{background:#fff6df;color:#765400}
+.tag{display:inline-block;background:#edf1ff;color:#2949c9;border-radius:99px;padding:3px 8px;font-size:12px;font-weight:700}.cardtask{border:1px solid var(--line);border-radius:11px;padding:13px}.code,.output{background:#101b2d;color:#e4ecff;border-radius:10px;padding:13px;white-space:pre-wrap;overflow:auto;font:13px/1.65 ui-monospace,Consolas,monospace}.live-preview{margin-top:12px;border:1px solid var(--line);border-radius:11px;padding:12px;background:#f8faff}.live-preview-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.live-preview-head strong{font-size:13px}.live-preview-head span{font-size:12px;color:var(--muted)}.live-preview .code{margin:0;min-height:48px}.editor{width:100%;min-height:180px;background:#101b2d;color:#e4ecff;border:1px solid #263854;border-radius:10px;padding:13px;font:13px/1.65 ui-monospace,Consolas,monospace;tab-size:4}.output{min-height:70px}
+.editor-shell{display:grid;grid-template-columns:46px minmax(0,1fr);border:1px solid #263854;border-radius:11px;overflow:hidden;background:#101b2d;margin:8px 0 12px;min-width:0}
+.editor-toolbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 9px;background:#17263d;border-bottom:1px solid #2a3c59;color:#c7d4ec;font-size:12px}
+.editor-toolbar .editor-tools{display:flex;gap:5px}.editor-toolbar button{padding:3px 9px;border:1px solid #415574;background:#233651;color:#e4ecff;border-radius:6px;font-size:12px}
+.editor-gutter{grid-column:1;grid-row:2;overflow:hidden;background:#0c1524;color:#71809a;text-align:right;padding:13px 8px 13px 4px;font:13px/1.65 ui-monospace,Consolas,monospace;user-select:none;white-space:pre}
+.editor-gutter span{display:block;height:1.65em}.editor-gutter span.error{background:#8d2633;color:#fff;border-radius:4px;font-weight:800}
+.editor-shell textarea.editor{grid-column:2;grid-row:2;display:block;width:100%;min-width:0;min-height:220px;margin:0;border:0;border-radius:0;padding:13px;background:#101b2d;color:#e4ecff;font:13px/1.65 ui-monospace,Consolas,monospace;tab-size:4;white-space:pre;overflow:auto;resize:vertical;outline:none}
+.editor-shell textarea.editor:focus{box-shadow:inset 0 0 0 1px #5578ff}.editor-shell.has-error{border-color:#bd3948}.editor-help{grid-column:1/-1;padding:5px 10px;background:#17263d;color:#91a1bc;font-size:11px;border-top:1px solid #2a3c59}
+@media(max-width:600px){.editor-shell{grid-template-columns:38px minmax(0,1fr)}.editor-gutter{padding-left:2px;padding-right:6px}.editor-shell textarea.editor{font-size:12px;min-height:190px}}
+.output.err{color:#ffb8bd}.feedback{padding:10px 12px;border-radius:9px;margin-top:10px}.ok{background:#e8f7ef;color:#12633e}.bad{background:#fff0f1;color:#a52d3a}.hint{background:#fff6df;color:#765400}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.progress{height:7px;background:#edf0f5;border-radius:20px;overflow:hidden}.progress div{height:100%;background:var(--green)}.hidden{display:none!important}.option{display:block;border:1px solid var(--line);border-radius:9px;padding:9px;margin:7px 0}.option input{width:auto;margin-right:7px}.pill{padding:5px 9px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--muted);font-size:12px;cursor:pointer}.pill.sel{background:#edf1ff;color:#2949c9;border-color:#cbd5ff}
 footer{text-align:center;color:var(--muted);font-size:12px;margin:25px}
 @media(max-width:780px){.layout{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}
@@ -17,9 +26,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin:25px}
 <main>
 <section id="login" class="panel" style="max-width:520px;margin:7vh auto">
 <h1>Benvenuto in Python Lab</h1><p class="muted">Una raccolta di esercizi per imparare Python, a scuola e a casa.</p>
-<label>Codice classe</label><input id="classCode" placeholder="Inserisci il codice della classe" autocomplete="off"><label>Nome o nickname</label><input id="studentName" placeholder="Il tuo nickname" maxlength="24" autocomplete="nickname">
+<label>Codice personale (8 caratteri)</label><input id="classCode" placeholder="Inserisci il tuo codice personale" maxlength="8" autocomplete="one-time-code"><label>Nome o nickname</label><input id="studentName" placeholder="Il tuo nickname" maxlength="24" autocomplete="nickname">
 <button style="width:100%;margin-top:15px" onclick="enter()">Entra nella piattaforma</button><button class="ghost" style="width:100%;margin-top:8px" onclick="openTeacherFromLogin()">Accesso docente</button>
-<p id="loginError" class="small" style="color:var(--red);margin-top:12px" role="alert"></p><p class="small muted" style="margin-top:8px">I progressi vengono salvati online. Usa il codice ricevuto dal docente.</p>
+<p id="loginError" class="small" style="color:var(--red);margin-top:12px" role="alert"></p><p class="small muted" style="margin-top:8px">I progressi vengono salvati online. Usa il codice personale ricevuto dal docente.</p>
 </section>
 <section id="app" class="hidden">
 <div class="row between" style="margin-bottom:16px"><div><h1>Area di apprendimento</h1><div class="muted small" id="hello"></div></div><button class="ghost" onclick="logout()">Esci</button></div>
@@ -97,11 +106,12 @@ function showConnectionError(message){
   showLoginError(message);
 }
 async function enter(){
-  const code=document.getElementById('classCode').value.trim();
+  const code=document.getElementById('classCode').value.trim().toUpperCase();
   const nickname=document.getElementById('studentName').value.trim();
   const button=login.querySelector('button');
   showLoginError('');
-  if(!code){showLoginError('Inserisci il codice della classe.');return;}
+  if(!code){showLoginError('Inserisci il tuo codice personale.');return;}
+  if(!/^[A-HJ-NP-Z2-9]{8}$/.test(code)){showLoginError('Il codice personale deve contenere 8 caratteri (lettere e numeri, senza I, O, 0 e 1).');return;}
   if(nickname.length<2 || nickname.length>24){showLoginError('Il nickname deve contenere da 2 a 24 caratteri.');return;}
   button.disabled=true; button.textContent='Accesso…';
   try{
@@ -115,7 +125,7 @@ async function enter(){
       session=data.session;
     }
     studentId=session.user.id;
-    const {data:joined,error:joinError}=await studentSb.rpc('join_class',{p_join_code:code,p_nickname:nickname});
+    const {data:joined,error:joinError}=await studentSb.rpc('join_class_by_student_code',{p_student_code:code,p_nickname:nickname});
     if(joinError)throw joinError;
     const membership=Array.isArray(joined)?joined[0]:joined;
     if(!membership?.class_id)throw new Error('Supabase non ha restituito i dati della classe.');
@@ -134,7 +144,7 @@ async function enter(){
     hello.textContent='Ciao '+student+' · '+studentClassName;
     showBank(); initPy();
   }catch(err){
-    showLoginError('Accesso non riuscito: '+(err.message||String(err))+' Se il problema continua, controlla che lo schema SQL sia stato eseguito e che Anonymous Sign-Ins sia attivo.');
+    showLoginError('Accesso non riuscito: '+(err.message||String(err))+' Controlla il codice personale e che Anonymous Sign-Ins sia attivo.');
   }finally{button.disabled=false;button.textContent='Entra nella piattaforma';}
 }
 async function loadStudentExercises(){
@@ -156,7 +166,7 @@ async function loadStudentProgress(){
   (data||[]).forEach(row=>{attempts[row.exercise_id]=row.attempts||0;if(row.completed)done.push(row.exercise_id);});
   updateProgress();
 }
-function logout(){if(activeRole==='teacher'){teacherLogout();return;}activeRole=null;app.classList.add('hidden');login.classList.remove('hidden');showLoginError('');}
+async function logout(){if(activeRole==='teacher'){await teacherLogout();return;}await studentSb.auth.signOut();studentId=null;studentClassId=null;studentClassName='';activeRole=null;app.classList.add('hidden');login.classList.remove('hidden');showLoginError('');}
 function openTeacherFromLogin(){login.classList.add('hidden');app.classList.remove('hidden');hello.textContent='Accesso riservato al docente';showTeacher();}
 function nav(which){['Bank','Lab','Mixed','Teacher'].forEach(x=>document.getElementById('n'+x).classList.toggle('active',x.toLowerCase()===which));}
 function updateProgress(){ptext.textContent=done.filter(id=>exercises.some(e=>e.id===id)).length+' di '+exercises.length+' esercizi completati';pbar.style.width=Math.min(100,done.filter(id=>exercises.some(e=>e.id===id)).length/Math.max(1,exercises.length)*100)+'%';}
@@ -179,12 +189,13 @@ function openExercise(id){
  const e=exercises.find(x=>x.id===id);if(!e)return;let body='';
  if(e.type==='fill'){const blanks=(String(e.code||'').match(/\[\d+\]/g)||[]).length;body=`${Array.from({length:blanks},(_,i)=>`<label>Spazio ${i+1}</label><input id="a${i}" autocomplete="off" placeholder="Completa il codice">`).join('')}<div class="live-preview"><div class="live-preview-head"><strong>Anteprima live del codice</strong><span>Si aggiorna mentre scrivi · non esegue il programma</span></div><pre id="fillPreview" class="code" aria-live="polite">${esc(e.code||'')}</pre></div>`;}
  if(e.type==='quiz')body=(e.options||[]).map((o,i)=>`<label class="option"><input type="radio" name="q" value="${i}"> ${esc(o)}</label>`).join('');
- if(e.type==='debug')body=`<div class="code">${esc(e.code)}</div><label>Scrivi il codice corretto</label><textarea id="debugAnswer" rows="3" placeholder="Riscrivi la riga o il blocco corretto"></textarea>`;
+ if(e.type==='debug')body=`<div class="code">${esc(e.code)}</div><label>Scrivi il codice corretto</label><textarea id="debugAnswer" class="editor" spellcheck="false" rows="5" placeholder="Riscrivi la riga o il blocco corretto"></textarea>`;
  if(e.type==='write')body=`<label>Il tuo programma</label><textarea id="studentCode" class="editor">${esc(e.starter||'')}</textarea><p class="small muted">Puoi aprire il laboratorio per eseguire il programma. La verifica iniziale controlla la presenza degli elementi richiesti.</p>`;
  if(e.type==='lab')body=`<label>Codice Python</label><textarea id="labCode" class="editor" spellcheck="false">${esc(e.starter||'')}</textarea><label>Valori per input() (uno per riga, se necessari)</label><textarea id="labStdin" rows="2" placeholder="Facoltativo">${esc(e.stdin||'')}</textarea><div class="row" style="margin-top:10px"><button id="labRunCheck" onclick="checkLabExercise('${e.id}')">▶ Esegui e verifica</button><button class="secondary" onclick="runLabPreview('${e.id}')">Esegui soltanto</button></div><label>Output / errori</label><div id="labOutput" class="output">L’output apparirà qui.</div><p class="small muted">Per completare l’esercizio, l’output deve corrispondere al risultato atteso. Gli spazi finali non vengono considerati.</p>`;
  const verify=e.type==='lab'?'':`<button id="verifyExercise">Verifica</button>`;
  const labButton=e.type==='write'?`<button class="ghost" id="openInLab">Apri nel laboratorio</button>`:'';
  view.innerHTML=`<button class="ghost" id="backBank">← Torna alla raccolta</button><div class="small muted" style="margin-top:12px">Esercizio ${exercises.findIndex(x=>x.id===id)+1} di ${exercises.length}</div><div class="tag" style="margin-top:7px">${esc(e.topic)} · ${typeLabel(e.type)}</div><h2 style="margin-top:9px">${esc(e.title)}</h2><p>${esc(e.prompt)}</p>${body}<div class="row" style="margin-top:14px">${verify}<button class="secondary" id="hintExercise">Suggerimento</button>${labButton}</div><div id="feedback">${done.includes(id)?`<div class="feedback ok">Questo esercizio risulta già completato.</div>${completionHtml(id)}`:''}</div>`;
+ enhanceEditors(view);
  document.getElementById('backBank').onclick=showBank;
  if(e.type==='fill'){Array.from({length:(String(e.code||'').match(/\[\d+\]/g)||[]).length},(_,i)=>document.getElementById('a'+i)).filter(Boolean).forEach(input=>input.addEventListener('input',()=>updateFillPreview(e)));updateFillPreview(e);}
  if(e.type!=='lab')document.getElementById('verifyExercise').onclick=()=>checkExercise(id);
@@ -246,7 +257,79 @@ function showMixedLab(){
  const completed=challenges.filter(e=>done.includes(e.id)).length;
  view.innerHTML=`<span class="tag">Python · percorso pratico</span><h2 style="margin-top:10px">Sfide miste di laboratorio</h2><p class="muted">Problemi più completi che combinano input, variabili, condizioni, cicli, stringhe, liste, dizionari e funzioni. Ogni sfida propone un caso di prova: puoi modificare il codice e provare a risolverlo.</p><div class="row" style="margin:12px 0"><span class="tag">${challenges.length} sfide</span><span class="tag">${completed} completate</span><span class="tag">${challenges.length?Math.round(completed/challenges.length*100):0}%</span></div><div class="progress" style="margin-bottom:14px"><div style="width:${challenges.length?completed/challenges.length*100:0}%"></div></div><div class="stack">${challenges.map((e,i)=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${i+1}. ${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${done.includes(e.id)?'Completato':'Da svolgere'}</div></div><button onclick="openExercise('${e.id}')">${done.includes(e.id)?'Rivedi':'Apri sfida'}</button></div>`).join('')||'<div class="feedback hint">Le sfide miste non sono ancora state importate. Accedi come docente e importa il file <b>python_lab_laboratori_misti_30.json</b>.</div>'}</div><p class="small muted" style="margin-top:14px">Le attività completate vengono registrate nel tuo profilo e nel pannello docente, come gli altri esercizi Python.</p>`;
 }
-function showLab(prefill=''){nav('lab');view.innerHTML=`<span class="tag">Python 3 nel browser · Pyodide</span><h2 style="margin-top:10px">Laboratorio Python</h2><p class="muted">Scrivi codice Python, inserisci eventuali dati di input (uno per riga) e premi Esegui. Il codice viene eseguito nel browser.</p><textarea id="code" class="editor" spellcheck="false">${esc(prefill||'nome = input("Come ti chiami? ")\nprint("Ciao", nome)')}</textarea><div class="row" style="margin-top:10px"><button id="run" onclick="runPy()">▶ Esegui Python</button><button class="secondary" onclick="showLab()">Ripristina esempio</button><button class="ghost" onclick="document.getElementById('out').textContent='Output pulito'">Pulisci output</button></div><label>Valori per input() (uno per riga)</label><textarea id="stdin" rows="3" placeholder="Ada\n18"></textarea><label>Output / errori</label><div class="output" id="out">Il risultato apparirà qui.</div><p class="small muted">Per più chiamate a input(), inserisci un valore per riga. Pyodide viene caricato una sola volta.</p>`;}
+function editorLineFromError(error, code=''){
+ const message=String(error?.message||error||'');
+ const matches=[...message.matchAll(/line\s+(\d+)/gi)];
+ if(matches.length)return Math.max(1,Number(matches[matches.length-1][1]));
+ const near=message.match(/near\s+["'`]([^"'`]+)["'`]/i);
+ if(near){const lines=String(code).split('\n');const idx=lines.findIndex(line=>line.includes(near[1]));if(idx>=0)return idx+1;}
+ return null;
+}
+function clearEditorError(textarea){
+ const shell=textarea?.closest('.editor-shell');if(!shell)return;
+ shell.classList.remove('has-error');shell.querySelectorAll('.editor-gutter span').forEach(x=>x.classList.remove('error'));
+ textarea.style.backgroundImage='';textarea.style.backgroundAttachment='';
+}
+function markEditorError(id,error){
+ const textarea=document.getElementById(id);if(!textarea)return;
+ const line=editorLineFromError(error,textarea.value);if(!line)return;
+ const shell=textarea.closest('.editor-shell');if(!shell)return;
+ shell.classList.add('has-error');
+ shell.querySelectorAll('.editor-gutter span').forEach((el,i)=>el.classList.toggle('error',i===line-1));
+ const lh=parseFloat(getComputedStyle(textarea).lineHeight)||21.45,top=13+(line-1)*lh;
+ textarea.style.backgroundImage=`linear-gradient(to bottom, transparent ${top}px, rgba(189,57,72,.30) ${top}px, rgba(189,57,72,.30) ${top+lh}px, transparent ${top+lh}px)`;
+ textarea.style.backgroundAttachment='local';
+}
+function enhanceEditor(textarea){
+ if(!textarea||textarea.dataset.enhanced==='1')return;
+ textarea.dataset.enhanced='1';textarea.wrap='off';
+ const shell=document.createElement('div');shell.className='editor-shell';
+ const toolbar=document.createElement('div');toolbar.className='editor-toolbar';
+ toolbar.innerHTML='<span>Editor · Tab = 4 spazi · parentesi automatiche</span><span class="editor-tools"><button type="button" data-zoom="out" aria-label="Riduci editor">A−</button><button type="button" data-zoom="in" aria-label="Ingrandisci editor">A+</button></span>';
+ const gutter=document.createElement('div');gutter.className='editor-gutter';gutter.setAttribute('aria-hidden','true');
+ const parent=textarea.parentNode;parent.insertBefore(shell,textarea);shell.append(toolbar,gutter,textarea);
+ let fontSize=Number(textarea.dataset.fontSize||13);textarea.style.fontSize=fontSize+'px';
+ const updateLines=()=>{const count=Math.max(1,textarea.value.split('\n').length);gutter.innerHTML=Array.from({length:count},(_,i)=>`<span>${i+1}</span>`).join('');gutter.scrollTop=textarea.scrollTop;};
+ textarea.addEventListener('input',()=>{updateLines();clearEditorError(textarea);});
+ textarea.addEventListener('scroll',()=>{gutter.scrollTop=textarea.scrollTop;});
+ toolbar.querySelector('[data-zoom="in"]').addEventListener('click',()=>{fontSize=Math.min(24,fontSize+1);textarea.style.fontSize=fontSize+'px';gutter.style.fontSize=fontSize+'px';textarea.dataset.fontSize=fontSize;});
+ toolbar.querySelector('[data-zoom="out"]').addEventListener('click',()=>{fontSize=Math.max(10,fontSize-1);textarea.style.fontSize=fontSize+'px';gutter.style.fontSize=fontSize+'px';textarea.dataset.fontSize=fontSize;});
+ textarea.addEventListener('keydown',event=>{
+  const start=textarea.selectionStart,end=textarea.selectionEnd,value=textarea.value;
+  if(event.key==='Tab'){
+   event.preventDefault();
+   if(start===end){textarea.setRangeText('    ',start,end,'end');}
+   else{
+    const lineStart=value.lastIndexOf('\n',start-1)+1,lineEnd=value.indexOf('\n',end);const stop=lineEnd<0?value.length:lineEnd;
+    const block=value.slice(lineStart,stop).split('\n');
+    const shift=event.shiftKey;
+    const changed=block.map(line=>shift?line.replace(/^ {1,4}/,''):('    '+line)).join('\n');
+    textarea.setRangeText(changed,lineStart,stop,'select');
+    const delta=changed.length-(stop-lineStart);textarea.selectionStart=Math.max(lineStart,start+(shift?-Math.min(4,(value.slice(lineStart,start).match(/^ */)||[''])[0].length):4));textarea.selectionEnd=Math.max(textarea.selectionStart,end+delta);
+   }
+   updateLines();clearEditorError(textarea);return;
+  }
+  const pairs={'(':')','[':']','{':'}','"':'"',"'":"'"};
+  if(pairs[event.key]){
+   const close=pairs[event.key];
+   if(start===end&&value[start]===close){event.preventDefault();textarea.selectionStart=textarea.selectionEnd=start+1;return;}
+   event.preventDefault();const selected=value.slice(start,end);textarea.setRangeText(event.key+selected+close,start,end,'select');textarea.selectionStart=start+1;textarea.selectionEnd=start+1+selected.length;updateLines();return;
+  }
+  if([')',']','}'].includes(event.key)&&start===end&&value[start]===event.key){event.preventDefault();textarea.selectionStart=textarea.selectionEnd=start+1;return;}
+  if(event.key==='Backspace'&&start===end){const prev=value[start-1],next=value[start];if(pairs[prev]===next){event.preventDefault();textarea.setRangeText('',start-1,start+1,'end');updateLines();return;}}
+  if(event.key==='Enter'){
+   event.preventDefault();const lineStart=value.lastIndexOf('\n',start-1)+1;const before=value.slice(lineStart,start);const indent=(before.match(/^\s*/)||[''])[0];
+   const trimmed=before.trimEnd();const extra=/[:([{]$/.test(trimmed)?'    ':'';
+   if(extra&&['(', '[', '{'].includes(value[start]||'')&&({ '(':')','[':']','{':'}' }[trimmed.slice(-1)]===value[start])){
+    const insertion='\n'+indent+'    '+'\n'+indent;textarea.setRangeText(insertion,start,end,'end');textarea.selectionStart=textarea.selectionEnd=start+1+indent.length+4;
+   }else{const insertion='\n'+indent+extra;textarea.setRangeText(insertion,start,end,'end');}
+   updateLines();return;
+  }
+ });
+ updateLines();
+}
+function enhanceEditors(root=document){root.querySelectorAll('textarea.editor').forEach(enhanceEditor);}
+function showLab(prefill=''){nav('lab');view.innerHTML=`<span class="tag">Python 3 nel browser · Pyodide</span><h2 style="margin-top:10px">Laboratorio Python</h2><p class="muted">Scrivi codice Python, inserisci eventuali dati di input (uno per riga) e premi Esegui. Il codice viene eseguito nel browser.</p><textarea id="code" class="editor" spellcheck="false">${esc(prefill||'nome = input("Come ti chiami? ")\nprint("Ciao", nome)')}</textarea><div class="row" style="margin-top:10px"><button id="run" onclick="runPy()">▶ Esegui Python</button><button class="secondary" onclick="showLab()">Ripristina esempio</button><button class="ghost" onclick="document.getElementById('out').textContent='Output pulito'">Pulisci output</button></div><label>Valori per input() (uno per riga)</label><textarea id="stdin" rows="3" placeholder="Ada\n18"></textarea><label>Output / errori</label><div class="output" id="out">Il risultato apparirà qui.</div><p class="small muted">Per più chiamate a input(), inserisci un valore per riga. Pyodide viene caricato una sola volta.</p>`;enhanceEditors(view);}
 async function initPy(){if(py)return py;if(pyLoading)return pyLoading;runtimeStatus.textContent='Caricamento Pyodide…';pyLoading=(async()=>{try{if(typeof loadPyodide!=='function')throw new Error('Libreria Pyodide non caricata. Controlla la connessione Internet.');py=await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.27.7/full/'});runtimeStatus.textContent='● Python pronto';return py;}catch(e){runtimeStatus.textContent='Motore Python non disponibile';pyLoading=null;return null;}})();return pyLoading;}
 async function executePython(code,inputText=''){
  const p=await initPy();if(!p)throw new Error('Pyodide non è disponibile. Verifica la connessione Internet e ricarica la pagina.');
@@ -270,10 +353,11 @@ async function executePython(code,inputText=''){
  finally{p.runPython('builtins.input = _pl_original_input');}
  return captured;
 }
-async function runPy(){const b=document.getElementById('run'),o=document.getElementById('out');b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const output=await executePython(document.getElementById('code').value,document.getElementById('stdin').value);o.textContent=output||'Eseguito senza output.';}catch(e){o.className='output err';o.textContent=String(e);}finally{b.disabled=false;}}
-async function runLabPreview(id){const e=exercises.find(x=>x.id===id),b=document.getElementById('labRunCheck'),o=document.getElementById('labOutput');b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const out=await executePython(document.getElementById('labCode').value,document.getElementById('labStdin').value);o.textContent=out||'Eseguito senza output.';}catch(err){o.className='output err';o.textContent=String(err);}finally{b.disabled=false;}}
+async function runPy(){const b=document.getElementById('run'),o=document.getElementById('out');clearEditorError(document.getElementById('code'));b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const output=await executePython(document.getElementById('code').value,document.getElementById('stdin').value);o.textContent=output||'Eseguito senza output.';}catch(e){o.className='output err';o.textContent=String(e);markEditorError('code',e);}finally{b.disabled=false;}}
+async function runLabPreview(id){const e=exercises.find(x=>x.id===id),b=document.getElementById('labRunCheck'),o=document.getElementById('labOutput');clearEditorError(document.getElementById('labCode'));b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const out=await executePython(document.getElementById('labCode').value,document.getElementById('labStdin').value);o.textContent=out||'Eseguito senza output.';}catch(err){o.className='output err';o.textContent=String(err);markEditorError('labCode',err);}finally{b.disabled=false;}}
 async function checkLabExercise(id){
  const b=document.getElementById('labRunCheck'),o=document.getElementById('labOutput');
+ clearEditorError(document.getElementById('labCode'));
  b.disabled=true;o.className='output';o.textContent='Esecuzione e verifica…';
  try{
   const out=await executePython(document.getElementById('labCode').value,document.getElementById('labStdin').value);
@@ -281,6 +365,7 @@ async function checkLabExercise(id){
   await submitExercise(id,{output:out});
  }catch(err){
   o.className='output err';o.textContent=String(err);
+  markEditorError('labCode',err);
   if(feedback)feedback.innerHTML=`<div class="feedback bad">${esc(err.message||String(err))}</div>`;
  }finally{b.disabled=false;}
 }
@@ -325,7 +410,7 @@ async function loadTeacherDashboard(){
  view.innerHTML='<p class="muted">Caricamento dati della classe…</p>';
  try{
   const [classRes,studentRes,progressRes]=await Promise.all([
-   teacherSb.from('classes').select('id,name,course_type,is_active,created_at').order('created_at'),
+   teacherSb.from('classes').select('id,name,course_type,max_students,is_active,created_at').order('created_at'),
    teacherSb.from('student_profiles').select('user_id,class_id,nickname,created_at').order('nickname'),
    teacherSb.from('student_progress').select('student_id,exercise_id,attempts,completed,best_score,hints_used,updated_at')
   ]);
@@ -349,25 +434,43 @@ async function loadTeacherDashboard(){
     const pct=classTotal?Math.round(completed/classTotal*100):0;
     return `<tr><td>${esc(s.nickname)}</td><td>${completed}/${classTotal}</td><td>${pct}%</td><td>${attemptsTotal}</td></tr>`;
    }).join('');
-   return `<div class="cardtask"><div class="row between"><div><b>${esc(c.name)}</b><div class="small muted">${isSql?'Laboratorio SQL':'Python Lab'} · ${members.length} studenti · ${c.is_active?'Attiva':'Disattivata'}</div></div><span class="tag">${classTotal} esercizi</span></div><div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th align="left">Nickname</th><th align="left">Completati</th><th align="left">Progresso</th><th align="left">Tentativi</th></tr></thead><tbody>${memberRows||'<tr><td colspan="4" class="muted">Nessuno studente iscritto.</td></tr>'}</tbody></table></div></div>`;
+   return `<div class="cardtask"><div class="row between"><div><b>${esc(c.name)}</b><div class="small muted">${isSql?'Laboratorio SQL':'Python Lab'} · ${members.length}/${c.max_students||30} studenti · ${c.is_active?'Attiva':'Disattivata'}</div></div><span class="tag">${classTotal} esercizi</span></div><div class="row" style="margin-top:8px"><button class="ghost" onclick="issueStudentCodes('${c.id}')">Rigenera codici non utilizzati</button></div><div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th align="left">Nickname</th><th align="left">Completati</th><th align="left">Progresso</th><th align="left">Tentativi</th></tr></thead><tbody>${memberRows||'<tr><td colspan="4" class="muted">Nessuno studente iscritto.</td></tr>'}</tbody></table></div></div>`;
   }).join('');
   view.innerHTML=`<div class="row between"><div><span class="tag">Area docente · ${esc(teacherProfile?.display_name||'Docente')}</span><h2 style="margin-top:9px">Gestione classi e progressi</h2></div><button class="ghost" onclick="teacherLogout()">Esci dall’area docente</button></div>
   <div class="grid2" style="margin:14px 0"><div class="cardtask"><b>${teacherClasses.length}</b><div class="small muted">Classi</div></div><div class="cardtask"><b>${students.length}</b><div class="small muted">Studenti registrati</div></div><div class="cardtask"><b>${total}</b><div class="small muted">Esercizi pubblicati</div></div><div class="cardtask"><b>${progress.filter(p=>p.completed).length}</b><div class="small muted">Completamenti registrati</div></div></div>
-  <div class="cardtask"><h3>Crea una classe</h3><div class="grid2"><div><label>Nome classe</label><input id="newClassName" placeholder="Es. 3A Informatica"></div><div><label>Codice di accesso (6–32 caratteri)</label><input id="newClassCode" placeholder="Es. 3AINF26" maxlength="32"></div><div><label>Tipo di laboratorio</label><select id="newClassType"><option value="python">Python</option><option value="sql">SQL</option></select></div></div><button style="margin-top:10px" onclick="createClass()">Crea classe</button><p id="classCreateMessage" class="small muted"></p></div>
+  <div class="cardtask"><h3>Crea una classe</h3><div class="grid2"><div><label>Nome classe</label><input id="newClassName" placeholder="Es. 3A Informatica"></div><div><label>Numero massimo di studenti</label><input id="newClassCapacity" type="number" min="1" max="100" value="25"></div><div><label>Tipo di laboratorio</label><select id="newClassType"><option value="python">Python</option><option value="sql">SQL</option></select></div></div><p class="small muted">Il sistema genererà un codice personale univoco per ogni posto. Ogni codice può essere usato da un solo studente.</p><button style="margin-top:10px" onclick="createClass()">Crea classe e genera codici</button><p id="classCreateMessage" class="small muted"></p></div>
   <div class="cardtask" style="margin-top:12px"><h3>Libreria esercizi</h3><p class="small muted">${exercises.length} esercizi caricati. Importa il file JSON della raccolta o un pacchetto aggiuntivo, ad esempio le 30 sfide miste. Le soluzioni saranno memorizzate in una tabella non leggibile dagli studenti.</p><div class="row"><button onclick="document.getElementById('importFile').click()">Importa JSON esercizi (raccolta o pacchetto aggiuntivo)</button><button class="secondary" onclick="exportData()">Esporta raccolta</button><input id="importFile" type="file" accept=".json,application/json" class="hidden" onchange="importData(event)"></div><p class="small muted">Non pubblicare il file JSON della libreria nel repository GitHub pubblico.</p></div>
   <h3 style="margin-top:18px">Statistiche per classe</h3><div class="stack">${classCards||'<p class="muted">Non hai ancora creato classi. Usa il modulo qui sopra.</p>'}</div>
   <h3 style="margin-top:18px">Gestione esercizi</h3><div class="row"><button class="secondary" onclick="manualForm()">Crea esercizio</button></div><div class="stack" style="margin-top:10px">${exercises.filter(e=>!String(e.id).toLowerCase().startsWith('sql')).map(e=>`<div class="row between cardtask"><div><b>${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><button class="secondary" onclick="editExercise('${e.id}')">Modifica</button><button class="danger" onclick="deleteExercise('${e.id}')">Elimina</button></div></div>`).join('')}</div>`;
  }catch(err){view.innerHTML=`<div class="feedback bad">Errore nel caricamento dei dati: ${esc(err.message||String(err))}</div><button class="secondary" onclick="showTeacher()">Riprova</button>`;}
 }
+let lastIssuedStudentCodes=[];
+function showIssuedCodes(className,codes){
+ lastIssuedStudentCodes=codes||[];
+ const panel=document.createElement('div');panel.className='cardtask';panel.style.marginBottom='12px';
+ panel.innerHTML=`<div class="row between"><div><b>Codici personali · ${esc(className)}</b><div class="small muted">Consegna un codice diverso a ogni studente. Il codice è personale e riutilizzabile per recuperare i progressi su un altro dispositivo: non condividerlo.</div></div><span class="tag">${lastIssuedStudentCodes.length} codici</span></div><div class="row" style="margin:10px 0"><button type="button" onclick="copyStudentCodes()">Copia tutti</button><button type="button" class="secondary" onclick="downloadStudentCodes()">Scarica CSV</button><button type="button" class="ghost" onclick="this.closest('.cardtask').remove()">Chiudi</button></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px">${lastIssuedStudentCodes.map((code,i)=>`<div class="tag" style="font:700 15px ui-monospace,monospace;padding:9px 12px">${i+1}. ${esc(code)}</div>`).join('')}</div>`;
+ view.prepend(panel);
+}
+async function copyStudentCodes(){const text=lastIssuedStudentCodes.map((c,i)=>`${i+1}\t${c}`).join('\n');try{await navigator.clipboard.writeText(text);alert('Codici copiati. Salvali prima di chiudere questa schermata.');}catch(_){alert(text);}}
+function downloadStudentCodes(){const csv='Numero,Codice personale\n'+lastIssuedStudentCodes.map((c,i)=>`${i+1},${c}`).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='codici_personali_studenti.csv';a.click();URL.revokeObjectURL(url);}
+async function issueStudentCodes(classId){
+ const className=teacherClasses.find(c=>c.id===classId)?.name||'Classe';
+ if(!confirm('I codici non ancora utilizzati verranno invalidati e sostituiti. I codici già usati dagli studenti resteranno validi. Continuare?'))return;
+ try{const {data,error}=await teacherSb.rpc('issue_student_codes',{p_class_id:classId});if(error)throw error;const row=Array.isArray(data)?data[0]:data;const codes=row?.student_codes||[];if(!codes.length)throw new Error('Non ci sono posti/codici mancanti da emettere.');showIssuedCodes(className,codes);}
+ catch(err){alert('Impossibile generare i codici: '+(err.message||String(err)));}
+}
 async function createClass(){
- const name=document.getElementById('newClassName').value.trim(),code=document.getElementById('newClassCode').value.trim();
+ const name=document.getElementById('newClassName').value.trim();
+ const capacity=Number(document.getElementById('newClassCapacity').value);
  const courseType=document.getElementById('newClassType').value;
  const msg=document.getElementById('classCreateMessage');
- if(name.length<2||code.length<6||code.length>32){msg.textContent='Inserisci un nome e un codice di 6–32 caratteri.';return;}
+ if(name.length<2||name.length>80||!Number.isInteger(capacity)||capacity<1||capacity>100){msg.textContent='Inserisci un nome valido e una capienza tra 1 e 100 studenti.';return;}
  try{
-  const {data,error}=await teacherSb.rpc('create_class',{p_name:name,p_join_code:code,p_course_type:courseType});if(error)throw error;
-  alert('Classe '+(courseType==='sql'?'SQL':'Python')+' creata. Codice da comunicare agli studenti: '+code);
+  const {data,error}=await teacherSb.rpc('create_class_with_capacity',{p_name:name,p_course_type:courseType,p_capacity:capacity});if(error)throw error;
+  const row=Array.isArray(data)?data[0]:data;const codes=row?.student_codes||[];
+  if(!row?.class_id||codes.length!==capacity)throw new Error('La classe è stata creata ma Supabase non ha restituito tutti i codici. Contatta il docente amministratore prima di procedere.');
   await loadTeacherDashboard();
+  showIssuedCodes(name,codes);
  }catch(err){msg.textContent='Errore: '+(err.message||String(err));}
 }
 async function saveExerciseToSupabase(e){
