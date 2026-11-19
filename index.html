@@ -18,7 +18,7 @@ input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);b
 .editor-shell textarea.editor:focus{box-shadow:inset 0 0 0 1px #5578ff}.editor-shell.has-error{border-color:#bd3948}.editor-help{grid-column:1/-1;padding:5px 10px;background:#17263d;color:#91a1bc;font-size:11px;border-top:1px solid #2a3c59}
 @media(max-width:600px){.editor-shell{grid-template-columns:38px minmax(0,1fr)}.editor-gutter{padding-left:2px;padding-right:6px}.editor-shell textarea.editor{font-size:12px;min-height:190px}}
 .output.err{color:#ffb8bd}.feedback{padding:10px 12px;border-radius:9px;margin-top:10px}.ok{background:#e8f7ef;color:#12633e}.bad{background:#fff0f1;color:#a52d3a}.hint{background:#fff6df;color:#765400}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.progress{height:7px;background:#edf0f5;border-radius:20px;overflow:hidden}.progress div{height:100%;background:var(--green)}.hidden{display:none!important}.option{display:block;border:1px solid var(--line);border-radius:9px;padding:9px;margin:7px 0}.option input{width:auto;margin-right:7px}.pill{padding:5px 9px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--muted);font-size:12px;cursor:pointer}.pill.sel{background:#edf1ff;color:#2949c9;border-color:#cbd5ff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.progress{height:7px;background:#edf0f5;border-radius:20px;overflow:hidden}.progress div{height:100%;background:var(--green)}.hidden{display:none!important}.option{display:block;border:1px solid var(--line);border-radius:9px;padding:9px;margin:7px 0}.option input{width:auto;margin-right:7px}.reorder-list{padding-left:28px;margin:12px 0;display:grid;gap:8px}.reorder-item{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--panel)}.reorder-item code{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.55 ui-monospace,Consolas,monospace;flex:1}.reorder-controls{display:flex;gap:5px;flex-shrink:0}.reorder-controls button{padding:5px 10px;min-width:34px}.pill{padding:5px 9px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--muted);font-size:12px;cursor:pointer}.pill.sel{background:#edf1ff;color:#2949c9;border-color:#cbd5ff}
 footer{text-align:center;color:var(--muted);font-size:12px;margin:25px}
 @media(max-width:780px){.layout{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}
 </style></head><body>
@@ -43,9 +43,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin:25px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
 <script>
-const typeLabel = t => ({fill:'Completa il codice',quiz:'Quiz',debug:'Correggi il codice',write:'Scrivi un programma',lab:'Laboratorio: scrivi ed esegui'})[t] || t;
+const typeLabel = t => ({fill:'Completa il codice',quiz:'Quiz',predict:'Prevedi il risultato',reorder:'Riordina il codice',debug:'Correggi il codice',write:'Scrivi un programma',lab:'Laboratorio: scrivi ed esegui'})[t] || t;
 const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const validExercise = e => e && typeof e.id==='string' && ['fill','quiz','debug','write','lab'].includes(e.type);
+const validExercise = e => e && typeof e.id==='string' && ['fill','quiz','predict','reorder','debug','write','lab'].includes(e.type);
 
 // Project URL normalizzato: non includere /rest/v1.
 const SUPABASE_URL = 'https://dpehdxrsovtfrhsctjje.supabase.co';
@@ -64,6 +64,7 @@ const teacherSb = createSupabaseClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
 
 let exercises=[];
 let done=[];
+let reorderOrder=[];
 let attempts={};
 let py=null, pyLoading=null, student='';
 let studentId=null, studentClassId=null, studentClassName='', studentClassType='python';
@@ -93,6 +94,7 @@ function toDatabaseExercise(e, ownerId){
     required:Array.isArray(e.required)?e.required:[],
     solution:e.solution||'',
     expectedOutput:e.expectedOutput||'',
+    correctOrder:Array.isArray(e.correctOrder)?e.correctOrder:[],
     explain:e.explain||''
   };
   return {
@@ -189,6 +191,11 @@ function openExercise(id){
  const e=exercises.find(x=>x.id===id);if(!e)return;let body='';
  if(e.type==='fill'){const blanks=(String(e.code||'').match(/\[\d+\]/g)||[]).length;body=`${Array.from({length:blanks},(_,i)=>`<label>Spazio ${i+1}</label><input id="a${i}" autocomplete="off" placeholder="Completa il codice">`).join('')}<div class="live-preview"><div class="live-preview-head"><strong>Anteprima live del codice</strong><span>Si aggiorna mentre scrivi · non esegue il programma</span></div><pre id="fillPreview" class="code" aria-live="polite">${esc(e.code||'')}</pre></div>`;}
  if(e.type==='quiz')body=(e.options||[]).map((o,i)=>`<label class="option"><input type="radio" name="q" value="${i}"> ${esc(o)}</label>`).join('');
+ if(e.type==='predict')body=`<div class="code" style="white-space:pre-wrap;margin:10px 0">${esc(e.code||'')}</div><p class="small muted">Seleziona l’output che il programma produrrà senza eseguirlo.</p>${(e.options||[]).map((o,i)=>`<label class="option"><input type="radio" name="q" value="${i}"> <span style="white-space:pre-wrap">${esc(o)}</span></label>`).join('')}`;
+ if(e.type==='reorder'){
+   const lines=String(e.code||'').split('\n');reorderOrder=lines.map((_,i)=>i);
+   body=`<p class="small muted">Usa i pulsanti ↑ e ↓ per spostare le righe. Quando sei soddisfatto, premi Verifica.</p><ol id="reorderList" class="reorder-list" aria-label="Righe di codice da riordinare"></ol>`;
+ }
  if(e.type==='debug')body=`<div class="code">${esc(e.code)}</div><label>Scrivi il codice corretto</label><textarea id="debugAnswer" class="editor" spellcheck="false" rows="5" placeholder="Riscrivi la riga o il blocco corretto"></textarea>`;
  if(e.type==='write')body=`<label>Il tuo programma</label><textarea id="studentCode" class="editor">${esc(e.starter||'')}</textarea><p class="small muted">Puoi aprire il laboratorio per eseguire il programma. La verifica iniziale controlla la presenza degli elementi richiesti.</p>`;
  if(e.type==='lab')body=`<label>Codice Python</label><textarea id="labCode" class="editor" spellcheck="false">${esc(e.starter||'')}</textarea><label>Valori per input() (uno per riga, se necessari)</label><textarea id="labStdin" rows="2" placeholder="Facoltativo">${esc(e.stdin||'')}</textarea><div class="row" style="margin-top:10px"><button id="labRunCheck" onclick="checkLabExercise('${e.id}')">▶ Esegui e verifica</button><button class="secondary" onclick="runLabPreview('${e.id}')">Esegui soltanto</button></div><label>Output / errori</label><div id="labOutput" class="output">L’output apparirà qui.</div><p class="small muted">Per completare l’esercizio, l’output deve corrispondere al risultato atteso. Gli spazi finali non vengono considerati.</p>`;
@@ -198,6 +205,11 @@ function openExercise(id){
  enhanceEditors(view);
  document.getElementById('backBank').onclick=showBank;
  if(e.type==='fill'){Array.from({length:(String(e.code||'').match(/\[\d+\]/g)||[]).length},(_,i)=>document.getElementById('a'+i)).filter(Boolean).forEach(input=>input.addEventListener('input',()=>updateFillPreview(e)));updateFillPreview(e);}
+ if(e.type==='reorder'){
+   const lines=String(e.code||'').split('\n'),list=document.getElementById('reorderList');
+   const draw=()=>{list.innerHTML=reorderOrder.map((lineIndex,pos)=>`<li class="reorder-item"><code>${esc(lines[lineIndex])}</code><span class="reorder-controls"><button type="button" class="secondary" data-move="-1" data-pos="${pos}" aria-label="Sposta riga ${pos+1} in alto" ${pos===0?'disabled':''}>↑</button><button type="button" class="secondary" data-move="1" data-pos="${pos}" aria-label="Sposta riga ${pos+1} in basso" ${pos===reorderOrder.length-1?'disabled':''}>↓</button></span></li>`).join('');};
+   list.addEventListener('click',event=>{const button=event.target.closest('button[data-move]');if(!button)return;const pos=Number(button.dataset.pos),next=pos+Number(button.dataset.move);if(next<0||next>=reorderOrder.length)return;[reorderOrder[pos],reorderOrder[next]]=[reorderOrder[next],reorderOrder[pos]];draw();});draw();
+ }
  if(e.type!=='lab')document.getElementById('verifyExercise').onclick=()=>checkExercise(id);
  document.getElementById('hintExercise').onclick=()=>hint(id);
  if(e.type==='write')document.getElementById('openInLab').onclick=()=>showLab(document.getElementById('studentCode').value);
@@ -230,7 +242,8 @@ async function checkExercise(id){
   const e=exercises.find(x=>x.id===id);if(!e)return;
   let submission={};
   if(e.type==='fill')submission.answers=Array.from({length:(String(e.code||'').match(/\[\d+\]/g)||[]).length},(_,i)=>document.getElementById('a'+i)?.value.trim()||'');
-  if(e.type==='quiz'){const r=document.querySelector('input[name=q]:checked');if(!r){feedback.innerHTML='<div class="feedback bad">Seleziona una risposta.</div>';return;}submission.choice=Number(r.value);}
+  if(e.type==='quiz'||e.type==='predict'){const r=document.querySelector('input[name=q]:checked');if(!r){feedback.innerHTML='<div class="feedback bad">Seleziona una risposta.</div>';return;}submission.choice=Number(r.value);}
+  if(e.type==='reorder')submission.order=reorderOrder.slice();
   if(e.type==='debug')submission.answer=document.getElementById('debugAnswer').value.trim();
   if(e.type==='write')submission.code=document.getElementById('studentCode').value;
   const button=document.getElementById('verifyExercise');if(button)button.disabled=true;
@@ -245,7 +258,8 @@ async function revealSolution(id){
     if(!key)throw new Error('La soluzione non è disponibile. Servono almeno cinque tentativi registrati.');
     const e=exercises.find(x=>x.id===id);let solution='';
     if(e.type==='fill'){solution=e.code;(key.answers||[]).forEach((a,i)=>{solution=solution.replace('['+(i+1)+']',a);});}
-    else if(e.type==='quiz')solution=(e.options||[])[Number(key.correct)]||'Risposta non configurata';
+    else if(e.type==='quiz'||e.type==='predict')solution=(e.options||[])[Number(key.correct)]||'Risposta non configurata';
+    else if(e.type==='reorder')solution=key.solution||'Soluzione non configurata';
     else if(e.type==='debug')solution=(key.answers||[]).join('\noppure\n');
     else solution=key.solution||('Requisiti da includere: '+(key.required||[]).join(', '));
     feedback.innerHTML=`<div class="feedback hint"><b>Soluzione</b><pre style="white-space:pre-wrap;font:13px/1.5 ui-monospace,monospace">${esc(solution)}</pre><div>${esc(key.explain||'Rivedi la soluzione e prova a risolvere un esercizio simile.')}</div></div>`+(done.includes(id)?completionHtml(id):'');
@@ -493,15 +507,17 @@ async function importExercisesToSupabase(items){
 function manualForm(existing=null){
  if(activeRole!=='teacher'||!teacherUser){showTeacher();return;}
  let e=existing||{id:'',type:'fill',topic:'Nuovo argomento',title:'',prompt:'',code:'print([1])',answers:['"Ciao"'],options:['Opzione A','Opzione B'],correct:0,hint:'',explain:'',starter:'',required:['print'],expectedOutput:'',solution:'',class_id:null};
- view.innerHTML=`<button class="ghost" onclick="loadTeacherDashboard()">← Area docente</button><h2 style="margin-top:12px">${existing?'Modifica esercizio':'Nuovo esercizio'}</h2><label>Argomento</label><input id="mTopic" value="${esc(e.topic)}"><label>Titolo</label><input id="mTitle" value="${esc(e.title)}"><label>Tipologia</label><select id="mType" onchange="manualFields()"><option value="fill">Completa il codice</option><option value="quiz">Quiz</option><option value="debug">Correggi il codice</option><option value="write">Scrivi un programma</option><option value="lab">Laboratorio eseguibile</option></select><label>Disponibilità</label><select id="mClass"><option value="">Tutte le classi</option>${teacherClasses.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select><div id="mFields"></div><label>Consegna</label><textarea id="mPrompt">${esc(e.prompt)}</textarea><label>Suggerimento</label><input id="mHint" value="${esc(e.hint||'')}"><label>Spiegazione per dopo la soluzione</label><textarea id="mExplain">${esc(e.explain||'')}</textarea><button style="margin-top:14px" onclick="saveManual('${existing?existing.id:''}')">Salva esercizio online</button><p id="manualMessage" class="small muted"></p>`;
+ view.innerHTML=`<button class="ghost" onclick="loadTeacherDashboard()">← Area docente</button><h2 style="margin-top:12px">${existing?'Modifica esercizio':'Nuovo esercizio'}</h2><label>Argomento</label><input id="mTopic" value="${esc(e.topic)}"><label>Titolo</label><input id="mTitle" value="${esc(e.title)}"><label>Tipologia</label><select id="mType" onchange="manualFields()"><option value="fill">Completa il codice</option><option value="quiz">Quiz</option><option value="predict">Prevedi il risultato</option><option value="reorder">Riordina il codice</option><option value="debug">Correggi il codice</option><option value="write">Scrivi un programma</option><option value="lab">Laboratorio eseguibile</option></select><label>Disponibilità</label><select id="mClass"><option value="">Tutte le classi</option>${teacherClasses.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select><div id="mFields"></div><label>Consegna</label><textarea id="mPrompt">${esc(e.prompt)}</textarea><label>Suggerimento</label><input id="mHint" value="${esc(e.hint||'')}"><label>Spiegazione per dopo la soluzione</label><textarea id="mExplain">${esc(e.explain||'')}</textarea><button style="margin-top:14px" onclick="saveManual('${existing?existing.id:''}')">Salva esercizio online</button><p id="manualMessage" class="small muted"></p>`;
  mType.value=e.type;mClass.value=e.class_id||'';manualFields(e);
 }
-function manualFields(e={}){let t=mType.value,f=document.getElementById('mFields');if(t==='fill'||t==='debug')f.innerHTML=`<label>${t==='fill'?'Codice con segnaposto [1], [2]…':'Codice da correggere'}</label><textarea id="mCode">${esc(e.code||'print([1])')}</textarea><label>Risposte corrette (separate da virgola)</label><input id="mAnswers" value="${esc((e.answers||['']).join(','))}">`;else if(t==='quiz')f.innerHTML=`<label>Opzioni (una per riga)</label><textarea id="mOptions">${esc((e.options||[]).join('\n'))}</textarea><label>Numero risposta corretta (da 1)</label><input id="mCorrect" type="number" min="1" value="${Number(e.correct||0)+1}">`;else if(t==='write')f.innerHTML=`<label>Codice iniziale</label><textarea id="mStarter">${esc(e.starter||'')}</textarea><label>Elementi richiesti (separati da virgola)</label><input id="mRequired" value="${esc((e.required||[]).join(','))}"><label>Soluzione modello</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;else if(t==='lab')f.innerHTML=`<label>Codice iniziale</label><textarea id="mStarter" class="editor">${esc(e.starter||'')}</textarea><label>Valori iniziali per input() (uno per riga)</label><textarea id="mStdin">${esc(e.stdin||'')}</textarea><label>Output atteso</label><textarea id="mExpected">${esc(e.expectedOutput||'')}</textarea><label>Soluzione modello</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;}
+function manualFields(e={}){let t=mType.value,f=document.getElementById('mFields');if(t==='fill'||t==='debug')f.innerHTML=`<label>${t==='fill'?'Codice con segnaposto [1], [2]…':'Codice da correggere'}</label><textarea id="mCode">${esc(e.code||'print([1])')}</textarea><label>Risposte corrette (separate da virgola)</label><input id="mAnswers" value="${esc((e.answers||['']).join(','))}">`;else if(t==='predict')f.innerHTML=`<label>Codice da analizzare</label><textarea id="mCode">${esc(e.code||'')}</textarea><label>Possibili output (uno per riga)</label><textarea id="mOptions">${esc((e.options||[]).join('\n'))}</textarea><label>Numero risposta corretta (da 1)</label><input id="mCorrect" type="number" min="1" value="${Number(e.correct||0)+1}">`;else if(t==='reorder')f.innerHTML=`<label>Righe di codice mescolate (una per riga)</label><textarea id="mCode">${esc(e.code||'')}</textarea><label>Ordine corretto degli indici (da 0, separati da virgola)</label><input id="mCorrectOrder" value="${esc((e.correctOrder||[]).join(','))}"><label>Soluzione ordinata</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;else if(t==='quiz')f.innerHTML=`<label>Opzioni (una per riga)</label><textarea id="mOptions">${esc((e.options||[]).join('\n'))}</textarea><label>Numero risposta corretta (da 1)</label><input id="mCorrect" type="number" min="1" value="${Number(e.correct||0)+1}">`;else if(t==='write')f.innerHTML=`<label>Codice iniziale</label><textarea id="mStarter">${esc(e.starter||'')}</textarea><label>Elementi richiesti (separati da virgola)</label><input id="mRequired" value="${esc((e.required||[]).join(','))}"><label>Soluzione modello</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;else if(t==='lab')f.innerHTML=`<label>Codice iniziale</label><textarea id="mStarter" class="editor">${esc(e.starter||'')}</textarea><label>Valori iniziali per input() (uno per riga)</label><textarea id="mStdin">${esc(e.stdin||'')}</textarea><label>Output atteso</label><textarea id="mExpected">${esc(e.expectedOutput||'')}</textarea><label>Soluzione modello</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;}
 async function saveManual(id){
  if(activeRole!=='teacher'||!teacherUser){showTeacher();return;}
- let t=mType.value,e={id:id||'custom_'+Date.now(),topic:mTopic.value.trim(),title:mTitle.value.trim(),type:t,prompt:mPrompt.value.trim(),hint:mHint.value,explain:mExplain.value,class_id:mClass.value||null,sort_order:existing?.sort_order||((exercises.reduce((m,x)=>Math.max(m,Number(x.sort_order||0)),0))+1)};
+ let t=mType.value,e={id:id||'custom_'+Date.now(),topic:mTopic.value.trim(),title:mTitle.value.trim(),type:t,prompt:mPrompt.value.trim(),hint:mHint.value,explain:mExplain.value,class_id:mClass.value||null,sort_order:exercises.find(x=>x.id===id)?.sort_order||((exercises.reduce((m,x)=>Math.max(m,Number(x.sort_order||0)),0))+1)};
  if(!e.topic||!e.title||!e.prompt){alert('Compila argomento, titolo e consegna.');return;}
  if(t==='fill'||t==='debug'){e.code=mCode.value;e.answers=mAnswers.value.split(',').map(x=>x.trim()).filter(Boolean);}
+ if(t==='predict'){e.code=mCode.value;e.options=mOptions.value.split('\n').map(x=>x.trim()).filter(Boolean);e.correct=Number(mCorrect.value)-1;if(!e.code.trim()||!e.options.length||e.correct<0||e.correct>=e.options.length){alert('Controlla codice, opzioni e risposta corretta.');return;}}
+ if(t==='reorder'){e.code=mCode.value;e.correctOrder=mCorrectOrder.value.split(',').map(x=>Number(x.trim()));e.solution=mSolution.value;if(!e.code.trim()||!e.correctOrder.length||e.correctOrder.some(x=>!Number.isInteger(x)||x<0||x>=e.code.split('\n').length)||new Set(e.correctOrder).size!==e.correctOrder.length||e.correctOrder.length!==e.code.split('\n').length){alert('Controlla l’ordine corretto: deve contenere una volta ciascun indice delle righe.');return;}}
  if(t==='quiz'){e.options=mOptions.value.split('\n').map(x=>x.trim()).filter(Boolean);e.correct=Number(mCorrect.value)-1;if(!e.options.length||e.correct<0||e.correct>=e.options.length){alert('Controlla le opzioni e la risposta corretta.');return;}}
  if(t==='write'){e.starter=mStarter.value;e.required=mRequired.value.split(',').map(x=>x.trim()).filter(Boolean);e.solution=mSolution.value;}
  if(t==='lab'){e.starter=mStarter.value;e.stdin=mStdin.value;e.expectedOutput=mExpected.value;e.solution=mSolution.value;}
