@@ -10,7 +10,12 @@
 .editor-shell textarea.editor{grid-column:2;grid-row:2;width:100%;min-width:0;min-height:190px;margin:0;border:0;border-radius:0;padding:10px;background:#101827;color:#e8edf7;font:14px/1.5 ui-monospace,monospace;white-space:pre;overflow:auto;resize:vertical;outline:none}
 .editor-shell.has-error{border-color:#bd3434}
 @media(max-width:600px){.editor-shell{grid-template-columns:36px minmax(0,1fr)}.editor-shell textarea.editor{font-size:12px}}
-.predict-query{white-space:pre-wrap;background:#101827;color:#e8edf7;border-radius:9px;padding:12px;overflow:auto}.predict-options{display:grid;gap:9px;margin:12px 0}.predict-option{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:9px;padding:11px;font-weight:400;cursor:pointer}.predict-option input{width:auto;margin-top:4px}.predict-option span{min-width:0;white-space:pre-wrap;font:12px/1.45 ui-monospace,monospace}.fragment-list{display:grid;gap:8px;margin:12px 0}.fragment-row{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:9px}.fragment-row code{flex:1;white-space:pre-wrap;overflow-wrap:anywhere}.fragment-number{font-weight:700;color:var(--muted);min-width:20px}.fragment-controls{display:flex;gap:5px}.fragment-controls button{padding:5px 9px}</style></head><body>
+.predict-query{white-space:pre-wrap;background:#101827;color:#e8edf7;border-radius:9px;padding:12px;overflow:auto}.predict-options{display:grid;gap:9px;margin:12px 0}.predict-option{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:9px;padding:11px;font-weight:400;cursor:pointer}.predict-option input{width:auto;margin-top:4px}.predict-option span{min-width:0;white-space:pre-wrap;font:12px/1.45 ui-monospace,monospace}.fragment-list{display:grid;gap:8px;margin:12px 0}.fragment-row{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:9px}.fragment-row code{flex:1;white-space:pre-wrap;overflow-wrap:anywhere}.fragment-number{font-weight:700;color:var(--muted);min-width:20px}.fragment-controls{display:flex;gap:5px}.fragment-controls button{padding:5px 9px}
+.exercise-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:14px 0}
+.exercise-filters label{margin:0 0 5px;font-size:12px;color:var(--muted)}
+.filter-summary{font-size:12px;color:var(--muted);margin:8px 0 12px}
+
+</style></head><body>
 <header><div class="wrap"><div class="brand">SQL Lab</div><div class="sub">Laboratorio SQL per la classe · SQLite nel browser · progressi sincronizzati</div></div></header>
 <main>
 <section id="login" class="panel" style="max-width:520px;margin:30px auto"><span class="tag">Accesso studenti</span><h2>Entra nel laboratorio</h2><p class="muted">Inserisci il tuo nome e il codice personale ricevuto dal docente. Non serve creare un account o installare programmi.</p><label>Codice personale (8 caratteri)</label><input id="classCode" maxlength="8" autocomplete="one-time-code" placeholder="Es. A1B2C3D4"><label>Nome o nickname</label><input id="nickname" maxlength="24" placeholder="Il tuo nickname"><button id="enterBtn" style="width:100%;margin-top:14px" onclick="enterStudent()">Entra nel laboratorio</button><p id="loginError" class="small" style="color:var(--red)"></p><button class="ghost" onclick="showTeacherLogin()">Accesso docente</button></section>
@@ -80,8 +85,36 @@ function updateProgress(){
  $('progressBar').style.width=p+'%';
 }
 function tabs(which){$('tabExercises').className=which==='ex'?'active':'secondary';$('tabFree').className=which==='free'?'active':'secondary';}
-function showExercises(){tabs('ex');const topics=['Tutti',...new Set(exercises.map(e=>e.topic))];const tag=teacherPreviewMode?'Modalità docente · prova libera':'Percorso beginner';const intro=teacherPreviewMode?'Puoi svolgere e verificare gli esercizi senza salvare tentativi o progressi degli studenti.':'Completa gli esercizi in ordine oppure filtra per argomento. Ogni esecuzione viene verificata e registrata.';$('view').innerHTML=`<div class="panel"><span class="tag">${tag}</span><h2>${exercises.length} esercizi SQL</h2><p class="muted">${intro}</p><label>Argomento</label><select id="topicFilter" onchange="renderExercises()">${topics.map(t=>`<option>${esc(t)}</option>`).join('')}</select><div id="exerciseList" style="margin-top:12px"></div></div>`;renderExercises();}
-function renderExercises(){const f=$('topicFilter')?.value||'Tutti';const list=exercises.filter(e=>f==='Tutti'||e.topic===f);$('exerciseList').innerHTML=list.map((e)=>`<div class="exercise"><div><b>${esc(e.title)}</b><div class="small">${esc(e.topic)}${teacherPreviewMode?' · Anteprima docente':` · ${progress[e.id]?.completed?'Completato':'Da svolgere'} · ${progress[e.id]?.attempts||0} tentativi`}</div></div><button onclick="openExercise('${e.id}')">${teacherPreviewMode?'Prova':'Apri'}</button></div>`).join('')||'<div class="feedback bad"><b>Nessun esercizio SQL trovato per questa classe.</b><br>Seleziona la classe corretta o importa prima il file JSON dei 235 esercizi dall’area docente.</div>'; }
+function sqlExerciseCategory(e){
+ const topic=String(e.topic||'').trim().toLowerCase(),prompt=String(e.prompt||'').trim().toLowerCase(),query=String(e.query||'').trim().toLowerCase(),starter=String(e.starter||'').trim().toLowerCase();
+ const text=[topic,prompt,query,starter].join(' ');
+ if(/alter\s+table|modifica(?:re)? la struttura della tabella|aggiungi una colonna|rinomina una colonna|elimina una colonna/.test(text))return 'Modifica tabelle';
+ if(/create\s+table|crea(?:re)? una tabella|creazione tabelle/.test(text))return 'Creazione tabelle';
+ if(topic==='update'||/(^|\W)update(\W|$)/.test(query)||/^(aggiorna|aumenta|riduci|imposta|modifica|update)\b/.test(prompt))return 'Modifica celle';
+ if(topic==='insert'||topic==='delete'||/(^|\W)(insert|delete)(\W|$)/.test(query)||/^(inserisci|elimina|insert|delete)\b/.test(prompt))return 'Manipolazione dati';
+ return 'Query';
+}
+async function switchExerciseProgram(program){
+ if(program!=='python')return;
+ if(!teacherPreviewMode&&studentId){if(!confirm('Per passare a Python dovrai accedere con il codice di una classe Python. La sessione studente SQL verrà chiusa. Continuare?')){const s=$('programFilter');if(s)s.value='sql';return;}try{await studentSb.auth.signOut();}catch(e){console.warn('Chiusura sessione SQL:',e);}}
+ window.location.href='./index.html'+(teacherPreviewMode?'?access=teacher':'');
+}
+function showExercises(){
+ tabs('ex');
+ const categories=['Tutti','Query','Manipolazione dati','Creazione tabelle','Modifica tabelle','Modifica celle'];
+ const topics=['Tutti',...new Set(exercises.map(e=>e.topic))];
+ const tag=teacherPreviewMode?'Modalità docente · prova libera':'Percorso beginner';
+ const intro=teacherPreviewMode?'Puoi svolgere e verificare gli esercizi senza salvare tentativi o progressi degli studenti.':'Completa gli esercizi in ordine oppure filtra la raccolta per programma, tipo di attività e argomento.';
+ const categoryOptions=categories.map(c=>{const count=c==='Tutti'?exercises.length:exercises.filter(e=>sqlExerciseCategory(e)===c).length;return `<option value="${esc(c)}">${esc(c)}${c==='Tutti'?'':` · ${count}`}</option>`;}).join('');
+ $('view').innerHTML=`<div class="panel"><span class="tag">${tag}</span><h2>${exercises.length} esercizi SQL</h2><p class="muted">${intro}</p><div class="exercise-filters"><div><label for="programFilter">Programma</label><select id="programFilter" onchange="switchExerciseProgram(this.value)"><option value="python">Python</option><option value="sql" selected>SQL</option></select></div><div><label for="categoryFilter">Tipo di esercizio</label><select id="categoryFilter" onchange="renderExercises()">${categoryOptions}</select></div><div><label for="topicFilter">Argomento specifico</label><select id="topicFilter" onchange="renderExercises()">${topics.map(t=>`<option>${esc(t)}</option>`).join('')}</select></div></div><div id="filterSummary" class="filter-summary"></div><div id="exerciseList" style="margin-top:12px"></div><p class="small muted">Nota: al momento non sono presenti esercizi ALTER TABLE per la categoria “Modifica tabelle”; la relativa opzione è già predisposta.</p></div>`;
+ renderExercises();
+}
+function renderExercises(){
+ const category=$('categoryFilter')?.value||'Tutti',topic=$('topicFilter')?.value||'Tutti';
+ const list=exercises.filter(e=>(category==='Tutti'||sqlExerciseCategory(e)===category)&&(topic==='Tutti'||e.topic===topic));
+ const summary=$('filterSummary');if(summary)summary.textContent=`${list.length} esercizi corrispondenti ai filtri selezionati.`;
+ $('exerciseList').innerHTML=list.map(e=>`<div class="exercise"><div><b>${esc(e.title)}</b><div class="small">${esc(sqlExerciseCategory(e))} · ${esc(e.topic)}${teacherPreviewMode?' · Anteprima docente':` · ${progress[e.id]?.completed?'Completato':'Da svolgere'} · ${progress[e.id]?.attempts||0} tentativi`}</div></div><button onclick="openExercise('${e.id}')">${teacherPreviewMode?'Prova':'Apri'}</button></div>`).join('')||'<div class="feedback bad"><b>Nessun esercizio corrisponde ai filtri selezionati.</b><br>Prova un altro tipo o argomento, oppure verifica che la raccolta SQL sia stata importata.</div>';
+}
 function editorErrorLine(error,code=''){const msg=String(error?.message||error||'');const matches=[...msg.matchAll(/line\s+(\d+)/gi)];if(matches.length)return Number(matches[matches.length-1][1]);const near=msg.match(/near\s+["'`]([^"'`]+)["'`]/i);if(near){const i=String(code).split('\n').findIndex(x=>x.includes(near[1]));if(i>=0)return i+1;}return null;}
 function clearSqlEditorError(ta){const sh=ta?.closest('.editor-shell');if(!sh)return;sh.classList.remove('has-error');sh.querySelectorAll('.editor-gutter span').forEach(x=>x.classList.remove('error'));ta.style.backgroundImage='';}
 function markSqlEditorError(id,error){const ta=$(id);if(!ta)return;const n=editorErrorLine(error,ta.value);if(!n)return;const sh=ta.closest('.editor-shell');if(!sh)return;sh.classList.add('has-error');sh.querySelectorAll('.editor-gutter span').forEach((x,i)=>x.classList.toggle('error',i===n-1));const h=parseFloat(getComputedStyle(ta).lineHeight)||21,top=10+(n-1)*h;ta.style.backgroundImage=`linear-gradient(to bottom,transparent ${top}px,rgba(189,52,52,.28) ${top}px,rgba(189,52,52,.28) ${top+h}px,transparent ${top+h}px)`;ta.style.backgroundAttachment='local';}
@@ -179,5 +212,18 @@ async function startTeacherFreeLab(){
 function exitCurrentApp(){if(teacherPreviewMode){exitTeacherPractice();return;}logoutStudent();}
 function exitTeacherPractice(){teacherPreviewMode=false;teacherPreviewKeys={};exercises=[];progress={};classId=null;className='';if(window.freeDb){window.freeDb.close();window.freeDb=null;}const exitBtn=$('app').querySelector('.panel button');if(exitBtn)exitBtn.textContent='Esci';$('app').classList.add('hidden');$('teacher').classList.remove('hidden');loadTeacherPanel();}
 async function teacherLogout(){await teacherSb.auth.signOut();$('teacher').classList.add('hidden');$('login').classList.remove('hidden');}
-resumeSqlStudent();
+async function resumeSqlTeacherFromLink(){
+ if(new URLSearchParams(window.location.search).get('access')!=='teacher')return false;
+ $('login').classList.add('hidden');$('teacher').classList.remove('hidden');
+ try{
+  const {data:{session},error}=await teacherSb.auth.getSession();if(error)throw error;
+  if(!session){await showTeacherLogin();return true;}
+  teacherUser=session.user;
+  const p=await teacherSb.from('teacher_profiles').select('user_id').eq('user_id',teacherUser.id).maybeSingle();
+  if(p.error)throw p.error;if(!p.data){await teacherSb.auth.signOut();await showTeacherLogin();$('tError').textContent='Account non autorizzato come docente.';return true;}
+  await loadTeacherPanel();
+ }catch(e){await showTeacherLogin();const err=$('tError');if(err)err.textContent=e.message||String(e);}
+ return true;
+}
+(async()=>{const teacherOpened=await resumeSqlTeacherFromLink();if(!teacherOpened)resumeSqlStudent();})();
 </script></body></html>
