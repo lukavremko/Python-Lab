@@ -59,14 +59,14 @@ const typeLabel = t => ({fill:'Dopolni kodo',quiz:'Kviz',predict:'Napovej izpis'
 const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const validExercise = e => e && typeof e.id==='string' && ['fill','quiz','predict','reorder','debug','write','lab'].includes(e.type);
 
-// Project URL normalizzato: non includere /rest/v1.
+// Naslov projekta Supabase: ne dodajaj poti /rest/v1.
 const SUPABASE_URL = 'https://dpehdxrsovtfrhsctjje.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jO2n3bZrS0IR3pOlYGNRUA_-vypcPfZ';
 if (!window.supabase || typeof window.supabase.createClient !== 'function') {
   throw new Error('Knjižnica Supabase se ni naložila. Preveri internetno povezavo.');
 }
 const createSupabaseClient = window.supabase.createClient;
-// Sessioni distinte: lo studente resta autenticato anche mentre il docente accede all’area riservata.
+// Ločeni seji: učenec ostane prijavljen tudi med prijavo učitelja v varovano območje.
 const studentSb = createSupabaseClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:false, storageKey:'pythonlab_student_auth' }
 });
@@ -83,8 +83,8 @@ let freeTurtleMode=false, turtleRunSucceeded=false, activeTurtleExercise=null;
 let studentId=null, studentClassId=null, studentClassName='', studentClassType='python';
 let teacherUser=null, teacherProfile=null, teacherClasses=[];
 let activeRole=null;
-function persist(){} // I dati risiedono su Supabase; non copiare soluzioni o progressi in localStorage.
-function saveAttempts(){} // Gli errori sono salvati dal database via RPC submit_exercise.
+function persist(){} // Podatki so shranjeni v Supabase; rešitev ali napredka ne shranjuj v localStorage.
+function saveAttempts(){} // Baza podatkov shrani poskuse prek klica RPC submit_exercise.
 function showLoginError(message){const el=document.getElementById('loginError');if(el)el.textContent=message||'';}
 function isAnonymousSession(session){const user=session?.user;if(user&&(user.is_anonymous===true||user.app_metadata?.provider==='anonymous'))return true;try{const part=session?.access_token?.split('.')[1];if(!part)return false;const payload=JSON.parse(atob(part.replace(/-/g,'+').replace(/_/g,'/')));return payload.is_anonymous===true;}catch(_){return false;}}
 function fromDatabaseExercise(row, keyContent={}){
@@ -159,7 +159,7 @@ async function enter(){
     hello.textContent='Živjo, '+student+' · '+studentClassName;
     showBank(); initPy();
   }catch(err){
-    showLoginError('Prijava ni uspela: '+(err.message||String(err))+' Preveri osebno kodo in ali je omogočena možnost Anonymous Sign-Ins.');
+    showLoginError('Prijava ni uspela: '+(err.message||String(err))+' Preveri osebno kodo in ali je v nastavitvah Supabase omogočena anonimna prijava.');
   }finally{button.disabled=false;button.textContent='Vstopi v platformo';}
 }
 async function loadStudentExercises(){
@@ -169,7 +169,7 @@ async function loadStudentExercises(){
     .or(`class_id.is.null,class_id.eq.${studentClassId}`)
     .order('sort_order').order('id');
   if(error)throw error;
-  // Python Lab non carica mai la raccolta SQL, anche in caso di record configurati male.
+  // Python Lab nikoli ne naloži zbirke SQL, tudi če so zapisi napačno nastavljeni.
   exercises=(data||[]).filter(row=>!String(row.id).toLowerCase().startsWith('sql')).map(row=>fromDatabaseExercise(row));
 }
 async function loadStudentProgress(){
@@ -228,7 +228,7 @@ function updateFillPreview(e){
   const value=document.getElementById('a'+answerIndex++)?.value??'';
   return value.trim()?value:placeholder;
  });
- // textContent mantiene il codice come testo: eventuale HTML digitato non viene eseguito.
+ // textContent ohrani kodo kot besedilo, zato se vnesena koda HTML ne izvede.
  previewEl.textContent=preview;
 }
 function completionHtml(id){const i=exercises.findIndex(x=>x.id===id),hasNext=i>=0&&i<exercises.length-1;return `<div class="row" style="margin-top:12px"><button onclick="nextExercise('${id}')">${hasNext?'Naslednja vaja →':'Konec poti · Nazaj na zbirko'}</button><button class="ghost" onclick="showBank()">Zbirka vaj</button></div>`;}
@@ -238,7 +238,7 @@ function showTurtleExercises(){
  nav('turtle');
  const items=exercises.filter(isTurtleExercise).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0));
  const completed=items.filter(e=>done.includes(e.id)).length;
- view.innerHTML=`<span class="tag">Grafika v Pythonu · Turtle v brskalniku</span><h2 style="margin-top:10px">🐢 Risanje s Turtle</h2><p class="muted">Vodene vaje za turtle: ukazi za premikanje, obračanje, pero in barve, zanke, funkcije ter sestavljene risbe. Napiši kodo, jo zaženi in opazuj risbo na platnu.</p><div class="row" style="margin:12px 0"><span class="tag">${items.length} vaj</span><span class="tag">${completed} opravljenih</span><span class="tag">${items.length?Math.round(completed/items.length*100):0}%</span></div><div class="progress" style="margin-bottom:14px"><div style="width:${items.length?completed/items.length*100:0}%"></div></div>${items.length?`<div class="stack">${items.map((e,i)=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${i+1}. ${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${done.includes(e.id)?'Opravljeno':'Za rešiti'}</div></div><button onclick="openTurtleExercise('${e.id}')">${done.includes(e.id)?'Ponovi':'Odpri vajo'}</button></div>`).join('')}</div>`:`<div class="feedback hint"><b>Vaje Turtle še niso bile uvožene.</b><p>Prijavi se kot učitelj, odpri uvoz vaj in naloži <code>python_lab_želva_30_vaj.json</code>. Lahko pa uvoziš tudi enotno datoteko z vsemi 295 vajami za Python.</p></div>`}<p class="turtle-note">Pravilnost risbe preveriš vizualno: po zagonu primerjaj risbo z navodili. Gumb za dokončanje shrani tvojo samooceno; slike ne primerja samodejno z vzorcem.</p>`;
+ view.innerHTML=`<span class="tag">Grafika v Pythonu · Turtle v brskalniku</span><h2 style="margin-top:10px">🐢 Risanje s Turtle</h2><p class="muted">Vodene vaje za turtle: ukazi za premikanje, obračanje, pero in barve, zanke, funkcije ter sestavljene risbe. Napiši kodo, jo zaženi in opazuj risbo na platnu.</p><div class="row" style="margin:12px 0"><span class="tag">${items.length} vaj</span><span class="tag">${completed} opravljenih</span><span class="tag">${items.length?Math.round(completed/items.length*100):0}%</span></div><div class="progress" style="margin-bottom:14px"><div style="width:${items.length?completed/items.length*100:0}%"></div></div>${items.length?`<div class="stack">${items.map((e,i)=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${i+1}. ${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${done.includes(e.id)?'Opravljeno':'Za rešiti'}</div></div><button onclick="openTurtleExercise('${e.id}')">${done.includes(e.id)?'Ponovi':'Odpri vajo'}</button></div>`).join('')}</div>`:`<div class="feedback hint"><b>Vaje Turtle še niso bile uvožene.</b><p>Prijavi se kot učitelj, odpri uvoz vaj in naloži <code>python_lab_zelva_30_vaj_sl.json</code>. Lahko pa uvoziš tudi enotno datoteko z vsemi 295 vajami za Python.</p></div>`}<p class="turtle-note">Pravilnost risbe preveriš vizualno: po zagonu primerjaj risbo z navodili. Gumb za dokončanje shrani tvojo samooceno; slike ne primerja samodejno z vzorcem.</p>`;
  updateProgress();
 }
 function openTurtleExercise(id){
@@ -344,7 +344,7 @@ async function revealSolution(id){
     if(e.type==='fill'){solution=e.code;(key.answers||[]).forEach((a,i)=>{solution=solution.replace('['+(i+1)+']',a);});}
     else if(e.type==='quiz'||e.type==='predict')solution=(e.options||[])[Number(key.correct)]||'Odgovor ni nastavljen';
     else if(e.type==='reorder')solution=key.solution||'Rešitev ni nastavljena';
-    else if(e.type==='debug')solution=(key.answers||[]).join('\noppure\n');
+    else if(e.type==='debug')solution=(key.answers||[]).join('\nali\n');
     else solution=key.solution||('Zahtevani elementi: '+(key.required||[]).join(', '));
     feedback.innerHTML=`<div class="feedback hint"><b>Rešitev</b><pre style="white-space:pre-wrap;font:13px/1.5 ui-monospace,monospace">${esc(solution)}</pre><div>${esc(key.explain||'Preglej rešitev in poskusi rešiti podobno vajo.')}</div></div>`+(done.includes(id)?completionHtml(id):'');
   }catch(err){feedback.innerHTML=`<div class="feedback bad">${esc(err.message||String(err))}</div>`;}
@@ -430,7 +430,7 @@ function enhanceEditors(root=document){root.querySelectorAll('textarea.editor').
 function showLab(prefill=''){
  nav('lab');freeTurtleMode=false;
  const initial=prefill||'ime = input("Kako ti je ime? ")\nprint("Živjo", ime)';
- view.innerHTML=`<span class="tag">Python 3 v brskalniku · Pyodide</span><h2 style="margin-top:10px">Pythonovo okolje</h2><p class="muted">Napiši kodo Python, po potrebi vnesi vhodne podatke (enega na vrstico) in klikni Opravi. Koda se izvaja v brskalniku.</p><textarea id="code" class="editor" spellcheck="false">${esc(initial)}</textarea><div class="row" style="margin-top:10px"><button id="run" onclick="runPy()">▶ Opravi Python</button><button class="secondary" onclick="showLab()">Reset</button><button class="ghost" onclick="document.getElementById('out').textContent='Izpis je počiščen'">Počisti izpis</button><button class="secondary" id="freeTurtleButton" onclick="enableFreeTurtle()">🐢 Funkcije Turtle</button></div><div id="freeTurtlePanel" class="turtle-stage hidden" style="margin-top:12px"><div class="turtle-stage-head"><strong>Canvas Turtle</strong><span class="small muted">Grafična risba</span></div><canvas id="freeTurtleCanvas" width="720" height="480" aria-label="Grafična površina Turtle del laboratorio libero"></canvas><div class="turtle-note">Znova klikni gumb Turtle, da skriješ ali prikažeš platno. Podpora za Turtle je v tej seji aktivirana.</div></div><label>Vrednosti za input() (ena na vrstico)</label><textarea id="stdin" rows="3" placeholder="Ada\n18"></textarea><label>Izpis / napake</label><div class="output" id="out">Rezultat bo prikazan tukaj.</div><p class="small muted">Pri več klicih input() vnesi po eno vrednost v vsako vrstico. Pyodide se naloži samo enkrat. Pred risanjem najprej aktiviraj funkcije Turtle.</p>`;
+ view.innerHTML=`<span class="tag">Python 3 v brskalniku · Pyodide</span><h2 style="margin-top:10px">Pythonovo okolje</h2><p class="muted">Napiši kodo Python, po potrebi vnesi vhodne podatke (enega na vrstico) in klikni Opravi. Koda se izvaja v brskalniku.</p><textarea id="code" class="editor" spellcheck="false">${esc(initial)}</textarea><div class="row" style="margin-top:10px"><button id="run" onclick="runPy()">▶ Opravi Python</button><button class="secondary" onclick="showLab()">Reset</button><button class="ghost" onclick="document.getElementById('out').textContent='Izpis je počiščen'">Počisti izpis</button><button class="secondary" id="freeTurtleButton" onclick="enableFreeTurtle()">🐢 Funkcije Turtle</button></div><div id="freeTurtlePanel" class="turtle-stage hidden" style="margin-top:12px"><div class="turtle-stage-head"><strong>Platno Turtle</strong><span class="small muted">Grafična risba</span></div><canvas id="freeTurtleCanvas" width="720" height="480" aria-label="Grafična površina Turtle v prostem laboratoriju"></canvas><div class="turtle-note">Znova klikni gumb Turtle, da skriješ ali prikažeš platno. Podpora za Turtle je v tej seji aktivirana.</div></div><label>Vrednosti za input() (ena na vrstico)</label><textarea id="stdin" rows="3" placeholder="Ada\n18"></textarea><label>Izpis / napake</label><div class="output" id="out">Rezultat bo prikazan tukaj.</div><p class="small muted">Pri več klicih input() vnesi po eno vrednost v vsako vrstico. Pyodide se naloži samo enkrat. Pred risanjem najprej aktiviraj funkcije Turtle.</p>`;
  enhanceEditors(view);
  if(/(^|\n)\s*(import turtle|from turtle import)/m.test(initial))enableFreeTurtle(false);
 }
@@ -454,7 +454,7 @@ function createTurtleRenderer(canvas){
  function goto(x,y){x=Number(x);y=Number(y);strokeSegment(s.x,s.y,x,y);s.x=x;s.y=y;addFillPoint();}
  function circle(radius,extent=360){radius=Number(radius);extent=Number(extent);if(!radius||!extent)return;const sign=radius>=0?1:-1,rad=Math.abs(radius),theta=s.heading*Math.PI/180;const cx=s.x-Math.sin(theta)*radius,cy=s.y+Math.cos(theta)*radius;const start=Math.atan2(s.y-cy,s.x-cx),delta=sign*extent*Math.PI/180;const steps=Math.max(12,Math.ceil(Math.abs(extent)/4));let px=s.x,py=s.y;for(let i=1;i<=steps;i++){const a=start+delta*i/steps,nx=cx+rad*Math.cos(a),ny=cy+rad*Math.sin(a);strokeSegment(px,py,nx,ny);s.x=nx;s.y=ny;addFillPoint();px=nx;py=ny;}s.heading+=extent; s.circleCount++;}
  function finish(){
-  // Marker triangolare della posizione finale.
+  // Trikotna oznaka končnega položaja želve.
   const [cx,cy]=point(s.x,s.y),a=s.heading*Math.PI/180;
   ctx.save();ctx.translate(cx,cy);ctx.rotate(-a);ctx.beginPath();ctx.moveTo(11,0);ctx.lineTo(-8,-6);ctx.lineTo(-5,0);ctx.lineTo(-8,6);ctx.closePath();ctx.fillStyle='#1d4ed8';ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.fill();ctx.stroke();ctx.restore();
  }
