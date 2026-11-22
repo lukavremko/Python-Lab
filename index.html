@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Python Lab – Fase 3 · Laboratori misti · Supabase</title>
+<html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python Lab – 3. faza · Mešane vaje · Supabase</title>
 <style>
 :root{--bg:#f3f5fa;--panel:#fff;--ink:#182238;--muted:#65718a;--line:#e0e5ef;--blue:#315efb;--green:#168653;--red:#bd3948;--navy:#17243a}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}header{background:var(--navy);color:#fff;padding:16px max(18px,calc((100% - 1180px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:21px;font-weight:800}.brand span{color:#9db2ff}.status{font-size:12px;color:#d6def0}
@@ -34,28 +34,28 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin:25px}
 .filter-summary{font-size:12px;color:var(--muted);margin:8px 0 12px}
 
 </style></head><body>
-<header><div class="brand">🐍 Python <span>Lab</span> <small style="font-size:12px;font-weight:500;color:#d6def0">Fase 3</small></div><div class="status" id="runtimeStatus">Motore Python: in attesa</div></header>
+<header><div class="brand">🐍 Python <span>Lab</span> <small style="font-size:12px;font-weight:500;color:#d6def0">3. faza</small></div><div class="status" id="runtimeStatus">Pythonovo okolje: čakanje</div></header>
 <main>
 <section id="login" class="panel" style="max-width:520px;margin:7vh auto">
-<h1>Benvenuto in Python Lab</h1><p class="muted">Una raccolta di esercizi per imparare Python, a scuola e a casa.</p>
-<label>Codice personale (8 caratteri)</label><input id="classCode" placeholder="Inserisci il tuo codice personale" maxlength="8" autocomplete="one-time-code"><label>Nome o nickname</label><input id="studentName" placeholder="Il tuo nickname" maxlength="24" autocomplete="nickname">
-<button style="width:100%;margin-top:15px" onclick="enter()">Entra nella piattaforma</button><button class="ghost" style="width:100%;margin-top:8px" onclick="openTeacherFromLogin()">Accesso docente</button>
-<p id="loginError" class="small" style="color:var(--red);margin-top:12px" role="alert"></p><p class="small muted" style="margin-top:8px">I progressi vengono salvati online. Usa il codice personale ricevuto dal docente.</p>
+<h1>Dobrodošli v Python Lab</h1><p class="muted">Zbirka vaj za učenje Pythona v šoli in doma.</p>
+<label>Osebna koda (8 znakov)</label><input id="classCode" placeholder="Vnesi svojo osebno kodo" maxlength="8" autocomplete="one-time-code"><label>Ime ali vzdevek</label><input id="studentName" placeholder="Tvoj vzdevek" maxlength="24" autocomplete="nickname">
+<button style="width:100%;margin-top:15px" onclick="enter()">Vstopi v platformo</button><button class="ghost" style="width:100%;margin-top:8px" onclick="openTeacherFromLogin()">Prijava za učitelje</button>
+<p id="loginError" class="small" style="color:var(--red);margin-top:12px" role="alert"></p><p class="small muted" style="margin-top:8px">Napredek se shranjuje v spletu. Uporabi osebno kodo, ki ti jo je dal učitelj.</p>
 </section>
 <section id="app" class="hidden">
-<div class="row between" style="margin-bottom:16px"><div><h1>Area di apprendimento</h1><div class="muted small" id="hello"></div></div><button class="ghost" onclick="logout()">Esci</button></div>
+<div class="row between" style="margin-bottom:16px"><div><h1>Učno okolje</h1><div class="muted small" id="hello"></div></div><button class="ghost" onclick="logout()">Odjava</button></div>
 <div class="layout">
 <aside class="panel">
-<h3>Menu</h3><button class="nav active" id="nBank" onclick="showBank()">📚 Raccolta esercizi</button><button class="nav" id="nLab" onclick="showLab()">⌨️ Laboratorio Python</button><button class="nav" id="nMixed" onclick="showMixedLab()">🧩 Sfide miste</button><button class="nav" id="nTurtle" onclick="showTurtleExercises()">🐢 Turtle · Disegni</button><button class="nav" id="nTeacher" onclick="showTeacher()">🛠 Area docente</button>
-<hr style="border:0;border-top:1px solid var(--line);margin:15px 0"><b>Il tuo percorso</b><div class="progress" style="margin:9px 0"><div id="pbar" style="width:0%"></div></div><div class="small muted" id="ptext">0 esercizi completati</div>
-<div class="small muted" style="margin-top:17px">I tuoi progressi sono sincronizzati con il database della classe.</div>
+<h3>Meni</h3><button class="nav active" id="nBank" onclick="showBank()">📚 Zbirka vaj</button><button class="nav" id="nLab" onclick="showLab()">⌨️ Pythonovo okolje</button><button class="nav" id="nMixed" onclick="showMixedLab()">🧩 Mešani izzivi</button><button class="nav" id="nTurtle" onclick="showTurtleExercises()">🐢 Turtle · Risanje</button><button class="nav" id="nTeacher" onclick="showTeacher()">🛠 Učiteljsko okolje</button>
+<hr style="border:0;border-top:1px solid var(--line);margin:15px 0"><b>Tvoja učna pot</b><div class="progress" style="margin:9px 0"><div id="pbar" style="width:0%"></div></div><div class="small muted" id="ptext">0 opravljenih vaj</div>
+<div class="small muted" style="margin-top:17px">Tvoj napredek je sinhroniziran z zbirko podatkov razreda.</div>
 </aside>
 <section class="panel" id="view"></section>
-</div></section></main><footer>Python Lab · Supabase · Python tramite Pyodide · Grafica Turtle su canvas</footer>
+</div></section></main><footer>Python Lab · Supabase · Python prek Pyodide · Grafika Turtle na platnu</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
 <script>
-const typeLabel = t => ({fill:'Completa il codice',quiz:'Quiz',predict:'Prevedi il risultato',reorder:'Riordina il codice',debug:'Correggi il codice',write:'Scrivi un programma',lab:'Laboratorio: scrivi ed esegui'})[t] || t;
+const typeLabel = t => ({fill:'Dopolni kodo',quiz:'Kviz',predict:'Napovej izpis',reorder:'Uredi vrstni red kode',debug:'Popravi kodo',write:'Napiši program',lab:'Laboratorij: napiši in zaženi'})[t] || t;
 const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const validExercise = e => e && typeof e.id==='string' && ['fill','quiz','predict','reorder','debug','write','lab'].includes(e.type);
 
@@ -63,7 +63,7 @@ const validExercise = e => e && typeof e.id==='string' && ['fill','quiz','predic
 const SUPABASE_URL = 'https://dpehdxrsovtfrhsctjje.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jO2n3bZrS0IR3pOlYGNRUA_-vypcPfZ';
 if (!window.supabase || typeof window.supabase.createClient !== 'function') {
-  throw new Error('La libreria Supabase non è stata caricata. Controlla la connessione Internet.');
+  throw new Error('Knjižnica Supabase se ni naložila. Preveri internetno povezavo.');
 }
 const createSupabaseClient = window.supabase.createClient;
 // Sessioni distinte: lo studente resta autenticato anche mentre il docente accede all’area riservata.
@@ -125,10 +125,10 @@ async function enter(){
   const nickname=document.getElementById('studentName').value.trim();
   const button=login.querySelector('button');
   showLoginError('');
-  if(!code){showLoginError('Inserisci il tuo codice personale.');return;}
-  if(!/^[A-HJ-NP-Z2-9]{8}$/.test(code)){showLoginError('Il codice personale deve contenere 8 caratteri (lettere e numeri, senza I, O, 0 e 1).');return;}
-  if(nickname.length<2 || nickname.length>24){showLoginError('Il nickname deve contenere da 2 a 24 caratteri.');return;}
-  button.disabled=true; button.textContent='Accesso…';
+  if(!code){showLoginError('Vnesi svojo osebno kodo.');return;}
+  if(!/^[A-HJ-NP-Z2-9]{8}$/.test(code)){showLoginError('Osebna koda mora vsebovati 8 znakov (črke in številke, brez I, O, 0 in 1).');return;}
+  if(nickname.length<2 || nickname.length>24){showLoginError('Vzdevek mora vsebovati od 2 do 24 znakov.');return;}
+  button.disabled=true; button.textContent='Prijavljanje …';
   try{
     const {data:sessionData,error:sessionError}=await studentSb.auth.getSession();
     if(sessionError)throw sessionError;
@@ -143,10 +143,10 @@ async function enter(){
     const {data:joined,error:joinError}=await studentSb.rpc('join_class_by_student_code',{p_student_code:code,p_nickname:nickname});
     if(joinError)throw joinError;
     const membership=Array.isArray(joined)?joined[0]:joined;
-    if(!membership?.class_id)throw new Error('Supabase non ha restituito i dati della classe.');
+    if(!membership?.class_id)throw new Error('Supabase ni vrnil podatkov o razredu.');
     student=membership.student_nickname||nickname;
     studentClassId=membership.class_id;
-    studentClassName=membership.class_name||'Classe';
+    studentClassName=membership.class_name||'Razred';
     studentClassType=membership.course_type||'python';
     if(studentClassType==='sql'){
       window.location.replace('./sql_lab.html');
@@ -156,11 +156,11 @@ async function enter(){
     await loadStudentExercises();
     await loadStudentProgress();
     login.classList.add('hidden'); app.classList.remove('hidden');
-    hello.textContent='Ciao '+student+' · '+studentClassName;
+    hello.textContent='Živjo, '+student+' · '+studentClassName;
     showBank(); initPy();
   }catch(err){
-    showLoginError('Accesso non riuscito: '+(err.message||String(err))+' Controlla il codice personale e che Anonymous Sign-Ins sia attivo.');
-  }finally{button.disabled=false;button.textContent='Entra nella piattaforma';}
+    showLoginError('Prijava ni uspela: '+(err.message||String(err))+' Preveri osebno kodo in ali je omogočena možnost Anonymous Sign-Ins.');
+  }finally{button.disabled=false;button.textContent='Vstopi v platformo';}
 }
 async function loadStudentExercises(){
   const {data,error}=await studentSb.from('exercises')
@@ -182,46 +182,44 @@ async function loadStudentProgress(){
   updateProgress();
 }
 async function logout(){if(activeRole==='teacher'){await teacherLogout();return;}await studentSb.auth.signOut();studentId=null;studentClassId=null;studentClassName='';activeRole=null;app.classList.add('hidden');login.classList.remove('hidden');showLoginError('');}
-function openTeacherFromLogin(){login.classList.add('hidden');app.classList.remove('hidden');hello.textContent='Accesso riservato al docente';showTeacher();}
+function openTeacherFromLogin(){login.classList.add('hidden');app.classList.remove('hidden');hello.textContent='Dostop je dovoljen samo učitelju';showTeacher();}
 function nav(which){['Bank','Lab','Mixed','Turtle','Teacher'].forEach(x=>document.getElementById('n'+x).classList.toggle('active',x.toLowerCase()===which));}
 function isTurtleExercise(e){return String(e?.id||'').startsWith('turtle');}
-function updateProgress(){ptext.textContent=done.filter(id=>exercises.some(e=>e.id===id)).length+' di '+exercises.length+' esercizi completati';pbar.style.width=Math.min(100,done.filter(id=>exercises.some(e=>e.id===id)).length/Math.max(1,exercises.length)*100)+'%';}
+function updateProgress(){ptext.textContent=done.filter(id=>exercises.some(e=>e.id===id)).length+' od '+exercises.length+' opravljenih vaj';pbar.style.width=Math.min(100,done.filter(id=>exercises.some(e=>e.id===id)).length/Math.max(1,exercises.length)*100)+'%';}
 function pythonExerciseCategory(e){
- const t=String(e.topic||'').toLowerCase(),id=String(e.id||'').toLowerCase(),type=String(e.type||'').toLowerCase();
- if(isTurtleExercise(e)||t.startsWith('turtle'))return 'Turtle';
- // Classifica prima per argomento: un esercizio di debug sul while resta nel gruppo while.
- if(/prevedere il risultato|riordino del codice|debug|errori/.test(t))return 'Debug, previsione e riordino';
- if(/ciclo while|laboratorio: while/.test(t))return 'Ciclo while';
- if(/condizion|sfide miste · condizioni/.test(t))return 'Condizioni (if)';
- if(/ciclo for|cicli|laboratorio: for|sfide miste · cicli/.test(t))return 'Cicli (for e annidati)';
- if(/prime istruzioni|input e conversioni|operatori|laboratorio: output|laboratorio: operatori|laboratorio: conversioni/.test(t))return 'Istruzioni base';
- if(/funzion|parametri e return|moduli/.test(t))return 'Funzioni e moduli';
- if(/variabili|tipi di dati|booleani|stringh|liste|tuple|dizionari/.test(t))return 'Variabili e tipi di dato';
- if(['debug','predict','reorder'].includes(type))return 'Debug, previsione e riordino';
- return 'Altri argomenti e laboratori';
+ const t=String(e.topic||'').toLowerCase(),type=String(e.type||'').toLowerCase();
+ if(isTurtleExercise(e)||t.startsWith('želvja grafika')||t.startsWith('turtle'))return 'Želvja grafika (Turtle)';
+ if(/napovedovanje rezultata|urejanje kode|odpravljanje napak|napake/.test(t)||['debug','predict','reorder'].includes(type))return 'Odpravljanje napak, napovedovanje in urejanje kode';
+ if(/zanka while|laboratorij: while/.test(t))return 'Zanka while';
+ if(/pogoji|mešani izzivi · pogoji/.test(t))return 'Pogoji (if)';
+ if(/zanka for|zanke|laboratorij: for|mešani izzivi · zanke/.test(t))return 'Zanke (for in gnezdene zanke)';
+ if(/prva navodila|osnovna navodila|vnos in pretvorbe|operatorji|laboratorij: izpis|laboratorij: operatorji|laboratorij: pretvorbe/.test(t))return 'Osnovna navodila';
+ if(/funkcije|parametri in return|moduli/.test(t))return 'Funkcije in moduli';
+ if(/spremenljivke|podatkovni tipi|logične vrednosti|nizi|seznami|terke|slovarji/.test(t))return 'Spremenljivke in podatkovni tipi';
+ return 'Druge teme in laboratorijske vaje';
 }
 async function switchExerciseProgram(program){
  if(program!=='sql')return;
  const isTeacher=activeRole==='teacher';
- if(!isTeacher&&studentId){if(!confirm('Per passare a SQL dovrai accedere con il codice di una classe SQL. La sessione studente Python verrà chiusa. Continuare?')){const s=document.getElementById('programFilter');if(s)s.value='python';return;}try{await studentSb.auth.signOut();}catch(e){console.warn('Chiusura sessione Python:',e);}}
+ if(!isTeacher&&studentId){if(!confirm('Za prehod na SQL se prijavi s kodo razreda SQL. Seja učenca v Pythonu se bo končala. Želiš nadaljevati?')){const s=document.getElementById('programFilter');if(s)s.value='python';return;}try{await studentSb.auth.signOut();}catch(e){console.warn('Zapiranje seje Python:',e);}}
  window.location.href='./sql_lab.html'+(isTeacher?'?access=teacher':'');
 }
 function showBank(){
  nav('bank');
  const all=exercises.filter(e=>!String(e.id||'').toLowerCase().startsWith('sql'));
- const categories=['Tutti',...['Istruzioni base','Variabili e tipi di dato','Condizioni (if)','Cicli (for e annidati)','Ciclo while','Funzioni e moduli','Debug, previsione e riordino','Turtle','Altri argomenti e laboratori'].filter(c=>all.some(e=>pythonExerciseCategory(e)===c))];
- const topics=['Tutti',...new Set(all.map(e=>e.topic))];
- view.innerHTML=`<span class="tag">Percorso Python · esercizi online</span><h2 style="margin-top:10px">Raccolta esercizi</h2><p class="muted">Filtra la raccolta per programma, tipo di argomento o argomento specifico. La sezione Turtle è inclusa anche qui, oltre ad avere il suo percorso dedicato.</p><div class="exercise-filters"><div><label for="programFilter">Programma</label><select id="programFilter" onchange="switchExerciseProgram(this.value)"><option value="python" selected>Python</option><option value="sql">SQL</option></select></div><div><label for="categoryFilter">Tipo di esercizio</label><select id="categoryFilter" onchange="renderBank()">${categories.map(t=>`<option>${esc(t)}</option>`).join('')}</select></div><div><label for="topicFilter">Argomento specifico</label><select id="topicFilter" onchange="renderBank()">${topics.map(t=>`<option>${esc(t)}</option>`).join('')}</select></div></div><div class="row" style="margin-top:8px"><span class="tag">${all.length} esercizi disponibili</span><span class="tag">${all.filter(e=>e.type==='lab').length} laboratori</span><span class="tag">${done.filter(id=>all.some(e=>e.id===id)).length} completati</span></div><div id="bankSummary" class="filter-summary"></div><div id="bankList" class="stack" style="margin-top:12px"></div>`;
+ const categories=['Vse',...['Osnovna navodila','Spremenljivke in podatkovni tipi','Pogoji (if)','Zanke (for in gnezdene zanke)','Zanka while','Funkcije in moduli','Odpravljanje napak, napovedovanje in urejanje kode','Želvja grafika (Turtle)','Druge teme in laboratorijske vaje'].filter(c=>all.some(e=>pythonExerciseCategory(e)===c))];
+ const topics=['Vse',...new Set(all.map(e=>e.topic))];
+ view.innerHTML=`<span class="tag">Python · spletne vaje</span><h2 style="margin-top:10px">Zbirka vaj</h2><p class="muted">Zbirko lahko filtriraš po programu, vrsti vsebine ali posamezni temi. Vaje Turtle so vključene tudi tukaj, na voljo pa je tudi njihova samostojna učna pot.</p><div class="exercise-filters"><div><label for="programFilter">Program</label><select id="programFilter" onchange="switchExerciseProgram(this.value)"><option value="python" selected>Python</option><option value="sql">SQL</option></select></div><div><label for="categoryFilter">Vrsta vaje</label><select id="categoryFilter" onchange="renderBank()">${categories.map(t=>`<option>${esc(t)}</option>`).join('')}</select></div><div><label for="topicFilter">Posamezna tema</label><select id="topicFilter" onchange="renderBank()">${topics.map(t=>`<option>${esc(t)}</option>`).join('')}</select></div></div><div class="row" style="margin-top:8px"><span class="tag">${all.length} vaj na voljo</span><span class="tag">${all.filter(e=>e.type==='lab').length} praktičnih vaj</span><span class="tag">${done.filter(id=>all.some(e=>e.id===id)).length} opravljenih</span></div><div id="bankSummary" class="filter-summary"></div><div id="bankList" class="stack" style="margin-top:12px"></div>`;
  renderBank();updateProgress();
 }
 function renderBank(){
- const category=document.getElementById('categoryFilter')?.value||'Tutti';
- const topic=document.getElementById('topicFilter')?.value||'Tutti';
+ const category=document.getElementById('categoryFilter')?.value||'Vse';
+ const topic=document.getElementById('topicFilter')?.value||'Vse';
  const all=exercises.filter(e=>!String(e.id||'').toLowerCase().startsWith('sql'));
- const list=all.filter(e=>(category==='Tutti'||pythonExerciseCategory(e)===category)&&(topic==='Tutti'||e.topic===topic)).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0));
- const summary=document.getElementById('bankSummary');if(summary)summary.textContent=`${list.length} esercizi corrispondenti ai filtri selezionati.`;
+ const list=all.filter(e=>(category==='Vse'||pythonExerciseCategory(e)===category)&&(topic==='Vse'||e.topic===topic)).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0));
+ const summary=document.getElementById('bankSummary');if(summary)summary.textContent=`${list.length} vaj ustreza izbranim filtrom.`;
  const target=document.getElementById('bankList');if(!target)return;
- target.innerHTML=list.map(e=>{const turtle=isTurtleExercise(e);return `<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${esc(e.title)}</b><div class="small muted">${esc(pythonExerciseCategory(e))} · ${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><span class="tag">${done.includes(e.id)?'Completato':'Da fare'}</span><button onclick="${turtle?'openTurtleExercise':'openExercise'}('${e.id}')">${turtle?'Disegna':'Apri'}</button></div></div>`;}).join('')||'<p class="muted">Nessun esercizio corrisponde ai filtri selezionati. Prova a scegliere un altro tipo o argomento.</p>';
+ target.innerHTML=list.map(e=>{const turtle=isTurtleExercise(e);return `<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${esc(e.title)}</b><div class="small muted">${esc(pythonExerciseCategory(e))} · ${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><span class="tag">${done.includes(e.id)?'Opravljeno':'Za opraviti'}</span><button onclick="${turtle?'openTurtleExercise':'openExercise'}('${e.id}')">${turtle?'Nariši':'Odpri'}</button></div></div>`;}).join('')||'<p class="muted">Nobena vaja ne ustreza izbranim filtrom. Poskusi izbrati drugo vrsto ali temo.</p>';
 }
 function updateFillPreview(e){
  const previewEl=document.getElementById('fillPreview');if(!previewEl)return;
@@ -233,14 +231,14 @@ function updateFillPreview(e){
  // textContent mantiene il codice come testo: eventuale HTML digitato non viene eseguito.
  previewEl.textContent=preview;
 }
-function completionHtml(id){const i=exercises.findIndex(x=>x.id===id),hasNext=i>=0&&i<exercises.length-1;return `<div class="row" style="margin-top:12px"><button onclick="nextExercise('${id}')">${hasNext?'Prossimo esercizio →':'Fine percorso · Torna alla raccolta'}</button><button class="ghost" onclick="showBank()">Raccolta esercizi</button></div>`;}
+function completionHtml(id){const i=exercises.findIndex(x=>x.id===id),hasNext=i>=0&&i<exercises.length-1;return `<div class="row" style="margin-top:12px"><button onclick="nextExercise('${id}')">${hasNext?'Naslednja vaja →':'Konec poti · Nazaj na zbirko'}</button><button class="ghost" onclick="showBank()">Zbirka vaj</button></div>`;}
 function nextExercise(id){const i=exercises.findIndex(x=>x.id===id),current=exercises[i];if(i>=0&&i<exercises.length-1){const next=exercises[i+1];if(isTurtleExercise(next))openTurtleExercise(next.id);else openExercise(next.id);return;}if(isTurtleExercise(current))showTurtleExercises();else showBank();}
 function markDone(id){if(!done.includes(id)){done.push(id);persist();updateProgress();}}
 function showTurtleExercises(){
  nav('turtle');
  const items=exercises.filter(isTurtleExercise).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0));
  const completed=items.filter(e=>done.includes(e.id)).length;
- view.innerHTML=`<span class="tag">Python grafica · Turtle nel browser</span><h2 style="margin-top:10px">🐢 Disegnare con Turtle</h2><p class="muted">Un percorso di 30 esercizi semi-guidati: comandi di movimento, rotazioni, penna e colori, cicli, funzioni e piccoli disegni composti. Scrivi il codice, eseguilo e osserva il disegno sul canvas.</p><div class="row" style="margin:12px 0"><span class="tag">${items.length} esercizi</span><span class="tag">${completed} completati</span><span class="tag">${items.length?Math.round(completed/items.length*100):0}%</span></div><div class="progress" style="margin-bottom:14px"><div style="width:${items.length?completed/items.length*100:0}%"></div></div>${items.length?`<div class="stack">${items.map((e,i)=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${i+1}. ${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${done.includes(e.id)?'Completato':'Da svolgere'}</div></div><button onclick="openTurtleExercise('${e.id}')">${done.includes(e.id)?'Rivedi':'Apri esercizio'}</button></div>`).join('')}</div>`:`<div class="feedback hint"><b>Gli esercizi Turtle non sono ancora stati importati.</b><p>Accedi come docente, apri l'importazione degli esercizi e carica <code>python_lab_turtle_30_esercizi.json</code>. In alternativa puoi importare il file unico con tutti i 295 esercizi Python.</p></div>`}<p class="turtle-note">La verifica del disegno è visiva: dopo l’esecuzione confronta la figura con la consegna. Il pulsante di completamento registra la tua autovalutazione, non confronta automaticamente l’immagine.</p>`;
+ view.innerHTML=`<span class="tag">Grafika v Pythonu · Turtle v brskalniku</span><h2 style="margin-top:10px">🐢 Risanje s Turtle</h2><p class="muted">Pot 30 delno vodenih vaj: ukazi za premikanje, obračanje, pero in barve, zanke, funkcije ter sestavljene risbe. Napiši kodo, jo zaženi in opazuj risbo na platnu.</p><div class="row" style="margin:12px 0"><span class="tag">${items.length} vaj</span><span class="tag">${completed} opravljenih</span><span class="tag">${items.length?Math.round(completed/items.length*100):0}%</span></div><div class="progress" style="margin-bottom:14px"><div style="width:${items.length?completed/items.length*100:0}%"></div></div>${items.length?`<div class="stack">${items.map((e,i)=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${i+1}. ${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${done.includes(e.id)?'Opravljeno':'Za rešiti'}</div></div><button onclick="openTurtleExercise('${e.id}')">${done.includes(e.id)?'Ponovi':'Odpri vajo'}</button></div>`).join('')}</div>`:`<div class="feedback hint"><b>Vaje Turtle še niso bile uvožene.</b><p>Prijavi se kot učitelj, odpri uvoz vaj in naloži <code>python_lab_želva_30_vaj.json</code>. Lahko pa uvoziš tudi enotno datoteko z vsemi 295 vajami za Python.</p></div>`}<p class="turtle-note">Pravilnost risbe preveriš vizualno: po zagonu primerjaj risbo z navodili. Gumb za dokončanje shrani tvojo samooceno; slike ne primerja samodejno z vzorcem.</p>`;
  updateProgress();
 }
 function openTurtleExercise(id){
@@ -248,50 +246,50 @@ function openTurtleExercise(id){
  nav('turtle');activeTurtleExercise=id;turtleRunSucceeded=false;
  const index=exercises.filter(isTurtleExercise).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0)).findIndex(x=>x.id===id)+1;
  const canRecord=activeRole==='student';
- view.innerHTML=`<button class="ghost" onclick="showTurtleExercises()">← Torna agli esercizi Turtle</button><div class="small muted" style="margin-top:12px">Esercizio ${index} di 30 · ${esc(e.topic)}</div><h2 style="margin-top:8px">${esc(e.title)}</h2><p>${esc(e.prompt)}</p><div class="turtle-workspace"><div><label for="turtleCode">Il tuo codice Python</label><textarea id="turtleCode" class="editor" spellcheck="false">${esc(e.starter||'import turtle\nt = turtle.Turtle()\n')}</textarea><div class="row" style="margin-top:9px"><button id="runTurtle" onclick="runTurtleExercise('${e.id}')">▶ Esegui disegno</button><button class="secondary" onclick="showTurtleHint('${e.id}')">Suggerimento</button>${canRecord?`<button class="ghost" id="recordTurtle" onclick="recordTurtleCompletion('${e.id}')" disabled>✓ Registra come completato</button>`:''}</div><div id="turtleFeedback">${done.includes(id)?'<div class="feedback ok">Questo esercizio risulta già completato.</div>':''}</div><label>Output / errori Python</label><div id="turtleOutput" class="output">Il risultato dell’esecuzione apparirà qui.</div></div><div class="turtle-stage"><div class="turtle-stage-head"><strong>Area di disegno</strong><span class="small muted">Origine al centro · asse Y verso l’alto</span></div><canvas id="turtleCanvas" width="720" height="480" aria-label="Area grafica Turtle"></canvas><div class="turtle-note">Ogni esecuzione ridisegna la scena da zero. Coordinate e distanze sono espresse in passi Turtle.</div></div></div><div class="row" style="margin-top:12px"><button class="ghost" onclick="showTurtleExercises()">Tutti gli esercizi</button><button class="secondary" onclick="showLab('import turtle\n\nt = turtle.Turtle()\nt.speed(5)\n\n')">Apri nel laboratorio libero</button></div>`;
+ view.innerHTML=`<button class="ghost" onclick="showTurtleExercises()">← Nazaj na vaje Turtle</button><div class="small muted" style="margin-top:12px">Vaja ${index} od 30 · ${esc(e.topic)}</div><h2 style="margin-top:8px">${esc(e.title)}</h2><p>${esc(e.prompt)}</p><div class="turtle-workspace"><div><label for="turtleCode">Tvoja koda Python</label><textarea id="turtleCode" class="editor" spellcheck="false">${esc(e.starter||'import turtle\nt = turtle.Turtle()\n')}</textarea><div class="row" style="margin-top:9px"><button id="runTurtle" onclick="runTurtleExercise('${e.id}')">▶ Zaženi risanje</button><button class="secondary" onclick="showTurtleHint('${e.id}')">Namig</button>${canRecord?`<button class="ghost" id="recordTurtle" onclick="recordTurtleCompletion('${e.id}')" disabled>✓ Označi kot opravljeno</button>`:''}</div><div id="turtleFeedback">${done.includes(id)?'<div class="feedback ok">Ta vaja je že označena kot opravljena.</div>':''}</div><label>Izpis / napake Pythona</label><div id="turtleOutput" class="output">Rezultat izvajanja bo prikazan tukaj.</div></div><div class="turtle-stage"><div class="turtle-stage-head"><strong>Risarska površina</strong><span class="small muted">Izhodišče je na sredini · os Y je usmerjena navzgor</span></div><canvas id="turtleCanvas" width="720" height="480" aria-label="Grafična površina Turtle"></canvas><div class="turtle-note">Ob vsakem zagonu se risba nariše znova. Koordinate in razdalje so izražene v korakih Turtle.</div></div></div><div class="row" style="margin-top:12px"><button class="ghost" onclick="showTurtleExercises()">Vse vaje</button><button class="secondary" onclick="showLab('import turtle\n\nt = turtle.Turtle()\nt.speed(5)\n\n')">Odpri v prostem laboratoriju</button></div>`;
  enhanceEditors(view);
 }
-function showTurtleHint(id){const e=exercises.find(x=>x.id===id);const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback hint">💡 ${esc(e?.hint||'Rileggi la consegna e individua i comandi Turtle necessari.')}</div>`;}
+function showTurtleHint(id){const e=exercises.find(x=>x.id===id);const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback hint">💡 ${esc(e?.hint||'Ponovno preberi navodila in ugotovi, katere ukaze Turtle potrebuješ.')}</div>`;}
 async function runTurtleExercise(id){
  const button=document.getElementById('runTurtle'),out=document.getElementById('turtleOutput'),record=document.getElementById('recordTurtle');
  if(!button||!out)return;
  turtleRunSucceeded=false;if(record)record.disabled=true;
- clearEditorError(document.getElementById('turtleCode'));button.disabled=true;out.className='output';out.textContent='Esecuzione del disegno…';
+ clearEditorError(document.getElementById('turtleCode'));button.disabled=true;out.className='output';out.textContent='Risanje poteka …';
  try{
   const result=await executePython(document.getElementById('turtleCode').value,'',{turtle:true,canvasId:'turtleCanvas'});
-  out.textContent=result||'Disegno eseguito senza output testuale.';turtleRunSucceeded=true;
+  out.textContent=result||'Risba je ustvarjena brez besedilnega izpisa.';turtleRunSucceeded=true;
   if(record)record.disabled=false;
-  const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback ok">Disegno eseguito. Controlla che la figura rispetti la consegna; poi puoi registrare il completamento.</div>`;
- }catch(err){out.className='output err';out.textContent=String(err?.message||err);markEditorError('turtleCode',err);const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback bad">Il codice contiene un errore. Correggilo e prova di nuovo.</div>`;}
+  const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback ok">Risba je končana. Preveri, ali ustreza navodilom; nato lahko označiš vajo kot opravljeno.</div>`;
+ }catch(err){out.className='output err';out.textContent=String(err?.message||err);markEditorError('turtleCode',err);const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback bad">V kodi je napaka. Popravi jo in poskusi znova.</div>`;}
  finally{button.disabled=false;}
 }
 async function recordTurtleCompletion(id){
  if(activeRole!=='student'||!turtleRunSucceeded||activeTurtleExercise!==id)return;
  const button=document.getElementById('recordTurtle');if(button)button.disabled=true;
  try{const result=await submitExercise(id,{output:'__TURTLE_OK__'});if(result?.correct){turtleRunSucceeded=false;if(button)button.disabled=true;}}
- catch(err){const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback bad">Completamento non registrato: ${esc(err.message||String(err))}</div>`;if(button)button.disabled=false;}
+ catch(err){const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback bad">Dokončanje ni bilo shranjeno: ${esc(err.message||String(err))}</div>`;if(button)button.disabled=false;}
 }
 function openExercise(id){
  const e=exercises.find(x=>x.id===id);if(!e)return;let body='';
- if(e.type==='fill'){const blanks=(String(e.code||'').match(/\[\d+\]/g)||[]).length;body=`${Array.from({length:blanks},(_,i)=>`<label>Spazio ${i+1}</label><input id="a${i}" autocomplete="off" placeholder="Completa il codice">`).join('')}<div class="live-preview"><div class="live-preview-head"><strong>Anteprima live del codice</strong><span>Si aggiorna mentre scrivi · non esegue il programma</span></div><pre id="fillPreview" class="code" aria-live="polite">${esc(e.code||'')}</pre></div>`;}
+ if(e.type==='fill'){const blanks=(String(e.code||'').match(/\[\d+\]/g)||[]).length;body=`${Array.from({length:blanks},(_,i)=>`<label>Prazno mesto ${i+1}</label><input id="a${i}" autocomplete="off" placeholder="Dopolni kodo">`).join('')}<div class="live-preview"><div class="live-preview-head"><strong>Predogled kode v živo</strong><span>Posodablja se med pisanjem · programa ne zažene</span></div><pre id="fillPreview" class="code" aria-live="polite">${esc(e.code||'')}</pre></div>`;}
  if(e.type==='quiz')body=(e.options||[]).map((o,i)=>`<label class="option"><input type="radio" name="q" value="${i}"> ${esc(o)}</label>`).join('');
- if(e.type==='predict')body=`<div class="code" style="white-space:pre-wrap;margin:10px 0">${esc(e.code||'')}</div><p class="small muted">Seleziona l’output che il programma produrrà senza eseguirlo.</p>${(e.options||[]).map((o,i)=>`<label class="option"><input type="radio" name="q" value="${i}"> <span style="white-space:pre-wrap">${esc(o)}</span></label>`).join('')}`;
+ if(e.type==='predict')body=`<div class="code" style="white-space:pre-wrap;margin:10px 0">${esc(e.code||'')}</div><p class="small muted">Izberi izpis, ki ga bo ustvaril program, ne da bi ga zagnal.</p>${(e.options||[]).map((o,i)=>`<label class="option"><input type="radio" name="q" value="${i}"> <span style="white-space:pre-wrap">${esc(o)}</span></label>`).join('')}`;
  if(e.type==='reorder'){
    const lines=String(e.code||'').split('\n');reorderOrder=lines.map((_,i)=>i);
-   body=`<p class="small muted">Usa i pulsanti ↑ e ↓ per spostare le righe. Quando sei soddisfatto, premi Verifica.</p><ol id="reorderList" class="reorder-list" aria-label="Righe di codice da riordinare"></ol>`;
+   body=`<p class="small muted">Z gumboma ↑ in ↓ premikaj vrstice. Ko si zadovoljen z vrstnim redom, klikni Preveri.</p><ol id="reorderList" class="reorder-list" aria-label="Vrstice kode za razvrščanje"></ol>`;
  }
- if(e.type==='debug')body=`<div class="code">${esc(e.code)}</div><label>Scrivi il codice corretto</label><textarea id="debugAnswer" class="editor" spellcheck="false" rows="5" placeholder="Riscrivi la riga o il blocco corretto"></textarea>`;
- if(e.type==='write')body=`<label>Il tuo programma</label><textarea id="studentCode" class="editor">${esc(e.starter||'')}</textarea><p class="small muted">Puoi aprire il laboratorio per eseguire il programma. La verifica iniziale controlla la presenza degli elementi richiesti.</p>`;
- if(e.type==='lab')body=`<label>Codice Python</label><textarea id="labCode" class="editor" spellcheck="false">${esc(e.starter||'')}</textarea><label>Valori per input() (uno per riga, se necessari)</label><textarea id="labStdin" rows="2" placeholder="Facoltativo">${esc(e.stdin||'')}</textarea><div class="row" style="margin-top:10px"><button id="labRunCheck" onclick="checkLabExercise('${e.id}')">▶ Esegui e verifica</button><button class="secondary" onclick="runLabPreview('${e.id}')">Esegui soltanto</button></div><label>Output / errori</label><div id="labOutput" class="output">L’output apparirà qui.</div><p class="small muted">Per completare l’esercizio, l’output deve corrispondere al risultato atteso. Gli spazi finali non vengono considerati.</p>`;
- const verify=e.type==='lab'?'':`<button id="verifyExercise">Verifica</button>`;
- const labButton=e.type==='write'?`<button class="ghost" id="openInLab">Apri nel laboratorio</button>`:'';
- view.innerHTML=`<button class="ghost" id="backBank">← Torna alla raccolta</button><div class="small muted" style="margin-top:12px">Esercizio ${exercises.findIndex(x=>x.id===id)+1} di ${exercises.length}</div><div class="tag" style="margin-top:7px">${esc(e.topic)} · ${typeLabel(e.type)}</div><h2 style="margin-top:9px">${esc(e.title)}</h2><p>${esc(e.prompt)}</p>${body}<div class="row" style="margin-top:14px">${verify}<button class="secondary" id="hintExercise">Suggerimento</button>${labButton}</div><div id="feedback">${done.includes(id)?`<div class="feedback ok">Questo esercizio risulta già completato.</div>${completionHtml(id)}`:''}</div>`;
+ if(e.type==='debug')body=`<div class="code">${esc(e.code)}</div><label>Napiši pravilno kodo</label><textarea id="debugAnswer" class="editor" spellcheck="false" rows="5" placeholder="Ponovno napiši pravilno vrstico ali blok kode"></textarea>`;
+ if(e.type==='write')body=`<label>Tvoj program</label><textarea id="studentCode" class="editor">${esc(e.starter||'')}</textarea><p class="small muted">Program lahko zaženeš v laboratoriju. Začetno preverjanje preveri, ali so vključeni zahtevani elementi.</p>`;
+ if(e.type==='lab')body=`<label>Koda Python</label><textarea id="labCode" class="editor" spellcheck="false">${esc(e.starter||'')}</textarea><label>Vrednosti za input() (ena na vrstico, če so potrebne)</label><textarea id="labStdin" rows="2" placeholder="Neobvezno">${esc(e.stdin||'')}</textarea><div class="row" style="margin-top:10px"><button id="labRunCheck" onclick="checkLabExercise('${e.id}')">▶ Zaženi in preveri</button><button class="secondary" onclick="runLabPreview('${e.id}')">Samo zaženi</button></div><label>Izpis / napake</label><div id="labOutput" class="output">Izpis bo prikazan tukaj.</div><p class="small muted">Za dokončanje vaje se mora izpis ujemati s pričakovanim rezultatom. Končni presledki se ne upoštevajo.</p>`;
+ const verify=e.type==='lab'?'':`<button id="verifyExercise">Preveri</button>`;
+ const labButton=e.type==='write'?`<button class="ghost" id="openInLab">Odpri v laboratoriju</button>`:'';
+ view.innerHTML=`<button class="ghost" id="backBank">← Nazaj na zbirko vaj</button><div class="small muted" style="margin-top:12px">Vaja ${exercises.findIndex(x=>x.id===id)+1} od ${exercises.length}</div><div class="tag" style="margin-top:7px">${esc(e.topic)} · ${typeLabel(e.type)}</div><h2 style="margin-top:9px">${esc(e.title)}</h2><p>${esc(e.prompt)}</p>${body}<div class="row" style="margin-top:14px">${verify}<button class="secondary" id="hintExercise">Namig</button>${labButton}</div><div id="feedback">${done.includes(id)?`<div class="feedback ok">Ta vaja je že označena kot opravljena.</div>${completionHtml(id)}`:''}</div>`;
  enhanceEditors(view);
  document.getElementById('backBank').onclick=showBank;
  if(e.type==='fill'){Array.from({length:(String(e.code||'').match(/\[\d+\]/g)||[]).length},(_,i)=>document.getElementById('a'+i)).filter(Boolean).forEach(input=>input.addEventListener('input',()=>updateFillPreview(e)));updateFillPreview(e);}
  if(e.type==='reorder'){
    const lines=String(e.code||'').split('\n'),list=document.getElementById('reorderList');
-   const draw=()=>{list.innerHTML=reorderOrder.map((lineIndex,pos)=>`<li class="reorder-item"><code>${esc(lines[lineIndex])}</code><span class="reorder-controls"><button type="button" class="secondary" data-move="-1" data-pos="${pos}" aria-label="Sposta riga ${pos+1} in alto" ${pos===0?'disabled':''}>↑</button><button type="button" class="secondary" data-move="1" data-pos="${pos}" aria-label="Sposta riga ${pos+1} in basso" ${pos===reorderOrder.length-1?'disabled':''}>↓</button></span></li>`).join('');};
+   const draw=()=>{list.innerHTML=reorderOrder.map((lineIndex,pos)=>`<li class="reorder-item"><code>${esc(lines[lineIndex])}</code><span class="reorder-controls"><button type="button" class="secondary" data-move="-1" data-pos="${pos}" aria-label="Premakni vrstico ${pos+1} navzgor" ${pos===0?'disabled':''}>↑</button><button type="button" class="secondary" data-move="1" data-pos="${pos}" aria-label="Premakni vrstico ${pos+1} navzdol" ${pos===reorderOrder.length-1?'disabled':''}>↓</button></span></li>`).join('');};
    list.addEventListener('click',event=>{const button=event.target.closest('button[data-move]');if(!button)return;const pos=Number(button.dataset.pos),next=pos+Number(button.dataset.move);if(next<0||next>=reorderOrder.length)return;[reorderOrder[pos],reorderOrder[next]]=[reorderOrder[next],reorderOrder[pos]];draw();});draw();
  }
  if(e.type!=='lab')document.getElementById('verifyExercise').onclick=()=>checkExercise(id);
@@ -300,27 +298,27 @@ function openExercise(id){
 }
 async function hint(id){
   const e=exercises.find(x=>x.id===id); if(!e)return;
-  feedback.innerHTML=`<div class="feedback hint">💡 ${esc(e.hint||'Rileggi la consegna e prova a scomporre il problema.')}</div>`+(done.includes(id)?completionHtml(id):'');
-  try{await studentSb.rpc('register_exercise_hint',{p_exercise_id:id});}catch(err){console.warn('Conteggio suggerimento non aggiornato:',err.message);}
+  feedback.innerHTML=`<div class="feedback hint">💡 ${esc(e.hint||'Ponovno preberi navodila in razdeli nalogo na manjše korake.')}</div>`+(done.includes(id)?completionHtml(id):'');
+  try{await studentSb.rpc('register_exercise_hint',{p_exercise_id:id});}catch(err){console.warn('Število uporabljenih namigov ni bilo posodobljeno:',err.message);}
 }
 function wrongAnswer(id,count){
   attempts[id]=Number(count||attempts[id]||0);
   const n=attempts[id],feedbackEl=document.getElementById('feedback')||document.getElementById('turtleFeedback');
   if(!feedbackEl)return;
-  feedbackEl.innerHTML=`<div class="feedback bad">Non ancora. Tentativo ${n} di 5.</div>`+
-    (n>=5?`<button class="secondary" style="margin-top:9px" onclick="revealSolution('${id}')">Mostra la soluzione</button>`:'');
+  feedbackEl.innerHTML=`<div class="feedback bad">Še ne. Poskus ${n} od 5.</div>`+
+    (n>=5?`<button class="secondary" style="margin-top:9px" onclick="revealSolution('${id}')">Prikaži rešitev</button>`:'');
 }
 async function submitExercise(id,submission){
   const {data,error}=await studentSb.rpc('submit_exercise',{p_exercise_id:id,p_submission:submission});
   if(error)throw error;
   const result=Array.isArray(data)?data[0]:data;
-  if(!result || typeof result.correct!=='boolean')throw new Error('Risposta del database non valida.');
+  if(!result || typeof result.correct!=='boolean')throw new Error('Neveljaven odgovor zbirke podatkov.');
   attempts[id]=Number(result.attempts||0);
   if(result.completed && !done.includes(id))done.push(id);
   updateProgress();
   const feedbackEl=document.getElementById('feedback')||document.getElementById('turtleFeedback');
   if(result.correct){
-    if(feedbackEl)feedbackEl.innerHTML=`<div class="feedback ok">✓ Corretto! Ottimo lavoro.</div>${completionHtml(id)}`;
+    if(feedbackEl)feedbackEl.innerHTML=`<div class="feedback ok">✓ Pravilno! Odlično opravljeno.</div>${completionHtml(id)}`;
   }else wrongAnswer(id,result.attempts);
   return result;
 }
@@ -328,12 +326,12 @@ async function checkExercise(id){
   const e=exercises.find(x=>x.id===id);if(!e)return;
   let submission={};
   if(e.type==='fill')submission.answers=Array.from({length:(String(e.code||'').match(/\[\d+\]/g)||[]).length},(_,i)=>document.getElementById('a'+i)?.value.trim()||'');
-  if(e.type==='quiz'||e.type==='predict'){const r=document.querySelector('input[name=q]:checked');if(!r){feedback.innerHTML='<div class="feedback bad">Seleziona una risposta.</div>';return;}submission.choice=Number(r.value);}
+  if(e.type==='quiz'||e.type==='predict'){const r=document.querySelector('input[name=q]:checked');if(!r){feedback.innerHTML='<div class="feedback bad">Izberi odgovor.</div>';return;}submission.choice=Number(r.value);}
   if(e.type==='reorder')submission.order=reorderOrder.slice();
   if(e.type==='debug')submission.answer=document.getElementById('debugAnswer').value.trim();
   if(e.type==='write')submission.code=document.getElementById('studentCode').value;
   const button=document.getElementById('verifyExercise');if(button)button.disabled=true;
-  try{await submitExercise(id,submission);}catch(err){feedback.innerHTML=`<div class="feedback bad">Non è stato possibile verificare la risposta online: ${esc(err.message||String(err))}</div>`;}
+  try{await submitExercise(id,submission);}catch(err){feedback.innerHTML=`<div class="feedback bad">Odgovora ni bilo mogoče preveriti v spletu: ${esc(err.message||String(err))}</div>`;}
   finally{if(button)button.disabled=false;}
 }
 async function revealSolution(id){
@@ -341,21 +339,21 @@ async function revealSolution(id){
     const {data,error}=await studentSb.rpc('reveal_exercise_solution',{p_exercise_id:id});
     if(error)throw error;
     const key=Array.isArray(data)?data[0]:data;
-    if(!key)throw new Error('La soluzione non è disponibile. Servono almeno cinque tentativi registrati.');
+    if(!key)throw new Error('Rešitev ni na voljo. Najprej mora biti zabeleženih vsaj pet poskusov.');
     const e=exercises.find(x=>x.id===id);let solution='';
     if(e.type==='fill'){solution=e.code;(key.answers||[]).forEach((a,i)=>{solution=solution.replace('['+(i+1)+']',a);});}
-    else if(e.type==='quiz'||e.type==='predict')solution=(e.options||[])[Number(key.correct)]||'Risposta non configurata';
-    else if(e.type==='reorder')solution=key.solution||'Soluzione non configurata';
+    else if(e.type==='quiz'||e.type==='predict')solution=(e.options||[])[Number(key.correct)]||'Odgovor ni nastavljen';
+    else if(e.type==='reorder')solution=key.solution||'Rešitev ni nastavljena';
     else if(e.type==='debug')solution=(key.answers||[]).join('\noppure\n');
-    else solution=key.solution||('Requisiti da includere: '+(key.required||[]).join(', '));
-    feedback.innerHTML=`<div class="feedback hint"><b>Soluzione</b><pre style="white-space:pre-wrap;font:13px/1.5 ui-monospace,monospace">${esc(solution)}</pre><div>${esc(key.explain||'Rivedi la soluzione e prova a risolvere un esercizio simile.')}</div></div>`+(done.includes(id)?completionHtml(id):'');
+    else solution=key.solution||('Zahtevani elementi: '+(key.required||[]).join(', '));
+    feedback.innerHTML=`<div class="feedback hint"><b>Rešitev</b><pre style="white-space:pre-wrap;font:13px/1.5 ui-monospace,monospace">${esc(solution)}</pre><div>${esc(key.explain||'Preglej rešitev in poskusi rešiti podobno vajo.')}</div></div>`+(done.includes(id)?completionHtml(id):'');
   }catch(err){feedback.innerHTML=`<div class="feedback bad">${esc(err.message||String(err))}</div>`;}
 }
 function showMixedLab(){
  nav('mixed');
  const challenges=exercises.filter(e=>e.type==='lab'&&String(e.id).startsWith('mixlab')).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0));
  const completed=challenges.filter(e=>done.includes(e.id)).length;
- view.innerHTML=`<span class="tag">Python · percorso pratico</span><h2 style="margin-top:10px">Sfide miste di laboratorio</h2><p class="muted">Problemi più completi che combinano input, variabili, condizioni, cicli, stringhe, liste, dizionari e funzioni. Ogni sfida propone un caso di prova: puoi modificare il codice e provare a risolverlo.</p><div class="row" style="margin:12px 0"><span class="tag">${challenges.length} sfide</span><span class="tag">${completed} completate</span><span class="tag">${challenges.length?Math.round(completed/challenges.length*100):0}%</span></div><div class="progress" style="margin-bottom:14px"><div style="width:${challenges.length?completed/challenges.length*100:0}%"></div></div><div class="stack">${challenges.map((e,i)=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${i+1}. ${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${done.includes(e.id)?'Completato':'Da svolgere'}</div></div><button onclick="openExercise('${e.id}')">${done.includes(e.id)?'Rivedi':'Apri sfida'}</button></div>`).join('')||'<div class="feedback hint">Le sfide miste non sono ancora state importate. Accedi come docente e importa il file <b>python_lab_laboratori_misti_30.json</b>.</div>'}</div><p class="small muted" style="margin-top:14px">Le attività completate vengono registrate nel tuo profilo e nel pannello docente, come gli altri esercizi Python.</p>`;
+ view.innerHTML=`<span class="tag">Python · praktične vaje</span><h2 style="margin-top:10px">Mešani praktični izzivi</h2><p class="muted">Obsežnejše naloge, ki združujejo input, spremenljivke, pogoje, zanke, nize, sezname, slovarje in funkcije. Vsak izziv vsebuje testni primer: kodo lahko spremeniš in poskusiš rešiti nalogo.</p><div class="row" style="margin:12px 0"><span class="tag">${challenges.length} izzivov</span><span class="tag">${completed} opravljenih</span><span class="tag">${challenges.length?Math.round(completed/challenges.length*100):0}%</span></div><div class="progress" style="margin-bottom:14px"><div style="width:${challenges.length?completed/challenges.length*100:0}%"></div></div><div class="stack">${challenges.map((e,i)=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${i+1}. ${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${done.includes(e.id)?'Opravljeno':'Za rešiti'}</div></div><button onclick="openExercise('${e.id}')">${done.includes(e.id)?'Ponovi':'Odpri izziv'}</button></div>`).join('')||'<div class="feedback hint">Mešani izzivi še niso bili uvoženi. Prijavi se kot učitelj in uvozi datoteko <b>python_lab_laboratori_misti_30.json</b>.</div>'}</div><p class="small muted" style="margin-top:14px">Opravljene dejavnosti se zabeležijo v tvojem profilu in v učiteljskem pogledu, enako kot druge vaje Python.</p>`;
 }
 function editorLineFromError(error, code=''){
  const message=String(error?.message||error||'');
@@ -385,7 +383,7 @@ function enhanceEditor(textarea){
  textarea.dataset.enhanced='1';textarea.wrap='off';
  const shell=document.createElement('div');shell.className='editor-shell';
  const toolbar=document.createElement('div');toolbar.className='editor-toolbar';
- toolbar.innerHTML='<span>Editor · Tab = 4 spazi · parentesi automatiche</span><span class="editor-tools"><button type="button" data-zoom="out" aria-label="Riduci editor">A−</button><button type="button" data-zoom="in" aria-label="Ingrandisci editor">A+</button></span>';
+ toolbar.innerHTML='<span>Urejevalnik · Tab = 4 presledki · samodejni oklepaji</span><span class="editor-tools"><button type="button" data-zoom="out" aria-label="Zmanjšaj pisavo urejevalnika">A−</button><button type="button" data-zoom="in" aria-label="Povečaj urejevalnik">A+</button></span>';
  const gutter=document.createElement('div');gutter.className='editor-gutter';gutter.setAttribute('aria-hidden','true');
  const parent=textarea.parentNode;parent.insertBefore(shell,textarea);shell.append(toolbar,gutter,textarea);
  let fontSize=Number(textarea.dataset.fontSize||13);textarea.style.fontSize=fontSize+'px';
@@ -431,8 +429,8 @@ function enhanceEditor(textarea){
 function enhanceEditors(root=document){root.querySelectorAll('textarea.editor').forEach(enhanceEditor);}
 function showLab(prefill=''){
  nav('lab');freeTurtleMode=false;
- const initial=prefill||'nome = input("Come ti chiami? ")\nprint("Ciao", nome)';
- view.innerHTML=`<span class="tag">Python 3 nel browser · Pyodide</span><h2 style="margin-top:10px">Laboratorio Python</h2><p class="muted">Scrivi codice Python, inserisci eventuali dati di input (uno per riga) e premi Esegui. Il codice viene eseguito nel browser.</p><textarea id="code" class="editor" spellcheck="false">${esc(initial)}</textarea><div class="row" style="margin-top:10px"><button id="run" onclick="runPy()">▶ Esegui Python</button><button class="secondary" onclick="showLab()">Ripristina esempio</button><button class="ghost" onclick="document.getElementById('out').textContent='Output pulito'">Pulisci output</button><button class="secondary" id="freeTurtleButton" onclick="enableFreeTurtle()">🐢 Funzioni Turtle</button></div><div id="freeTurtlePanel" class="turtle-stage hidden" style="margin-top:12px"><div class="turtle-stage-head"><strong>Canvas Turtle</strong><span class="small muted">Disegno grafico</span></div><canvas id="freeTurtleCanvas" width="720" height="480" aria-label="Area grafica Turtle del laboratorio libero"></canvas><div class="turtle-note">Premi di nuovo il pulsante Turtle per nascondere o mostrare il canvas. Il supporto Turtle viene attivato in questa sessione.</div></div><label>Valori per input() (uno per riga)</label><textarea id="stdin" rows="3" placeholder="Ada\n18"></textarea><label>Output / errori</label><div class="output" id="out">Il risultato apparirà qui.</div><p class="small muted">Per più chiamate a input(), inserisci un valore per riga. Pyodide viene caricato una sola volta. Per disegnare, attiva prima le funzioni Turtle.</p>`;
+ const initial=prefill||'ime = input("Kako ti je ime? ")\nprint("Živjo", ime)';
+ view.innerHTML=`<span class="tag">Python 3 v brskalniku · Pyodide</span><h2 style="margin-top:10px">Pythonovo okolje</h2><p class="muted">Napiši kodo Python, po potrebi vnesi vhodne podatke (enega na vrstico) in klikni Zaženi. Koda se izvaja v brskalniku.</p><textarea id="code" class="editor" spellcheck="false">${esc(initial)}</textarea><div class="row" style="margin-top:10px"><button id="run" onclick="runPy()">▶ Zaženi Python</button><button class="secondary" onclick="showLab()">Ponastavi primer</button><button class="ghost" onclick="document.getElementById('out').textContent='Izpis je počiščen'">Počisti izpis</button><button class="secondary" id="freeTurtleButton" onclick="enableFreeTurtle()">🐢 Funkcije Turtle</button></div><div id="freeTurtlePanel" class="turtle-stage hidden" style="margin-top:12px"><div class="turtle-stage-head"><strong>Canvas Turtle</strong><span class="small muted">Grafična risba</span></div><canvas id="freeTurtleCanvas" width="720" height="480" aria-label="Grafična površina Turtle del laboratorio libero"></canvas><div class="turtle-note">Znova klikni gumb Turtle, da skriješ ali prikažeš platno. Podpora za Turtle je v tej seji aktivirana.</div></div><label>Vrednosti za input() (ena na vrstico)</label><textarea id="stdin" rows="3" placeholder="Ada\n18"></textarea><label>Izpis / napake</label><div class="output" id="out">Rezultat bo prikazan tukaj.</div><p class="small muted">Pri več klicih input() vnesi po eno vrednost v vsako vrstico. Pyodide se naloži samo enkrat. Pred risanjem najprej aktiviraj funkcije Turtle.</p>`;
  enhanceEditors(view);
  if(/(^|\n)\s*(import turtle|from turtle import)/m.test(initial))enableFreeTurtle(false);
 }
@@ -440,12 +438,12 @@ function enableFreeTurtle(insertStarter=true){
  const panel=document.getElementById('freeTurtlePanel'),button=document.getElementById('freeTurtleButton'),code=document.getElementById('code');if(!panel||!code)return;
  if(!freeTurtleMode){freeTurtleMode=true;panel.classList.remove('hidden');if(insertStarter&&!/(^|\n)\s*(import turtle|from turtle import)/m.test(code.value))code.value='import turtle\n\nt = turtle.Turtle()\nt.speed(5)\n\n'+code.value;}
  else panel.classList.toggle('hidden');
- if(button)button.textContent=freeTurtleMode?'🐢 Turtle attiva · mostra/nascondi':'🐢 Funzioni Turtle';
+ if(button)button.textContent=freeTurtleMode?'🐢 Turtle je vklopljen · prikaži/skrij':'🐢 Funkcije Turtle';
  enhanceEditors(view);
 }
 function createTurtleRenderer(canvas){
- if(!canvas)throw new Error('Canvas Turtle non trovato. Attiva prima il pannello grafico.');
- const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Il browser non supporta il canvas 2D.');
+ if(!canvas)throw new Error('Platna Turtle ni mogoče najti. Najprej vklopi grafično ploščo.');
+ const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Brskalnik ne podpira 2D-platna.');
  const w=canvas.width,h=canvas.height;
  const s={x:0,y:0,heading:0,down:true,pen:'#17243a',fill:'#315efb',width:2,bg:'#ffffff',fills:[],lineCount:0,circleCount:0};
  const point=(x,y)=>[w/2+x,h/2-y];
@@ -586,9 +584,9 @@ _mod.title = _screen.title; _mod.setup = _screen.setup; _mod.screensize = _scree
 _mod.bgcolor = _screen.bgcolor; _mod.tracer = lambda *args: None; _mod.update = lambda: None
 sys.modules['turtle'] = _mod
 `;
-async function initPy(){if(py)return py;if(pyLoading)return pyLoading;runtimeStatus.textContent='Caricamento Pyodide…';pyLoading=(async()=>{try{if(typeof loadPyodide!=='function')throw new Error('Libreria Pyodide non caricata. Controlla la connessione Internet.');py=await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.27.7/full/'});runtimeStatus.textContent='● Python pronto';return py;}catch(e){runtimeStatus.textContent='Motore Python non disponibile';pyLoading=null;return null;}})();return pyLoading;}
+async function initPy(){if(py)return py;if(pyLoading)return pyLoading;runtimeStatus.textContent='Nalaganje Pyodide …';pyLoading=(async()=>{try{if(typeof loadPyodide!=='function')throw new Error('Knjižnica Pyodide se ni naložila. Preveri internetno povezavo.');py=await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.27.7/full/'});runtimeStatus.textContent='● Python je pripravljen';return py;}catch(e){runtimeStatus.textContent='Pythonovo okolje ni na voljo';pyLoading=null;return null;}})();return pyLoading;}
 async function executePython(code,inputText='',options={}){
- const p=await initPy();if(!p)throw new Error('Pyodide non è disponibile. Verifica la connessione Internet e ricarica la pagina.');
+ const p=await initPy();if(!p)throw new Error('Pyodide ni na voljo. Preveri internetno povezavo in znova naloži stran.');
  let captured='';p.setStdout({batched:s=>captured+=s});p.setStderr({batched:s=>captured+=s});
  let turtleApi=null;
  if(options.turtle){const canvas=document.getElementById(options.canvasId||'turtleCanvas');turtleApi=createTurtleRenderer(canvas);p.globals.set('__pl_turtle_api',turtleApi);p.runPython(TURTLE_PYTHON_BRIDGE);}
@@ -603,7 +601,7 @@ async function executePython(code,inputText='',options={}){
   '    try:',
   '        return next(_pl_input_values)',
   '    except StopIteration:',
-  '        raise EOFError("Nessun altro valore disponibile nel campo input")',
+  '        raise EOFError("V polju za vhod ni več razpoložljivih vrednosti")',
   'builtins.input = _pl_input'
  ].join('\n');
  p.runPython(setup);
@@ -611,15 +609,15 @@ async function executePython(code,inputText='',options={}){
  finally{p.runPython('builtins.input = _pl_original_input');if(turtleApi)turtleApi.finish();}
  return captured;
 }
-async function runPy(){const b=document.getElementById('run'),o=document.getElementById('out');clearEditorError(document.getElementById('code'));b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const output=await executePython(document.getElementById('code').value,document.getElementById('stdin').value,{turtle:freeTurtleMode,canvasId:'freeTurtleCanvas'});o.textContent=output||'Eseguito senza output.';}catch(e){o.className='output err';o.textContent=String(e?.message||e);markEditorError('code',e);}finally{b.disabled=false;}}
-async function runLabPreview(id){const e=exercises.find(x=>x.id===id),b=document.getElementById('labRunCheck'),o=document.getElementById('labOutput');clearEditorError(document.getElementById('labCode'));b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const out=await executePython(document.getElementById('labCode').value,document.getElementById('labStdin').value);o.textContent=out||'Eseguito senza output.';}catch(err){o.className='output err';o.textContent=String(err);markEditorError('labCode',err);}finally{b.disabled=false;}}
+async function runPy(){const b=document.getElementById('run'),o=document.getElementById('out');clearEditorError(document.getElementById('code'));b.disabled=true;o.className='output';o.textContent='Izvajanje …';try{const output=await executePython(document.getElementById('code').value,document.getElementById('stdin').value,{turtle:freeTurtleMode,canvasId:'freeTurtleCanvas'});o.textContent=output||'Program ni ustvaril izpisa.';}catch(e){o.className='output err';o.textContent=String(e?.message||e);markEditorError('code',e);}finally{b.disabled=false;}}
+async function runLabPreview(id){const e=exercises.find(x=>x.id===id),b=document.getElementById('labRunCheck'),o=document.getElementById('labOutput');clearEditorError(document.getElementById('labCode'));b.disabled=true;o.className='output';o.textContent='Izvajanje …';try{const out=await executePython(document.getElementById('labCode').value,document.getElementById('labStdin').value);o.textContent=out||'Program ni ustvaril izpisa.';}catch(err){o.className='output err';o.textContent=String(err);markEditorError('labCode',err);}finally{b.disabled=false;}}
 async function checkLabExercise(id){
  const b=document.getElementById('labRunCheck'),o=document.getElementById('labOutput');
  clearEditorError(document.getElementById('labCode'));
- b.disabled=true;o.className='output';o.textContent='Esecuzione e verifica…';
+ b.disabled=true;o.className='output';o.textContent='Izvajanje in preverjanje …';
  try{
   const out=await executePython(document.getElementById('labCode').value,document.getElementById('labStdin').value);
-  o.textContent=out||'Eseguito senza output.';
+  o.textContent=out||'Program ni ustvaril izpisa.';
   await submitExercise(id,{output:out});
  }catch(err){
   o.className='output err';o.textContent=String(err);
@@ -627,33 +625,33 @@ async function checkLabExercise(id){
   if(feedback)feedback.innerHTML=`<div class="feedback bad">${esc(err.message||String(err))}</div>`;
  }finally{b.disabled=false;}
 }
-// Area docente: autenticazione reale Supabase, separata dalla sessione anonima degli studenti.
+// Učiteljsko okolje: prava avtentikacija Supabase, ločena od anonimne seje učencev.
 async function showTeacher(){
  nav('teacher');
  const {data:{session}}=await teacherSb.auth.getSession();
  if(!session){renderTeacherLogin();return;}
  const {data:profile,error}=await teacherSb.from('teacher_profiles').select('user_id,display_name').eq('user_id',session.user.id).maybeSingle();
- if(error || !profile){await teacherSb.auth.signOut();teacherUser=null;teacherProfile=null;renderTeacherLogin(error?.message||'Questo account non è autorizzato come docente.');return;}
+ if(error || !profile){await teacherSb.auth.signOut();teacherUser=null;teacherProfile=null;renderTeacherLogin(error?.message||'Ta račun nima učiteljskih dovoljenj.');return;}
  teacherUser=session.user;teacherProfile=profile;activeRole='teacher';
  await loadTeacherDashboard();
 }
 function renderTeacherLogin(message=''){
- view.innerHTML=`<div style="max-width:480px;margin:20px auto"><span class="tag">Area riservata</span><h2 style="margin-top:12px">Accesso docenti</h2><p class="muted">Accedi con l’email e la password del tuo account docente Supabase.</p><label>Email docente</label><input id="teacherEmail" type="email" autocomplete="username" placeholder="docente@scuola.it"><label>Password</label><input id="teacherPass" type="password" autocomplete="current-password" placeholder="Password" onkeydown="if(event.key==='Enter')teacherSignIn()"><button id="teacherLoginButton" style="width:100%;margin-top:12px" onclick="teacherSignIn()">Accedi</button><p id="teacherLoginError" class="small" style="color:var(--red);margin-top:9px">${esc(message)}</p><p class="small muted">La verifica dei permessi viene eseguita dal database: la vecchia password locale non viene più utilizzata.</p></div>`;
+ view.innerHTML=`<div style="max-width:480px;margin:20px auto"><span class="tag">Učiteljsko okolje</span><h2 style="margin-top:12px">Prijava učiteljev</h2><p class="muted">Prijavi se z e-poštnim naslovom in geslom svojega učiteljskega računa Supabase.</p><label>E-pošta učitelja</label><input id="teacherEmail" type="email" autocomplete="username" placeholder="ucitelj@sola.si"><label>Geslo</label><input id="teacherPass" type="password" autocomplete="current-password" placeholder="Geslo" onkeydown="if(event.key==='Enter')teacherSignIn()"><button id="teacherLoginButton" style="width:100%;margin-top:12px" onclick="teacherSignIn()">Prijavi se</button><p id="teacherLoginError" class="small" style="color:var(--red);margin-top:9px">${esc(message)}</p><p class="small muted">Dovoljenja preveri zbirka podatkov; staro lokalno geslo se ne uporablja več.</p></div>`;
 }
 async function teacherSignIn(){
  const email=document.getElementById('teacherEmail').value.trim(),password=document.getElementById('teacherPass').value;
  const errorEl=document.getElementById('teacherLoginError'),button=document.getElementById('teacherLoginButton');
- if(!email||!password){errorEl.textContent='Inserisci email e password.';return;}
- button.disabled=true;button.textContent='Accesso…';errorEl.textContent='';
+ if(!email||!password){errorEl.textContent='Vnesi e-poštni naslov in geslo.';return;}
+ button.disabled=true;button.textContent='Prijavljanje …';errorEl.textContent='';
  try{
   const {data,error}=await teacherSb.auth.signInWithPassword({email,password});
   if(error)throw error;
   const {data:profile,error:profileError}=await teacherSb.from('teacher_profiles').select('user_id,display_name').eq('user_id',data.user.id).maybeSingle();
   if(profileError)throw profileError;
-  if(!profile){await teacherSb.auth.signOut();throw new Error('Account autenticato ma non autorizzato. Aggiungi il suo UUID a teacher_profiles.');}
+  if(!profile){await teacherSb.auth.signOut();throw new Error('Račun je overjen, vendar nima učiteljskih pravic. Dodaj njegov UUID v teacher_profiles.');}
   teacherUser=data.user;teacherProfile=profile;activeRole='teacher';await loadTeacherDashboard();
  }catch(err){errorEl.textContent=err.message||String(err);}
- finally{button.disabled=false;button.textContent='Accedi';}
+ finally{button.disabled=false;button.textContent='Prijavi se';}
 }
 async function teacherLogout(){await teacherSb.auth.signOut();teacherUser=null;teacherProfile=null;const {data:{session}}=await studentSb.auth.getSession();if(session&&isAnonymousSession(session)){activeRole='student';studentId=session.user.id;try{await loadStudentExercises();await loadStudentProgress();showBank();}catch(err){showConnectionError(err.message||String(err));}}else{activeRole=null;exercises=[];done=[];attempts={};app.classList.add('hidden');login.classList.remove('hidden');}}
 async function loadTeacherExercises(){
@@ -665,7 +663,7 @@ async function loadTeacherExercises(){
  exercises=(rows||[]).map(r=>fromDatabaseExercise(r,keyMap.get(r.id)||{}));
 }
 async function loadTeacherDashboard(){
- view.innerHTML='<p class="muted">Caricamento dati della classe…</p>';
+ view.innerHTML='<p class="muted">Nalaganje podatkov razreda …</p>';
  try{
   const [classRes,studentRes,progressRes]=await Promise.all([
    teacherSb.from('classes').select('id,name,course_type,max_students,is_active,created_at').order('created_at'),
@@ -692,44 +690,44 @@ async function loadTeacherDashboard(){
     const pct=classTotal?Math.round(completed/classTotal*100):0;
     return `<tr><td>${esc(s.nickname)}</td><td>${completed}/${classTotal}</td><td>${pct}%</td><td>${attemptsTotal}</td></tr>`;
    }).join('');
-   return `<div class="cardtask"><div class="row between"><div><b>${esc(c.name)}</b><div class="small muted">${isSql?'Laboratorio SQL':'Python Lab'} · ${members.length}/${c.max_students||30} studenti · ${c.is_active?'Attiva':'Disattivata'}</div></div><span class="tag">${classTotal} esercizi</span></div><div class="row" style="margin-top:8px"><button class="ghost" onclick="issueStudentCodes('${c.id}')">Rigenera codici non utilizzati</button></div><div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th align="left">Nickname</th><th align="left">Completati</th><th align="left">Progresso</th><th align="left">Tentativi</th></tr></thead><tbody>${memberRows||'<tr><td colspan="4" class="muted">Nessuno studente iscritto.</td></tr>'}</tbody></table></div></div>`;
+   return `<div class="cardtask"><div class="row between"><div><b>${esc(c.name)}</b><div class="small muted">${isSql?'Okolje SQL':'Python Lab'} · ${members.length}/${c.max_students||30} učencev · ${c.is_active?'Aktiven':'Neaktiven'}</div></div><span class="tag">${classTotal} vaj</span></div><div class="row" style="margin-top:8px"><button class="ghost" onclick="issueStudentCodes('${c.id}')">Ustvari nove neuporabljene kode</button></div><div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th align="left">Vzdevek</th><th align="left">Opravljene vaje</th><th align="left">Napredek</th><th align="left">Poskusi</th></tr></thead><tbody>${memberRows||'<tr><td colspan="4" class="muted">Noben učenec še ni vpisan.</td></tr>'}</tbody></table></div></div>`;
   }).join('');
-  view.innerHTML=`<div class="row between"><div><span class="tag">Area docente · ${esc(teacherProfile?.display_name||'Docente')}</span><h2 style="margin-top:9px">Gestione classi e progressi</h2></div><button class="ghost" onclick="teacherLogout()">Esci dall’area docente</button></div>
-  <div class="grid2" style="margin:14px 0"><div class="cardtask"><b>${teacherClasses.length}</b><div class="small muted">Classi</div></div><div class="cardtask"><b>${students.length}</b><div class="small muted">Studenti registrati</div></div><div class="cardtask"><b>${total}</b><div class="small muted">Esercizi pubblicati</div></div><div class="cardtask"><b>${progress.filter(p=>p.completed).length}</b><div class="small muted">Completamenti registrati</div></div></div>
-  <div class="cardtask"><h3>Crea una classe</h3><div class="grid2"><div><label>Nome classe</label><input id="newClassName" placeholder="Es. 3A Informatica"></div><div><label>Numero massimo di studenti</label><input id="newClassCapacity" type="number" min="1" max="100" value="25"></div><div><label>Tipo di laboratorio</label><select id="newClassType"><option value="python">Python</option><option value="sql">SQL</option></select></div></div><p class="small muted">Il sistema genererà un codice personale univoco per ogni posto. Ogni codice può essere usato da un solo studente.</p><button style="margin-top:10px" onclick="createClass()">Crea classe e genera codici</button><p id="classCreateMessage" class="small muted"></p></div>
-  <div class="cardtask" style="margin-top:12px"><h3>Libreria esercizi</h3><p class="small muted">${exercises.length} esercizi caricati. Importa il file JSON della raccolta o un pacchetto aggiuntivo, ad esempio le 30 sfide miste. Le soluzioni saranno memorizzate in una tabella non leggibile dagli studenti.</p><div class="row"><button onclick="document.getElementById('importFile').click()">Importa JSON esercizi (raccolta o pacchetto aggiuntivo)</button><button class="secondary" onclick="exportData()">Esporta raccolta</button><input id="importFile" type="file" accept=".json,application/json" class="hidden" onchange="importData(event)"></div><p class="small muted">Non pubblicare il file JSON della libreria nel repository GitHub pubblico.</p></div>
-  <h3 style="margin-top:18px">Statistiche per classe</h3><div class="stack">${classCards||'<p class="muted">Non hai ancora creato classi. Usa il modulo qui sopra.</p>'}</div>
-  <h3 style="margin-top:18px">Gestione esercizi</h3><div class="row"><button class="secondary" onclick="manualForm()">Crea esercizio</button></div><div class="stack" style="margin-top:10px">${exercises.filter(e=>!String(e.id).toLowerCase().startsWith('sql')).map(e=>`<div class="row between cardtask"><div><b>${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><button class="secondary" onclick="editExercise('${e.id}')">Modifica</button><button class="danger" onclick="deleteExercise('${e.id}')">Elimina</button></div></div>`).join('')}</div>`;
- }catch(err){view.innerHTML=`<div class="feedback bad">Errore nel caricamento dei dati: ${esc(err.message||String(err))}</div><button class="secondary" onclick="showTeacher()">Riprova</button>`;}
+  view.innerHTML=`<div class="row between"><div><span class="tag">Učiteljsko okolje · ${esc(teacherProfile?.display_name||'Učitelj')}</span><h2 style="margin-top:9px">Upravljanje razredov in napredka</h2></div><button class="ghost" onclick="teacherLogout()">Izhod iz učiteljskega okolja</button></div>
+  <div class="grid2" style="margin:14px 0"><div class="cardtask"><b>${teacherClasses.length}</b><div class="small muted">Razredi</div></div><div class="cardtask"><b>${students.length}</b><div class="small muted">Registrirani učenci</div></div><div class="cardtask"><b>${total}</b><div class="small muted">Objavljene vaje</div></div><div class="cardtask"><b>${progress.filter(p=>p.completed).length}</b><div class="small muted">Zabeležena dokončanja</div></div></div>
+  <div class="cardtask"><h3>Ustvari razred</h3><div class="grid2"><div><label>Ime razreda</label><input id="newClassName" placeholder="Npr. 3A – računalništvo"></div><div><label>Največje število učencev</label><input id="newClassCapacity" type="number" min="1" max="100" value="25"></div><div><label>Vrsta laboratorija</label><select id="newClassType"><option value="python">Python</option><option value="sql">SQL</option></select></div></div><p class="small muted">Sistem bo za vsako mesto ustvaril enolično osebno kodo. Vsako kodo lahko uporabi samo en učenec.</p><button style="margin-top:10px" onclick="createClass()">Ustvari razred in kode</button><p id="classCreateMessage" class="small muted"></p></div>
+  <div class="cardtask" style="margin-top:12px"><h3>Zbirka vaj</h3><p class="small muted">${exercises.length} vaj je naloženih. Uvozi datoteko JSON z zbirko ali dodatni paket, na primer 30 mešanih izzivov. Rešitve bodo shranjene v tabeli, ki učencem ni dostopna za branje.</p><div class="row"><button onclick="document.getElementById('importFile').click()">Uvozi JSON z vajami (zbirka ali dodatni paket)</button><button class="secondary" onclick="exportData()">Izvozi zbirko</button><input id="importFile" type="file" accept=".json,application/json" class="hidden" onchange="importData(event)"></div><p class="small muted">Datoteke JSON z zbirko ne objavi v javnem repozitoriju GitHub.</p></div>
+  <h3 style="margin-top:18px">Statistika po razredih</h3><div class="stack">${classCards||'<p class="muted">Razredov še nisi ustvaril. Uporabi zgornji obrazec.</p>'}</div>
+  <h3 style="margin-top:18px">Upravljanje vaj</h3><div class="row"><button class="secondary" onclick="manualForm()">Ustvari vajo</button></div><div class="stack" style="margin-top:10px">${exercises.filter(e=>!String(e.id).toLowerCase().startsWith('sql')).map(e=>`<div class="row between cardtask"><div><b>${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><button class="secondary" onclick="editExercise('${e.id}')">Uredi</button><button class="danger" onclick="deleteExercise('${e.id}')">Izbriši</button></div></div>`).join('')}</div>`;
+ }catch(err){view.innerHTML=`<div class="feedback bad">Napaka pri nalaganju podatkov: ${esc(err.message||String(err))}</div><button class="secondary" onclick="showTeacher()">Poskusi znova</button>`;}
 }
 let lastIssuedStudentCodes=[];
 function showIssuedCodes(className,codes){
  lastIssuedStudentCodes=codes||[];
  const panel=document.createElement('div');panel.className='cardtask';panel.style.marginBottom='12px';
- panel.innerHTML=`<div class="row between"><div><b>Codici personali · ${esc(className)}</b><div class="small muted">Consegna un codice diverso a ogni studente. Il codice è personale e riutilizzabile per recuperare i progressi su un altro dispositivo: non condividerlo.</div></div><span class="tag">${lastIssuedStudentCodes.length} codici</span></div><div class="row" style="margin:10px 0"><button type="button" onclick="copyStudentCodes()">Copia tutti</button><button type="button" class="secondary" onclick="downloadStudentCodes()">Scarica CSV</button><button type="button" class="ghost" onclick="this.closest('.cardtask').remove()">Chiudi</button></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px">${lastIssuedStudentCodes.map((code,i)=>`<div class="tag" style="font:700 15px ui-monospace,monospace;padding:9px 12px">${i+1}. ${esc(code)}</div>`).join('')}</div>`;
+ panel.innerHTML=`<div class="row between"><div><b>Osebne kode · ${esc(className)}</b><div class="small muted">Vsakemu učencu dodeli drugo kodo. Koda je osebna in jo lahko znova uporabi za dostop do svojega napredka na drugi napravi: ne deli je z drugimi.</div></div><span class="tag">${lastIssuedStudentCodes.length} kod</span></div><div class="row" style="margin:10px 0"><button type="button" onclick="copyStudentCodes()">Kopiraj vse</button><button type="button" class="secondary" onclick="downloadStudentCodes()">Prenesi CSV</button><button type="button" class="ghost" onclick="this.closest('.cardtask').remove()">Zapri</button></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px">${lastIssuedStudentCodes.map((code,i)=>`<div class="tag" style="font:700 15px ui-monospace,monospace;padding:9px 12px">${i+1}. ${esc(code)}</div>`).join('')}</div>`;
  view.prepend(panel);
 }
-async function copyStudentCodes(){const text=lastIssuedStudentCodes.map((c,i)=>`${i+1}\t${c}`).join('\n');try{await navigator.clipboard.writeText(text);alert('Codici copiati. Salvali prima di chiudere questa schermata.');}catch(_){alert(text);}}
-function downloadStudentCodes(){const csv='Numero,Codice personale\n'+lastIssuedStudentCodes.map((c,i)=>`${i+1},${c}`).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='codici_personali_studenti.csv';a.click();URL.revokeObjectURL(url);}
+async function copyStudentCodes(){const text=lastIssuedStudentCodes.map((c,i)=>`${i+1}\t${c}`).join('\n');try{await navigator.clipboard.writeText(text);alert('Kode so kopirane. Shrani jih, preden zapreš to okno.');}catch(_){alert(text);}}
+function downloadStudentCodes(){const csv='Številka,Osebna koda\n'+lastIssuedStudentCodes.map((c,i)=>`${i+1},${c}`).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='osebne_kode_ucencev.csv';a.click();URL.revokeObjectURL(url);}
 async function issueStudentCodes(classId){
- const className=teacherClasses.find(c=>c.id===classId)?.name||'Classe';
- if(!confirm('I codici non ancora utilizzati verranno invalidati e sostituiti. I codici già usati dagli studenti resteranno validi. Continuare?'))return;
- try{const {data,error}=await teacherSb.rpc('issue_student_codes',{p_class_id:classId});if(error)throw error;const row=Array.isArray(data)?data[0]:data;const codes=row?.student_codes||[];if(!codes.length)throw new Error('Non ci sono posti/codici mancanti da emettere.');showIssuedCodes(className,codes);}
- catch(err){alert('Impossibile generare i codici: '+(err.message||String(err)));}
+ const className=teacherClasses.find(c=>c.id===classId)?.name||'Razred';
+ if(!confirm('Neuporabljene kode bodo razveljavljene in zamenjane. Kode, ki so jih učenci že uporabili, bodo ostale veljavne. Želiš nadaljevati?'))return;
+ try{const {data,error}=await teacherSb.rpc('issue_student_codes',{p_class_id:classId});if(error)throw error;const row=Array.isArray(data)?data[0]:data;const codes=row?.student_codes||[];if(!codes.length)throw new Error('Ni prostih mest oziroma manjkajočih kod za izdajo.');showIssuedCodes(className,codes);}
+ catch(err){alert('Kod ni mogoče ustvariti: '+(err.message||String(err)));}
 }
 async function createClass(){
  const name=document.getElementById('newClassName').value.trim();
  const capacity=Number(document.getElementById('newClassCapacity').value);
  const courseType=document.getElementById('newClassType').value;
  const msg=document.getElementById('classCreateMessage');
- if(name.length<2||name.length>80||!Number.isInteger(capacity)||capacity<1||capacity>100){msg.textContent='Inserisci un nome valido e una capienza tra 1 e 100 studenti.';return;}
+ if(name.length<2||name.length>80||!Number.isInteger(capacity)||capacity<1||capacity>100){msg.textContent='Vnesi veljavno ime in število mest med 1 in 100 učencev.';return;}
  try{
   const {data,error}=await teacherSb.rpc('create_class_with_capacity',{p_name:name,p_course_type:courseType,p_capacity:capacity});if(error)throw error;
   const row=Array.isArray(data)?data[0]:data;const codes=row?.student_codes||[];
-  if(!row?.class_id||codes.length!==capacity)throw new Error('La classe è stata creata ma Supabase non ha restituito tutti i codici. Contatta il docente amministratore prima di procedere.');
+  if(!row?.class_id||codes.length!==capacity)throw new Error('Razred je bil ustvarjen, vendar Supabase ni vrnil vseh kod. Pred nadaljevanjem se obrni na skrbnika učiteljev.');
   await loadTeacherDashboard();
   showIssuedCodes(name,codes);
- }catch(err){msg.textContent='Errore: '+(err.message||String(err));}
+ }catch(err){msg.textContent='Napaka: '+(err.message||String(err));}
 }
 async function saveExerciseToSupabase(e){
  const records=toDatabaseExercise(e,teacherUser.id);
@@ -738,40 +736,40 @@ async function saveExerciseToSupabase(e){
 }
 async function importExercisesToSupabase(items){
  const valid=items.filter(validExercise).map((e,index)=>({...e,sort_order:e.sort_order||index+1}));
- if(!valid.length)throw new Error('Il file non contiene esercizi validi.');
+ if(!valid.length)throw new Error('Datoteka ne vsebuje veljavnih vaj.');
  for(let i=0;i<valid.length;i+=40){
   const batch=valid.slice(i,i+40).map(e=>toDatabaseExercise(e,teacherUser.id));
   const {error}=await teacherSb.from('exercises').upsert(batch.map(x=>x.exercise),{onConflict:'id'});if(error)throw error;
   const {error:keyError}=await teacherSb.from('exercise_keys').upsert(batch.map(x=>x.key),{onConflict:'exercise_id'});if(keyError)throw keyError;
-  view.innerHTML=`<p class="muted">Importazione in corso: ${Math.min(i+40,valid.length)} di ${valid.length} esercizi…</p>`;
+  view.innerHTML=`<p class="muted">Uvoz poteka: ${Math.min(i+40,valid.length)} od ${valid.length} vaj …</p>`;
  }
  await loadTeacherDashboard();
- alert('Importazione completata: '+valid.length+' esercizi sincronizzati con Supabase. Le nuove sfide sono disponibili nel laboratorio dedicato.');
+ alert('Uvoz je končan: '+valid.length+' vaj je sinhroniziranih s Supabase. Nove naloge so na voljo v ustreznem laboratoriju.');
 }
 function manualForm(existing=null){
  if(activeRole!=='teacher'||!teacherUser){showTeacher();return;}
- let e=existing||{id:'',type:'fill',topic:'Nuovo argomento',title:'',prompt:'',code:'print([1])',answers:['"Ciao"'],options:['Opzione A','Opzione B'],correct:0,hint:'',explain:'',starter:'',required:['print'],expectedOutput:'',solution:'',class_id:null};
- view.innerHTML=`<button class="ghost" onclick="loadTeacherDashboard()">← Area docente</button><h2 style="margin-top:12px">${existing?'Modifica esercizio':'Nuovo esercizio'}</h2><label>Argomento</label><input id="mTopic" value="${esc(e.topic)}"><label>Titolo</label><input id="mTitle" value="${esc(e.title)}"><label>Tipologia</label><select id="mType" onchange="manualFields()"><option value="fill">Completa il codice</option><option value="quiz">Quiz</option><option value="predict">Prevedi il risultato</option><option value="reorder">Riordina il codice</option><option value="debug">Correggi il codice</option><option value="write">Scrivi un programma</option><option value="lab">Laboratorio eseguibile</option></select><label>Disponibilità</label><select id="mClass"><option value="">Tutte le classi</option>${teacherClasses.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select><div id="mFields"></div><label>Consegna</label><textarea id="mPrompt">${esc(e.prompt)}</textarea><label>Suggerimento</label><input id="mHint" value="${esc(e.hint||'')}"><label>Spiegazione per dopo la soluzione</label><textarea id="mExplain">${esc(e.explain||'')}</textarea><button style="margin-top:14px" onclick="saveManual('${existing?existing.id:''}')">Salva esercizio online</button><p id="manualMessage" class="small muted"></p>`;
+ let e=existing||{id:'',type:'fill',topic:'Nova tema',title:'',prompt:'',code:'print([1])',answers:['"Živjo"'],options:['Možnost A','Možnost B'],correct:0,hint:'',explain:'',starter:'',required:['print'],expectedOutput:'',solution:'',class_id:null};
+ view.innerHTML=`<button class="ghost" onclick="loadTeacherDashboard()">← Učiteljsko okolje</button><h2 style="margin-top:12px">${existing?'Uredi vajo':'Nova vaja'}</h2><label>Tema</label><input id="mTopic" value="${esc(e.topic)}"><label>Naslov</label><input id="mTitle" value="${esc(e.title)}"><label>Vrsta</label><select id="mType" onchange="manualFields()"><option value="fill">Dopolni kodo</option><option value="quiz">Kviz</option><option value="predict">Napovej izpis</option><option value="reorder">Uredi vrstni red kode</option><option value="debug">Popravi kodo</option><option value="write">Napiši program</option><option value="lab">Izvedljivi laboratorij</option></select><label>Dostopnost</label><select id="mClass"><option value="">Vsi razredi</option>${teacherClasses.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select><div id="mFields"></div><label>Navodila</label><textarea id="mPrompt">${esc(e.prompt)}</textarea><label>Namig</label><input id="mHint" value="${esc(e.hint||'')}"><label>Razlaga po prikazu rešitve</label><textarea id="mExplain">${esc(e.explain||'')}</textarea><button style="margin-top:14px" onclick="saveManual('${existing?existing.id:''}')">Shrani vajo v spletu</button><p id="manualMessage" class="small muted"></p>`;
  mType.value=e.type;mClass.value=e.class_id||'';manualFields(e);
 }
-function manualFields(e={}){let t=mType.value,f=document.getElementById('mFields');if(t==='fill'||t==='debug')f.innerHTML=`<label>${t==='fill'?'Codice con segnaposto [1], [2]…':'Codice da correggere'}</label><textarea id="mCode">${esc(e.code||'print([1])')}</textarea><label>Risposte corrette (separate da virgola)</label><input id="mAnswers" value="${esc((e.answers||['']).join(','))}">`;else if(t==='predict')f.innerHTML=`<label>Codice da analizzare</label><textarea id="mCode">${esc(e.code||'')}</textarea><label>Possibili output (uno per riga)</label><textarea id="mOptions">${esc((e.options||[]).join('\n'))}</textarea><label>Numero risposta corretta (da 1)</label><input id="mCorrect" type="number" min="1" value="${Number(e.correct||0)+1}">`;else if(t==='reorder')f.innerHTML=`<label>Righe di codice mescolate (una per riga)</label><textarea id="mCode">${esc(e.code||'')}</textarea><label>Ordine corretto degli indici (da 0, separati da virgola)</label><input id="mCorrectOrder" value="${esc((e.correctOrder||[]).join(','))}"><label>Soluzione ordinata</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;else if(t==='quiz')f.innerHTML=`<label>Opzioni (una per riga)</label><textarea id="mOptions">${esc((e.options||[]).join('\n'))}</textarea><label>Numero risposta corretta (da 1)</label><input id="mCorrect" type="number" min="1" value="${Number(e.correct||0)+1}">`;else if(t==='write')f.innerHTML=`<label>Codice iniziale</label><textarea id="mStarter">${esc(e.starter||'')}</textarea><label>Elementi richiesti (separati da virgola)</label><input id="mRequired" value="${esc((e.required||[]).join(','))}"><label>Soluzione modello</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;else if(t==='lab')f.innerHTML=`<label>Codice iniziale</label><textarea id="mStarter" class="editor">${esc(e.starter||'')}</textarea><label>Valori iniziali per input() (uno per riga)</label><textarea id="mStdin">${esc(e.stdin||'')}</textarea><label>Output atteso</label><textarea id="mExpected">${esc(e.expectedOutput||'')}</textarea><label>Soluzione modello</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;}
+function manualFields(e={}){let t=mType.value,f=document.getElementById('mFields');if(t==='fill'||t==='debug')f.innerHTML=`<label>${t==='fill'?'Koda z nadomestnimi oznakami [1], [2] …':'Koda za popravljanje'}</label><textarea id="mCode">${esc(e.code||'print([1])')}</textarea><label>Pravilni odgovori (ločeni z vejico)</label><input id="mAnswers" value="${esc((e.answers||['']).join(','))}">`;else if(t==='predict')f.innerHTML=`<label>Koda za analizo</label><textarea id="mCode">${esc(e.code||'')}</textarea><label>Možni izpisi (eden na vrstico)</label><textarea id="mOptions">${esc((e.options||[]).join('\n'))}</textarea><label>Številka pravilnega odgovora (od 1 naprej)</label><input id="mCorrect" type="number" min="1" value="${Number(e.correct||0)+1}">`;else if(t==='reorder')f.innerHTML=`<label>Premešane vrstice kode (ena na vrstico)</label><textarea id="mCode">${esc(e.code||'')}</textarea><label>Pravilni vrstni red indeksov (od 0 naprej, ločeni z vejico)</label><input id="mCorrectOrder" value="${esc((e.correctOrder||[]).join(','))}"><label>Pravilno urejena rešitev</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;else if(t==='quiz')f.innerHTML=`<label>Možnosti (ena na vrstico)</label><textarea id="mOptions">${esc((e.options||[]).join('\n'))}</textarea><label>Številka pravilnega odgovora (od 1 naprej)</label><input id="mCorrect" type="number" min="1" value="${Number(e.correct||0)+1}">`;else if(t==='write')f.innerHTML=`<label>Začetna koda</label><textarea id="mStarter">${esc(e.starter||'')}</textarea><label>Zahtevani elementi (ločeni z vejico)</label><input id="mRequired" value="${esc((e.required||[]).join(','))}"><label>Vzorčna rešitev</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;else if(t==='lab')f.innerHTML=`<label>Začetna koda</label><textarea id="mStarter" class="editor">${esc(e.starter||'')}</textarea><label>Začetne vrednosti za input() (ena na vrstico)</label><textarea id="mStdin">${esc(e.stdin||'')}</textarea><label>Pričakovani izpis</label><textarea id="mExpected">${esc(e.expectedOutput||'')}</textarea><label>Vzorčna rešitev</label><textarea id="mSolution">${esc(e.solution||'')}</textarea>`;}
 async function saveManual(id){
  if(activeRole!=='teacher'||!teacherUser){showTeacher();return;}
  let t=mType.value,e={id:id||'custom_'+Date.now(),topic:mTopic.value.trim(),title:mTitle.value.trim(),type:t,prompt:mPrompt.value.trim(),hint:mHint.value,explain:mExplain.value,class_id:mClass.value||null,sort_order:exercises.find(x=>x.id===id)?.sort_order||((exercises.reduce((m,x)=>Math.max(m,Number(x.sort_order||0)),0))+1)};
- if(!e.topic||!e.title||!e.prompt){alert('Compila argomento, titolo e consegna.');return;}
+ if(!e.topic||!e.title||!e.prompt){alert('Izpolni temo, naslov in navodila.');return;}
  if(t==='fill'||t==='debug'){e.code=mCode.value;e.answers=mAnswers.value.split(',').map(x=>x.trim()).filter(Boolean);}
- if(t==='predict'){e.code=mCode.value;e.options=mOptions.value.split('\n').map(x=>x.trim()).filter(Boolean);e.correct=Number(mCorrect.value)-1;if(!e.code.trim()||!e.options.length||e.correct<0||e.correct>=e.options.length){alert('Controlla codice, opzioni e risposta corretta.');return;}}
- if(t==='reorder'){e.code=mCode.value;e.correctOrder=mCorrectOrder.value.split(',').map(x=>Number(x.trim()));e.solution=mSolution.value;if(!e.code.trim()||!e.correctOrder.length||e.correctOrder.some(x=>!Number.isInteger(x)||x<0||x>=e.code.split('\n').length)||new Set(e.correctOrder).size!==e.correctOrder.length||e.correctOrder.length!==e.code.split('\n').length){alert('Controlla l’ordine corretto: deve contenere una volta ciascun indice delle righe.');return;}}
- if(t==='quiz'){e.options=mOptions.value.split('\n').map(x=>x.trim()).filter(Boolean);e.correct=Number(mCorrect.value)-1;if(!e.options.length||e.correct<0||e.correct>=e.options.length){alert('Controlla le opzioni e la risposta corretta.');return;}}
+ if(t==='predict'){e.code=mCode.value;e.options=mOptions.value.split('\n').map(x=>x.trim()).filter(Boolean);e.correct=Number(mCorrect.value)-1;if(!e.code.trim()||!e.options.length||e.correct<0||e.correct>=e.options.length){alert('Preveri kodo, možnosti in pravilni odgovor.');return;}}
+ if(t==='reorder'){e.code=mCode.value;e.correctOrder=mCorrectOrder.value.split(',').map(x=>Number(x.trim()));e.solution=mSolution.value;if(!e.code.trim()||!e.correctOrder.length||e.correctOrder.some(x=>!Number.isInteger(x)||x<0||x>=e.code.split('\n').length)||new Set(e.correctOrder).size!==e.correctOrder.length||e.correctOrder.length!==e.code.split('\n').length){alert('Preveri pravilni vrstni red: vsak indeks vrstice mora biti naveden natanko enkrat.');return;}}
+ if(t==='quiz'){e.options=mOptions.value.split('\n').map(x=>x.trim()).filter(Boolean);e.correct=Number(mCorrect.value)-1;if(!e.options.length||e.correct<0||e.correct>=e.options.length){alert('Preveri možnosti in pravilni odgovor.');return;}}
  if(t==='write'){e.starter=mStarter.value;e.required=mRequired.value.split(',').map(x=>x.trim()).filter(Boolean);e.solution=mSolution.value;}
  if(t==='lab'){e.starter=mStarter.value;e.stdin=mStdin.value;e.expectedOutput=mExpected.value;e.solution=mSolution.value;}
- const button=view.querySelector('button[onclick^="saveManual"]');if(button){button.disabled=true;button.textContent='Salvataggio…';}
- try{await saveExerciseToSupabase(e);const i=exercises.findIndex(x=>x.id===id);if(i>=0)exercises[i]=e;else exercises.push(e);persist();await loadTeacherDashboard();alert('Esercizio salvato nel database online.');}
- catch(err){const m=document.getElementById('manualMessage');if(m)m.textContent='Errore di salvataggio: '+(err.message||String(err));if(button){button.disabled=false;button.textContent='Salva esercizio online';}}
+ const button=view.querySelector('button[onclick^="saveManual"]');if(button){button.disabled=true;button.textContent='Shranjevanje …';}
+ try{await saveExerciseToSupabase(e);const i=exercises.findIndex(x=>x.id===id);if(i>=0)exercises[i]=e;else exercises.push(e);persist();await loadTeacherDashboard();alert('Vaja je shranjena v spletni zbirki podatkov.');}
+ catch(err){const m=document.getElementById('manualMessage');if(m)m.textContent='Napaka pri shranjevanju: '+(err.message||String(err));if(button){button.disabled=false;button.textContent='Shrani vajo v spletu';}}
 }
 function editExercise(id){if(activeRole!=='teacher')return;const e=exercises.find(x=>x.id===id);if(e)manualForm(e);}
-async function deleteExercise(id){if(activeRole!=='teacher')return;if(!confirm('Eliminare questo esercizio dal database?'))return;try{const {error}=await teacherSb.from('exercises').delete().eq('id',id);if(error)throw error;exercises=exercises.filter(x=>x.id!==id);await loadTeacherDashboard();}catch(err){alert('Errore durante l’eliminazione: '+(err.message||String(err)));}}
-function exportData(){if(activeRole!=='teacher')return;let blob=new Blob([JSON.stringify({version:4,exercises},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='python-lab-esercizi-backup.json';a.click();URL.revokeObjectURL(url);}
-function importData(ev){if(activeRole!=='teacher')return;let file=ev.target.files[0];if(!file)return;let r=new FileReader();r.onload=async()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.exercises))throw Error('Formato non valido: serve un JSON con un array exercises.');if(confirm('Importare '+d.exercises.length+' esercizi in Supabase? Gli ID già presenti verranno aggiornati.'))await importExercisesToSupabase(d.exercises);}catch(e){alert('Importazione non riuscita: '+(e.message||String(e)));}finally{ev.target.value='';}};r.readAsText(file);}
+async function deleteExercise(id){if(activeRole!=='teacher')return;if(!confirm('Ali želiš izbrisati to vajo iz zbirke podatkov?'))return;try{const {error}=await teacherSb.from('exercises').delete().eq('id',id);if(error)throw error;exercises=exercises.filter(x=>x.id!==id);await loadTeacherDashboard();}catch(err){alert('Napaka med brisanjem: '+(err.message||String(err)));}}
+function exportData(){if(activeRole!=='teacher')return;let blob=new Blob([JSON.stringify({version:4,exercises},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='python-lab-varnostna-kopija-vaj.json';a.click();URL.revokeObjectURL(url);}
+function importData(ev){if(activeRole!=='teacher')return;let file=ev.target.files[0];if(!file)return;let r=new FileReader();r.onload=async()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.exercises))throw Error('Neveljavna oblika: datoteka JSON mora vsebovati polje exercises z zbirko vaj.');if(confirm('Uvoziti '+d.exercises.length+' vaj v Supabase? Obstoječi ID-ji bodo posodobljeni.'))await importExercisesToSupabase(d.exercises);}catch(e){alert('Uvoz ni uspel: '+(e.message||String(e)));}finally{ev.target.value='';}};r.readAsText(file);}
 if(new URLSearchParams(window.location.search).get('access')==='teacher'){openTeacherFromLogin();showTeacher();}
 </script></body></html>
