@@ -21,6 +21,13 @@ input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);b
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.progress{height:7px;background:#edf0f5;border-radius:20px;overflow:hidden}.progress div{height:100%;background:var(--green)}.hidden{display:none!important}.option{display:block;border:1px solid var(--line);border-radius:9px;padding:9px;margin:7px 0}.option input{width:auto;margin-right:7px}.reorder-list{padding-left:28px;margin:12px 0;display:grid;gap:8px}.reorder-item{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--panel)}.reorder-item code{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.55 ui-monospace,Consolas,monospace;flex:1}.reorder-controls{display:flex;gap:5px;flex-shrink:0}.reorder-controls button{padding:5px 10px;min-width:34px}.pill{padding:5px 9px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--muted);font-size:12px;cursor:pointer}.pill.sel{background:#edf1ff;color:#2949c9;border-color:#cbd5ff}
 footer{text-align:center;color:var(--muted);font-size:12px;margin:25px}
 @media(max-width:780px){.layout{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}
+
+.turtle-workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,1fr);gap:14px;align-items:start;margin-top:14px}
+.turtle-stage{border:1px solid var(--line);border-radius:12px;padding:9px;background:#f8fafc;min-width:0}
+.turtle-stage canvas{display:block;width:100%;height:auto;aspect-ratio:3/2;background:#fff;border-radius:8px;border:1px solid #dce3ed}
+.turtle-stage-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:13px}
+.turtle-note{font-size:12px;color:var(--muted);margin-top:8px}
+@media(max-width:820px){.turtle-workspace{grid-template-columns:1fr}}
 </style></head><body>
 <header><div class="brand">🐍 Python <span>Lab</span> <small style="font-size:12px;font-weight:500;color:#d6def0">Fase 3</small></div><div class="status" id="runtimeStatus">Motore Python: in attesa</div></header>
 <main>
@@ -34,12 +41,12 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin:25px}
 <div class="row between" style="margin-bottom:16px"><div><h1>Area di apprendimento</h1><div class="muted small" id="hello"></div></div><button class="ghost" onclick="logout()">Esci</button></div>
 <div class="layout">
 <aside class="panel">
-<h3>Menu</h3><button class="nav active" id="nBank" onclick="showBank()">📚 Raccolta esercizi</button><button class="nav" id="nLab" onclick="showLab()">⌨️ Laboratorio Python</button><button class="nav" id="nMixed" onclick="showMixedLab()">🧩 Sfide miste</button><button class="nav" id="nTeacher" onclick="showTeacher()">🛠 Area docente</button>
+<h3>Menu</h3><button class="nav active" id="nBank" onclick="showBank()">📚 Raccolta esercizi</button><button class="nav" id="nLab" onclick="showLab()">⌨️ Laboratorio Python</button><button class="nav" id="nMixed" onclick="showMixedLab()">🧩 Sfide miste</button><button class="nav" id="nTurtle" onclick="showTurtleExercises()">🐢 Turtle · Disegni</button><button class="nav" id="nTeacher" onclick="showTeacher()">🛠 Area docente</button>
 <hr style="border:0;border-top:1px solid var(--line);margin:15px 0"><b>Il tuo percorso</b><div class="progress" style="margin:9px 0"><div id="pbar" style="width:0%"></div></div><div class="small muted" id="ptext">0 esercizi completati</div>
 <div class="small muted" style="margin-top:17px">I tuoi progressi sono sincronizzati con il database della classe.</div>
 </aside>
 <section class="panel" id="view"></section>
-</div></section></main><footer>Python Lab · Database online Supabase · Laboratorio Python tramite Pyodide</footer>
+</div></section></main><footer>Python Lab · Supabase · Python tramite Pyodide · Grafica Turtle su canvas</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
 <script>
@@ -67,6 +74,7 @@ let done=[];
 let reorderOrder=[];
 let attempts={};
 let py=null, pyLoading=null, student='';
+let freeTurtleMode=false, turtleRunSucceeded=false, activeTurtleExercise=null;
 let studentId=null, studentClassId=null, studentClassName='', studentClassType='python';
 let teacherUser=null, teacherProfile=null, teacherClasses=[];
 let activeRole=null;
@@ -170,10 +178,11 @@ async function loadStudentProgress(){
 }
 async function logout(){if(activeRole==='teacher'){await teacherLogout();return;}await studentSb.auth.signOut();studentId=null;studentClassId=null;studentClassName='';activeRole=null;app.classList.add('hidden');login.classList.remove('hidden');showLoginError('');}
 function openTeacherFromLogin(){login.classList.add('hidden');app.classList.remove('hidden');hello.textContent='Accesso riservato al docente';showTeacher();}
-function nav(which){['Bank','Lab','Mixed','Teacher'].forEach(x=>document.getElementById('n'+x).classList.toggle('active',x.toLowerCase()===which));}
+function nav(which){['Bank','Lab','Mixed','Turtle','Teacher'].forEach(x=>document.getElementById('n'+x).classList.toggle('active',x.toLowerCase()===which));}
+function isTurtleExercise(e){return String(e?.id||'').startsWith('turtle');}
 function updateProgress(){ptext.textContent=done.filter(id=>exercises.some(e=>e.id===id)).length+' di '+exercises.length+' esercizi completati';pbar.style.width=Math.min(100,done.filter(id=>exercises.some(e=>e.id===id)).length/Math.max(1,exercises.length)*100)+'%';}
-function showBank(){nav('bank');let topics=['Tutti',...new Set(exercises.map(e=>e.topic))];view.innerHTML=`<span class="tag">Percorso Python · esercizi online</span><h2 style="margin-top:10px">Raccolta esercizi</h2><p class="muted">Esercizi graduati, ripassi dello stesso concetto in forme diverse e prove di laboratorio eseguibili.</p><label>Filtra per argomento</label><select id="filter" onchange="renderBank()">${topics.map(t=>`<option>${esc(t)}</option>`).join('')}</select><div class="row" style="margin-top:10px"><span class="tag">${exercises.length} esercizi</span><span class="tag">${exercises.filter(e=>e.type==='lab').length} laboratori</span><span class="tag">${done.length} completati</span></div><div id="bankList" class="stack" style="margin-top:12px"></div>`;renderBank();updateProgress();}
-function renderBank(){let f=document.getElementById('filter')?.value||'Tutti',list=exercises.filter(e=>f==='Tutti'||e.topic===f);bankList.innerHTML=list.map(e=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><span class="tag">${done.includes(e.id)?'Completato':'Da fare'}</span><button onclick="openExercise('${e.id}')">Apri</button></div></div>`).join('')||'<p class="muted">Nessun esercizio pubblicato. Chiedi al docente di importare la raccolta dal file JSON.</p>';}
+function showBank(){nav('bank');const regular=exercises.filter(e=>!isTurtleExercise(e));let topics=['Tutti',...new Set(regular.map(e=>e.topic))];view.innerHTML=`<span class="tag">Percorso Python · esercizi online</span><h2 style="margin-top:10px">Raccolta esercizi</h2><p class="muted">Esercizi graduati, ripassi dello stesso concetto in forme diverse e prove di laboratorio eseguibili.</p><label>Filtra per argomento</label><select id="filter" onchange="renderBank()">${topics.map(t=>`<option>${esc(t)}</option>`).join('')}</select><div class="row" style="margin-top:10px"><span class="tag">${regular.length} esercizi</span><span class="tag">${regular.filter(e=>e.type==='lab').length} laboratori</span><span class="tag">${done.filter(id=>regular.some(e=>e.id===id)).length} completati</span></div><div id="bankList" class="stack" style="margin-top:12px"></div>`;renderBank();updateProgress();}
+function renderBank(){let f=document.getElementById('filter')?.value||'Tutti',list=exercises.filter(e=>!isTurtleExercise(e)&&(f==='Tutti'||e.topic===f));bankList.innerHTML=list.map(e=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><span class="tag">${done.includes(e.id)?'Completato':'Da fare'}</span><button onclick="openExercise('${e.id}')">Apri</button></div></div>`).join('')||'<p class="muted">Nessun esercizio pubblicato. Chiedi al docente di importare la raccolta dal file JSON.</p>';}
 function updateFillPreview(e){
  const previewEl=document.getElementById('fillPreview');if(!previewEl)return;
  let answerIndex=0;
@@ -185,8 +194,43 @@ function updateFillPreview(e){
  previewEl.textContent=preview;
 }
 function completionHtml(id){const i=exercises.findIndex(x=>x.id===id),hasNext=i>=0&&i<exercises.length-1;return `<div class="row" style="margin-top:12px"><button onclick="nextExercise('${id}')">${hasNext?'Prossimo esercizio →':'Fine percorso · Torna alla raccolta'}</button><button class="ghost" onclick="showBank()">Raccolta esercizi</button></div>`;}
-function nextExercise(id){const i=exercises.findIndex(x=>x.id===id);if(i>=0&&i<exercises.length-1){openExercise(exercises[i+1].id);return;}showBank();}
+function nextExercise(id){const i=exercises.findIndex(x=>x.id===id),current=exercises[i];if(i>=0&&i<exercises.length-1){const next=exercises[i+1];if(isTurtleExercise(next))openTurtleExercise(next.id);else openExercise(next.id);return;}if(isTurtleExercise(current))showTurtleExercises();else showBank();}
 function markDone(id){if(!done.includes(id)){done.push(id);persist();updateProgress();}}
+function showTurtleExercises(){
+ nav('turtle');
+ const items=exercises.filter(isTurtleExercise).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0));
+ const completed=items.filter(e=>done.includes(e.id)).length;
+ view.innerHTML=`<span class="tag">Python grafica · Turtle nel browser</span><h2 style="margin-top:10px">🐢 Disegnare con Turtle</h2><p class="muted">Un percorso di 30 esercizi semi-guidati: comandi di movimento, rotazioni, penna e colori, cicli, funzioni e piccoli disegni composti. Scrivi il codice, eseguilo e osserva il disegno sul canvas.</p><div class="row" style="margin:12px 0"><span class="tag">${items.length} esercizi</span><span class="tag">${completed} completati</span><span class="tag">${items.length?Math.round(completed/items.length*100):0}%</span></div><div class="progress" style="margin-bottom:14px"><div style="width:${items.length?completed/items.length*100:0}%"></div></div>${items.length?`<div class="stack">${items.map((e,i)=>`<div class="cardtask row between"><div style="min-width:190px;flex:1"><b>${i+1}. ${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${done.includes(e.id)?'Completato':'Da svolgere'}</div></div><button onclick="openTurtleExercise('${e.id}')">${done.includes(e.id)?'Rivedi':'Apri esercizio'}</button></div>`).join('')}</div>`:`<div class="feedback hint"><b>Gli esercizi Turtle non sono ancora stati importati.</b><p>Accedi come docente, apri l'importazione degli esercizi e carica <code>python_lab_turtle_30_esercizi.json</code>. In alternativa puoi importare il file unico con tutti i 295 esercizi Python.</p></div>`}<p class="turtle-note">La verifica del disegno è visiva: dopo l’esecuzione confronta la figura con la consegna. Il pulsante di completamento registra la tua autovalutazione, non confronta automaticamente l’immagine.</p>`;
+ updateProgress();
+}
+function openTurtleExercise(id){
+ const e=exercises.find(x=>x.id===id&&isTurtleExercise(x));if(!e)return;
+ nav('turtle');activeTurtleExercise=id;turtleRunSucceeded=false;
+ const index=exercises.filter(isTurtleExercise).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0)).findIndex(x=>x.id===id)+1;
+ const canRecord=activeRole==='student';
+ view.innerHTML=`<button class="ghost" onclick="showTurtleExercises()">← Torna agli esercizi Turtle</button><div class="small muted" style="margin-top:12px">Esercizio ${index} di 30 · ${esc(e.topic)}</div><h2 style="margin-top:8px">${esc(e.title)}</h2><p>${esc(e.prompt)}</p><div class="turtle-workspace"><div><label for="turtleCode">Il tuo codice Python</label><textarea id="turtleCode" class="editor" spellcheck="false">${esc(e.starter||'import turtle\nt = turtle.Turtle()\n')}</textarea><div class="row" style="margin-top:9px"><button id="runTurtle" onclick="runTurtleExercise('${e.id}')">▶ Esegui disegno</button><button class="secondary" onclick="showTurtleHint('${e.id}')">Suggerimento</button>${canRecord?`<button class="ghost" id="recordTurtle" onclick="recordTurtleCompletion('${e.id}')" disabled>✓ Registra come completato</button>`:''}</div><div id="turtleFeedback">${done.includes(id)?'<div class="feedback ok">Questo esercizio risulta già completato.</div>':''}</div><label>Output / errori Python</label><div id="turtleOutput" class="output">Il risultato dell’esecuzione apparirà qui.</div></div><div class="turtle-stage"><div class="turtle-stage-head"><strong>Area di disegno</strong><span class="small muted">Origine al centro · asse Y verso l’alto</span></div><canvas id="turtleCanvas" width="720" height="480" aria-label="Area grafica Turtle"></canvas><div class="turtle-note">Ogni esecuzione ridisegna la scena da zero. Coordinate e distanze sono espresse in passi Turtle.</div></div></div><div class="row" style="margin-top:12px"><button class="ghost" onclick="showTurtleExercises()">Tutti gli esercizi</button><button class="secondary" onclick="showLab('import turtle\n\nt = turtle.Turtle()\nt.speed(5)\n\n')">Apri nel laboratorio libero</button></div>`;
+ enhanceEditors(view);
+}
+function showTurtleHint(id){const e=exercises.find(x=>x.id===id);const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback hint">💡 ${esc(e?.hint||'Rileggi la consegna e individua i comandi Turtle necessari.')}</div>`;}
+async function runTurtleExercise(id){
+ const button=document.getElementById('runTurtle'),out=document.getElementById('turtleOutput'),record=document.getElementById('recordTurtle');
+ if(!button||!out)return;
+ turtleRunSucceeded=false;if(record)record.disabled=true;
+ clearEditorError(document.getElementById('turtleCode'));button.disabled=true;out.className='output';out.textContent='Esecuzione del disegno…';
+ try{
+  const result=await executePython(document.getElementById('turtleCode').value,'',{turtle:true,canvasId:'turtleCanvas'});
+  out.textContent=result||'Disegno eseguito senza output testuale.';turtleRunSucceeded=true;
+  if(record)record.disabled=false;
+  const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback ok">Disegno eseguito. Controlla che la figura rispetti la consegna; poi puoi registrare il completamento.</div>`;
+ }catch(err){out.className='output err';out.textContent=String(err?.message||err);markEditorError('turtleCode',err);const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback bad">Il codice contiene un errore. Correggilo e prova di nuovo.</div>`;}
+ finally{button.disabled=false;}
+}
+async function recordTurtleCompletion(id){
+ if(activeRole!=='student'||!turtleRunSucceeded||activeTurtleExercise!==id)return;
+ const button=document.getElementById('recordTurtle');if(button)button.disabled=true;
+ try{const result=await submitExercise(id,{output:'__TURTLE_OK__'});if(result?.correct){turtleRunSucceeded=false;if(button)button.disabled=true;}}
+ catch(err){const box=document.getElementById('turtleFeedback');if(box)box.innerHTML=`<div class="feedback bad">Completamento non registrato: ${esc(err.message||String(err))}</div>`;if(button)button.disabled=false;}
+}
 function openExercise(id){
  const e=exercises.find(x=>x.id===id);if(!e)return;let body='';
  if(e.type==='fill'){const blanks=(String(e.code||'').match(/\[\d+\]/g)||[]).length;body=`${Array.from({length:blanks},(_,i)=>`<label>Spazio ${i+1}</label><input id="a${i}" autocomplete="off" placeholder="Completa il codice">`).join('')}<div class="live-preview"><div class="live-preview-head"><strong>Anteprima live del codice</strong><span>Si aggiorna mentre scrivi · non esegue il programma</span></div><pre id="fillPreview" class="code" aria-live="polite">${esc(e.code||'')}</pre></div>`;}
@@ -221,8 +265,9 @@ async function hint(id){
 }
 function wrongAnswer(id,count){
   attempts[id]=Number(count||attempts[id]||0);
-  const n=attempts[id];
-  feedback.innerHTML=`<div class="feedback bad">Non ancora. Tentativo ${n} di 5.</div>`+
+  const n=attempts[id],feedbackEl=document.getElementById('feedback')||document.getElementById('turtleFeedback');
+  if(!feedbackEl)return;
+  feedbackEl.innerHTML=`<div class="feedback bad">Non ancora. Tentativo ${n} di 5.</div>`+
     (n>=5?`<button class="secondary" style="margin-top:9px" onclick="revealSolution('${id}')">Mostra la soluzione</button>`:'');
 }
 async function submitExercise(id,submission){
@@ -233,8 +278,9 @@ async function submitExercise(id,submission){
   attempts[id]=Number(result.attempts||0);
   if(result.completed && !done.includes(id))done.push(id);
   updateProgress();
+  const feedbackEl=document.getElementById('feedback')||document.getElementById('turtleFeedback');
   if(result.correct){
-    feedback.innerHTML=`<div class="feedback ok">✓ Corretto! Ottimo lavoro.</div>${completionHtml(id)}`;
+    if(feedbackEl)feedbackEl.innerHTML=`<div class="feedback ok">✓ Corretto! Ottimo lavoro.</div>${completionHtml(id)}`;
   }else wrongAnswer(id,result.attempts);
   return result;
 }
@@ -343,11 +389,169 @@ function enhanceEditor(textarea){
  updateLines();
 }
 function enhanceEditors(root=document){root.querySelectorAll('textarea.editor').forEach(enhanceEditor);}
-function showLab(prefill=''){nav('lab');view.innerHTML=`<span class="tag">Python 3 nel browser · Pyodide</span><h2 style="margin-top:10px">Laboratorio Python</h2><p class="muted">Scrivi codice Python, inserisci eventuali dati di input (uno per riga) e premi Esegui. Il codice viene eseguito nel browser.</p><textarea id="code" class="editor" spellcheck="false">${esc(prefill||'nome = input("Come ti chiami? ")\nprint("Ciao", nome)')}</textarea><div class="row" style="margin-top:10px"><button id="run" onclick="runPy()">▶ Esegui Python</button><button class="secondary" onclick="showLab()">Ripristina esempio</button><button class="ghost" onclick="document.getElementById('out').textContent='Output pulito'">Pulisci output</button></div><label>Valori per input() (uno per riga)</label><textarea id="stdin" rows="3" placeholder="Ada\n18"></textarea><label>Output / errori</label><div class="output" id="out">Il risultato apparirà qui.</div><p class="small muted">Per più chiamate a input(), inserisci un valore per riga. Pyodide viene caricato una sola volta.</p>`;enhanceEditors(view);}
+function showLab(prefill=''){
+ nav('lab');freeTurtleMode=false;
+ const initial=prefill||'nome = input("Come ti chiami? ")\nprint("Ciao", nome)';
+ view.innerHTML=`<span class="tag">Python 3 nel browser · Pyodide</span><h2 style="margin-top:10px">Laboratorio Python</h2><p class="muted">Scrivi codice Python, inserisci eventuali dati di input (uno per riga) e premi Esegui. Il codice viene eseguito nel browser.</p><textarea id="code" class="editor" spellcheck="false">${esc(initial)}</textarea><div class="row" style="margin-top:10px"><button id="run" onclick="runPy()">▶ Esegui Python</button><button class="secondary" onclick="showLab()">Ripristina esempio</button><button class="ghost" onclick="document.getElementById('out').textContent='Output pulito'">Pulisci output</button><button class="secondary" id="freeTurtleButton" onclick="enableFreeTurtle()">🐢 Funzioni Turtle</button></div><div id="freeTurtlePanel" class="turtle-stage hidden" style="margin-top:12px"><div class="turtle-stage-head"><strong>Canvas Turtle</strong><span class="small muted">Disegno grafico</span></div><canvas id="freeTurtleCanvas" width="720" height="480" aria-label="Area grafica Turtle del laboratorio libero"></canvas><div class="turtle-note">Premi di nuovo il pulsante Turtle per nascondere o mostrare il canvas. Il supporto Turtle viene attivato in questa sessione.</div></div><label>Valori per input() (uno per riga)</label><textarea id="stdin" rows="3" placeholder="Ada\n18"></textarea><label>Output / errori</label><div class="output" id="out">Il risultato apparirà qui.</div><p class="small muted">Per più chiamate a input(), inserisci un valore per riga. Pyodide viene caricato una sola volta. Per disegnare, attiva prima le funzioni Turtle.</p>`;
+ enhanceEditors(view);
+ if(/(^|\n)\s*(import turtle|from turtle import)/m.test(initial))enableFreeTurtle(false);
+}
+function enableFreeTurtle(insertStarter=true){
+ const panel=document.getElementById('freeTurtlePanel'),button=document.getElementById('freeTurtleButton'),code=document.getElementById('code');if(!panel||!code)return;
+ if(!freeTurtleMode){freeTurtleMode=true;panel.classList.remove('hidden');if(insertStarter&&!/(^|\n)\s*(import turtle|from turtle import)/m.test(code.value))code.value='import turtle\n\nt = turtle.Turtle()\nt.speed(5)\n\n'+code.value;}
+ else panel.classList.toggle('hidden');
+ if(button)button.textContent=freeTurtleMode?'🐢 Turtle attiva · mostra/nascondi':'🐢 Funzioni Turtle';
+ enhanceEditors(view);
+}
+function createTurtleRenderer(canvas){
+ if(!canvas)throw new Error('Canvas Turtle non trovato. Attiva prima il pannello grafico.');
+ const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Il browser non supporta il canvas 2D.');
+ const w=canvas.width,h=canvas.height;
+ const s={x:0,y:0,heading:0,down:true,pen:'#17243a',fill:'#315efb',width:2,bg:'#ffffff',fills:[],lineCount:0,circleCount:0};
+ const point=(x,y)=>[w/2+x,h/2-y];
+ function clear(){ctx.save();ctx.fillStyle=s.bg;ctx.fillRect(0,0,w,h);ctx.restore();}
+ function strokeSegment(x1,y1,x2,y2){if(!s.down)return;const a=point(x1,y1),b=point(x2,y2);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.strokeStyle=s.pen;ctx.lineWidth=s.width;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();s.lineCount++;}
+ function addFillPoint(){if(s.fills.length)s.fills[s.fills.length-1].points.push([s.x,s.y]);}
+ function forward(d){const r=s.heading*Math.PI/180,nx=s.x+Math.cos(r)*d,ny=s.y+Math.sin(r)*d;strokeSegment(s.x,s.y,nx,ny);s.x=nx;s.y=ny;addFillPoint();}
+ function goto(x,y){x=Number(x);y=Number(y);strokeSegment(s.x,s.y,x,y);s.x=x;s.y=y;addFillPoint();}
+ function circle(radius,extent=360){radius=Number(radius);extent=Number(extent);if(!radius||!extent)return;const sign=radius>=0?1:-1,rad=Math.abs(radius),theta=s.heading*Math.PI/180;const cx=s.x-Math.sin(theta)*radius,cy=s.y+Math.cos(theta)*radius;const start=Math.atan2(s.y-cy,s.x-cx),delta=sign*extent*Math.PI/180;const steps=Math.max(12,Math.ceil(Math.abs(extent)/4));let px=s.x,py=s.y;for(let i=1;i<=steps;i++){const a=start+delta*i/steps,nx=cx+rad*Math.cos(a),ny=cy+rad*Math.sin(a);strokeSegment(px,py,nx,ny);s.x=nx;s.y=ny;addFillPoint();px=nx;py=ny;}s.heading+=extent; s.circleCount++;}
+ function finish(){
+  // Marker triangolare della posizione finale.
+  const [cx,cy]=point(s.x,s.y),a=s.heading*Math.PI/180;
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(-a);ctx.beginPath();ctx.moveTo(11,0);ctx.lineTo(-8,-6);ctx.lineTo(-5,0);ctx.lineTo(-8,6);ctx.closePath();ctx.fillStyle='#1d4ed8';ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.fill();ctx.stroke();ctx.restore();
+ }
+ function setBg(color){s.bg=String(color);clear();}
+ function color(which,value){if(value===undefined||value===null)return s[which];s[which]=String(value);return s[which];}
+ function penSize(value){if(value===undefined||value===null)return s.width;s.width=Math.max(0.2,Number(value));return s.width;}
+ function beginFill(){s.fills.push({points:[[s.x,s.y]],color:s.fill});}
+ function endFill(){const f=s.fills.pop();if(!f||f.points.length<3)return;ctx.beginPath();const p=point(...f.points[0]);ctx.moveTo(p[0],p[1]);for(const v of f.points.slice(1)){const q=point(v[0],v[1]);ctx.lineTo(q[0],q[1]);}ctx.closePath();ctx.fillStyle=f.color;ctx.fill();}
+ function dot(size=8,colorValue){const p=point(s.x,s.y);ctx.beginPath();ctx.arc(p[0],p[1],Math.max(1,Number(size)/2),0,Math.PI*2);ctx.fillStyle=colorValue?String(colorValue):s.pen;ctx.fill();}
+ function write(text,font='12px sans-serif',align='left'){const p=point(s.x,s.y);ctx.save();ctx.fillStyle=s.pen;ctx.font=String(font);ctx.textAlign=String(align);ctx.fillText(String(text),p[0],p[1]);ctx.restore();}
+ function reset(){s.x=0;s.y=0;s.heading=0;s.down=true;s.pen='#17243a';s.fill='#315efb';s.width=2;s.lineCount=0;s.circleCount=0;s.fills=[];clear();}
+ clear();
+ return {
+  forward,backward:d=>forward(-Number(d)),right:a=>s.heading-=Number(a),left:a=>s.heading+=Number(a),goto,
+  setheading:a=>{s.heading=Number(a);},heading:()=>s.heading,position:()=>[s.x,s.y],xcor:()=>s.x,ycor:()=>s.y,
+  penup:()=>{s.down=false;},pendown:()=>{s.down=true;},isdown:()=>s.down,
+  pencolor:v=>color('pen',v),fillcolor:v=>color('fill',v),color:(p,f)=>{if(p!==undefined)color('pen',p);if(f!==undefined)color('fill',f);return [s.pen,s.fill];},
+  pensize:penSize,begin_fill:beginFill,end_fill:endFill,circle,dot,write,clear:()=>{s.fills=[];clear();},reset,
+  bgcolor:setBg,finish,stats:()=>({lines:s.lineCount,circles:s.circleCount,x:s.x,y:s.y,heading:s.heading})
+ };
+}
+const TURTLE_PYTHON_BRIDGE=`
+import sys, types
+_api = __pl_turtle_api
+
+def _xy(x, y=None):
+    if y is None:
+        x, y = x
+    return float(x), float(y)
+
+class Turtle:
+    def forward(self, distance): _api.forward(float(distance))
+    fd = forward
+    def backward(self, distance): _api.backward(float(distance))
+    bk = back = backward
+    def right(self, angle): _api.right(float(angle))
+    rt = right
+    def left(self, angle): _api.left(float(angle))
+    lt = left
+    def goto(self, x, y=None):
+        x, y = _xy(x, y); _api.goto(x, y)
+    setpos = setposition = goto
+    def home(self): _api.goto(0, 0); _api.setheading(0)
+    def setheading(self, angle): _api.setheading(float(angle))
+    seth = setheading
+    def heading(self): return float(_api.heading())
+    def position(self): return (float(_api.xcor()), float(_api.ycor()))
+    pos = position
+    def xcor(self): return float(_api.xcor())
+    def ycor(self): return float(_api.ycor())
+    def penup(self): _api.penup()
+    up = penup
+    def pendown(self): _api.pendown()
+    down = pendown
+    def isdown(self): return bool(_api.isdown())
+    def pensize(self, width=None):
+        if width is None: return float(_api.pensize())
+        return float(_api.pensize(float(width)))
+    width = pensize
+    def pencolor(self, color=None):
+        if color is None: return str(_api.pencolor())
+        return str(_api.pencolor(str(color)))
+    def fillcolor(self, color=None):
+        if color is None: return str(_api.fillcolor())
+        return str(_api.fillcolor(str(color)))
+    def color(self, *args):
+        if len(args) == 1: _api.color(str(args[0]), str(args[0]))
+        elif len(args) >= 2: _api.color(str(args[0]), str(args[1]))
+        return (str(_api.pencolor()), str(_api.fillcolor()))
+    def begin_fill(self): _api.begin_fill()
+    def end_fill(self): _api.end_fill()
+    def circle(self, radius, extent=360, steps=None): _api.circle(float(radius), float(extent))
+    def speed(self, value=None): return 5 if value is None else value
+    def dot(self, size=8, color=None):
+        if color is None: _api.dot(float(size))
+        else: _api.dot(float(size), str(color))
+    def write(self, text, move=False, align='left', font=('Arial', 12, 'normal')):
+        family, size, style = font
+        _api.write(str(text), f'{size}px {family}', str(align))
+    def hideturtle(self): pass
+    ht = hideturtle
+    def showturtle(self): pass
+    st = showturtle
+    def clear(self): _api.clear()
+    def reset(self): _api.reset()
+    def setundobuffer(self, size): pass
+    def towards(self, x, y=None):
+        x, y = _xy(x, y); px, py = self.position()
+        import math
+        return math.degrees(math.atan2(y-py, x-px))
+    def distance(self, x, y=None):
+        x, y = _xy(x, y); px, py = self.position()
+        return ((x-px)**2 + (y-py)**2)**0.5
+
+class Screen:
+    def bgcolor(self, color=None):
+        if color is not None: _api.bgcolor(str(color))
+    def title(self, text): pass
+    def setup(self, width=0.5, height=0.5): pass
+    def screensize(self, *args): return (720, 480)
+    def clear(self): _api.clear()
+    def reset(self): _api.reset()
+    def exitonclick(self): pass
+    def mainloop(self): pass
+    def bye(self): pass
+
+_default = Turtle()
+_screen = Screen()
+_mod = types.ModuleType('turtle')
+_mod.Turtle = Turtle
+_mod.Screen = lambda: _screen
+_mod.forward = _default.forward; _mod.fd = _default.fd
+_mod.backward = _default.backward; _mod.back = _default.back; _mod.bk = _default.bk
+_mod.right = _default.right; _mod.rt = _default.rt
+_mod.left = _default.left; _mod.lt = _default.lt
+_mod.goto = _default.goto; _mod.setpos = _default.setpos; _mod.setposition = _default.setposition
+_mod.home = _default.home; _mod.setheading = _default.setheading; _mod.seth = _default.seth
+_mod.penup = _default.penup; _mod.up = _default.up; _mod.pendown = _default.pendown; _mod.down = _default.down
+_mod.pensize = _default.pensize; _mod.width = _default.width
+_mod.pencolor = _default.pencolor; _mod.fillcolor = _default.fillcolor; _mod.color = _default.color
+_mod.begin_fill = _default.begin_fill; _mod.end_fill = _default.end_fill; _mod.circle = _default.circle
+_mod.speed = _default.speed; _mod.dot = _default.dot; _mod.write = _default.write
+_mod.hideturtle = _default.hideturtle; _mod.showturtle = _default.showturtle
+_mod.clear = _default.clear; _mod.reset = _default.reset
+_mod.done = lambda: None; _mod.mainloop = lambda: None; _mod.exitonclick = lambda: None
+_mod.title = _screen.title; _mod.setup = _screen.setup; _mod.screensize = _screen.screensize
+_mod.bgcolor = _screen.bgcolor; _mod.tracer = lambda *args: None; _mod.update = lambda: None
+sys.modules['turtle'] = _mod
+`;
 async function initPy(){if(py)return py;if(pyLoading)return pyLoading;runtimeStatus.textContent='Caricamento Pyodide…';pyLoading=(async()=>{try{if(typeof loadPyodide!=='function')throw new Error('Libreria Pyodide non caricata. Controlla la connessione Internet.');py=await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.27.7/full/'});runtimeStatus.textContent='● Python pronto';return py;}catch(e){runtimeStatus.textContent='Motore Python non disponibile';pyLoading=null;return null;}})();return pyLoading;}
-async function executePython(code,inputText=''){
+async function executePython(code,inputText='',options={}){
  const p=await initPy();if(!p)throw new Error('Pyodide non è disponibile. Verifica la connessione Internet e ricarica la pagina.');
  let captured='';p.setStdout({batched:s=>captured+=s});p.setStderr({batched:s=>captured+=s});
+ let turtleApi=null;
+ if(options.turtle){const canvas=document.getElementById(options.canvasId||'turtleCanvas');turtleApi=createTurtleRenderer(canvas);p.globals.set('__pl_turtle_api',turtleApi);p.runPython(TURTLE_PYTHON_BRIDGE);}
  p.globals.set('pl_input_text',String(inputText??''));
  const setup=[
   'import builtins',
@@ -364,10 +568,10 @@ async function executePython(code,inputText=''){
  ].join('\n');
  p.runPython(setup);
  try{await p.runPythonAsync(String(code));}
- finally{p.runPython('builtins.input = _pl_original_input');}
+ finally{p.runPython('builtins.input = _pl_original_input');if(turtleApi)turtleApi.finish();}
  return captured;
 }
-async function runPy(){const b=document.getElementById('run'),o=document.getElementById('out');clearEditorError(document.getElementById('code'));b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const output=await executePython(document.getElementById('code').value,document.getElementById('stdin').value);o.textContent=output||'Eseguito senza output.';}catch(e){o.className='output err';o.textContent=String(e);markEditorError('code',e);}finally{b.disabled=false;}}
+async function runPy(){const b=document.getElementById('run'),o=document.getElementById('out');clearEditorError(document.getElementById('code'));b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const output=await executePython(document.getElementById('code').value,document.getElementById('stdin').value,{turtle:freeTurtleMode,canvasId:'freeTurtleCanvas'});o.textContent=output||'Eseguito senza output.';}catch(e){o.className='output err';o.textContent=String(e?.message||e);markEditorError('code',e);}finally{b.disabled=false;}}
 async function runLabPreview(id){const e=exercises.find(x=>x.id===id),b=document.getElementById('labRunCheck'),o=document.getElementById('labOutput');clearEditorError(document.getElementById('labCode'));b.disabled=true;o.className='output';o.textContent='Esecuzione…';try{const out=await executePython(document.getElementById('labCode').value,document.getElementById('labStdin').value);o.textContent=out||'Eseguito senza output.';}catch(err){o.className='output err';o.textContent=String(err);markEditorError('labCode',err);}finally{b.disabled=false;}}
 async function checkLabExercise(id){
  const b=document.getElementById('labRunCheck'),o=document.getElementById('labOutput');
