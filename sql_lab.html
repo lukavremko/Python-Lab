@@ -96,6 +96,37 @@ button:focus-visible,input:focus,select:focus,textarea:focus{outline:1px solid #
 .catalog-exercise small{font-size:12px;color:#aebdcd}
 .catalog-back{margin-bottom:12px}
 
+
+/* Shared Python/SQL exercise IDE */
+:root{--blue:#6495ED;--soft:#263d5c}
+button{background:var(--blue)!important}
+button.secondary{background:#34465f!important}
+button.ghost{background:#202d40!important}
+.tag,.pill{background:#263d5c!important;color:#c9dcff!important}
+#app{display:grid;grid-template-columns:210px minmax(0,1fr);gap:10px}
+#app>.panel:first-child{grid-column:1/-1}
+#app>.bar{grid-column:1;display:flex;flex-direction:column;align-self:start;position:sticky;top:12px;padding:8px;background:#172130;border:1px solid #35445a;border-radius:9px}
+#app>.bar button{text-align:left;width:100%;margin:2px 0}
+#app>#view{grid-column:2;min-width:0;background:transparent;border:0;padding:0}
+.exercise-workspace{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.9fr);gap:12px;align-items:stretch}
+.exercise-main,.exercise-guide{min-width:0;background:#172130;border:1px solid #35445a;border-radius:9px;overflow:hidden}
+.exercise-main{padding:12px;display:flex;flex-direction:column;gap:10px}
+.exercise-topline,.editor-tabline,.guide-tabs{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.exercise-topline{font-size:12px;color:var(--muted)}
+.editor-tabline{justify-content:flex-start;background:#202c3e;border-bottom:2px solid var(--blue);padding:10px 12px;margin:-12px -12px 4px;font-weight:650}
+.editor-tabline span{margin-left:auto;color:var(--muted);font-size:12px;font-weight:400}
+.exercise-main .editor-shell textarea.editor{min-height:290px}
+.exercise-main .output{min-height:110px;margin-top:5px}
+.exercise-guide{padding:0 16px 16px;background:#1b2636}
+.guide-tabs{margin:0 -16px 16px;padding:12px 14px;border-bottom:1px solid #3b4b61;color:#b9c8dc;font-size:13px}
+.guide-tabs b{color:#fff;border-bottom:2px solid var(--blue);padding-bottom:12px;margin-bottom:-13px}
+.exercise-guide h2{font-size:20px;margin:12px 0}
+.exercise-guide h3{font-size:14px;margin:18px 0 8px}
+.exercise-guide p{line-height:1.6;white-space:pre-wrap}
+.guide-note{border:1px solid #3c4d64;border-radius:8px;padding:12px;margin-top:20px;background:#202d40;font-size:13px}
+.guide-note p{margin:6px 0 0;color:#b8c7d9}
+@media(max-width:950px){#app{grid-template-columns:1fr}#app>.bar{grid-column:1;position:static;flex-direction:row;overflow:auto}#app>.bar button{white-space:nowrap;width:auto}#app>#view{grid-column:1}.exercise-workspace{grid-template-columns:1fr}.exercise-guide{order:-1}.exercise-main .editor-shell textarea.editor{min-height:220px}}
+
 </style></head><body>
 <header><div class="wrap"><div class="brand">SQL Lab</div><div class="sub">Okolje SQL za razred · SQLite v brskalniku · sinhroniziran napredek</div></div></header>
 <main>
@@ -214,7 +245,7 @@ function openExercise(id){const e=exercises.find(x=>x.id===id);if(!e)return;tabs
  if(e.exercise_type==='predict'||e.type==='predict'){activity=`<div class="small">Preberi poizvedbo in izberi rezultat, za katerega meniš, da je pravilen.</div><pre class="predict-query">${esc(e.query||'')}</pre><div class="predict-options">${(e.options||[]).map((o,i)=>`<label class="predict-option"><input type="radio" name="predictChoice" value="${i}"><span><b>${esc(o.label||('Možnost '+(i+1)))}</b></span></label>`).join('')}</div>`;}
  else if(e.exercise_type==='reorder'||e.type==='reorder'){activeReorderFragments=[...(e.fragments||[])];activity=`<div class="small">S puščicami razvrsti dele kode v pravilni vrstni red.</div><div id="fragmentList" class="fragment-list"></div>`;}
  else {activity=`<label>Tvoja poizvedba SQL</label><textarea id="queryEditor" class="editor" spellcheck="false">${esc(e.starter||'-- Tukaj napiši zahtevano poizvedbo SQL\n')}</textarea>`;}
- $('view').innerHTML=`<div class="panel"><button class="ghost" onclick="showExercises()">← Vse vaje</button><div class="small" style="margin-top:12px">${esc(e.topic)} · ${exercises.indexOf(e)+1} od ${exercises.length}</div><h2>${esc(e.title)}</h2><p>${esc(e.prompt)}</p><div class="small">Na voljo so tabele: dijaki, predmeti, vpisi, izdelki, narocila.</div>${activity}<div class="row" style="margin-top:10px"><button id="runCheck" onclick="runAndCheck('${e.id}')">${e.exercise_type==='predict'||e.type==='predict'?'Preveri odgovor':'▶ Zaženi in preveri'}</button>${(e.exercise_type==='reorder'||e.type==='reorder')?'<button class="secondary" onclick="previewReorder()">Preizkusi poizvedbo</button>':(e.exercise_type==='predict'||e.type==='predict')?'':'<button class="secondary" onclick="previewQuery()">Samo zaženi</button>'}<button class="ghost" onclick="showHint('${e.id}')">Namig</button></div><label>Rezultat</label><div id="result" class="output">Rezultat poizvedbe bo prikazan tukaj.</div><div id="feedback"></div></div>`;
+ $('view').innerHTML=`<div class="exercise-workspace"><section class="exercise-main"><div class="exercise-topline"><button class="ghost" onclick="showExercises()">← Vse vaje</button><span>Vaja ${exercises.indexOf(e)+1} od ${exercises.length}</span></div><div class="editor-tabline">▤ ${esc(e.title)} <span>SQL · SQLite</span></div><div class="small">Na voljo so tabele: dijaki, predmeti, vpisi, izdelki, narocila.</div>${activity}<div class="row exercise-actions"><button id="runCheck" onclick="runAndCheck('${e.id}')">${e.exercise_type==='predict'||e.type==='predict'?'Preveri odgovor':'▶ Zaženi in preveri'}</button>${(e.exercise_type==='reorder'||e.type==='reorder')?'<button class="secondary" onclick="previewReorder()">Preizkusi poizvedbo</button>':(e.exercise_type==='predict'||e.type==='predict')?'':'<button class="secondary" onclick="previewQuery()">Samo zaženi</button>'}<button class="ghost" onclick="showHint('${e.id}')">Namig</button></div><label>Terminal · rezultat</label><div id="result" class="output">Rezultat poizvedbe bo prikazan tukaj.</div><div id="feedback"></div></section><aside class="exercise-guide"><div class="guide-tabs"><b>▣ Vaja</b><span>♧ Namig</span><span>‹/› Rešitev</span></div><div class="tag">${esc(e.topic)} · SQL</div><h2>${esc(e.title)}</h2><h3>Navodila</h3><p>${esc(e.prompt)}</p><div class="guide-note"><b>Namig za delo</b><p>Vnesi poizvedbo v urejevalnik, zaženi jo in preveri rezultat v terminalu spodaj.</p></div></aside></div>`;
  if(e.exercise_type==='reorder'||e.type==='reorder')renderReorderFragments();else if(!(e.exercise_type==='predict'||e.type==='predict'))enhanceSqlEditors();}
 function renderReorderFragments(){const el=$('fragmentList');if(!el)return;el.innerHTML=activeReorderFragments.map((f,i)=>`<div class="fragment-row"><span class="fragment-number">${i+1}</span><code>${esc(f)}</code><span class="fragment-controls"><button type="button" class="secondary" ${i===0?'disabled':''} onclick="moveFragment(${i},-1)">↑</button><button type="button" class="secondary" ${i===activeReorderFragments.length-1?'disabled':''} onclick="moveFragment(${i},1)">↓</button></span></div>`).join('');}
 function moveFragment(i,delta){const j=i+delta;if(j<0||j>=activeReorderFragments.length)return;[activeReorderFragments[i],activeReorderFragments[j]]=[activeReorderFragments[j],activeReorderFragments[i]];renderReorderFragments();}

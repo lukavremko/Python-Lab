@@ -110,6 +110,35 @@ button:focus-visible,input:focus,select:focus,textarea:focus{outline:1px solid #
 .catalog-exercise small{font-size:12px;color:#aebdcd}
 .catalog-back{margin-bottom:12px}
 
+
+/* Exercise workspace: editor + output below, instructions on the right */
+:root{--blue:#6495ED;--soft:#263d5c}
+button{background:var(--blue)!important}
+button.secondary{background:#34465f!important}
+button.ghost{background:#202d40!important}
+.tag,.pill{background:#263d5c!important;color:#c9dcff!important}
+.vsc-statusbar{background:#365f9d!important}
+#app>.layout{grid-template-columns:245px minmax(0,1fr)}
+.exercise-workspace{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.9fr);gap:12px;align-items:stretch}
+.exercise-main,.exercise-guide{min-width:0;background:#172130;border:1px solid #35445a;border-radius:9px;overflow:hidden}
+.exercise-main{padding:12px;display:flex;flex-direction:column;gap:10px}
+.exercise-topline,.editor-tabline,.guide-tabs{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.exercise-topline{font-size:12px;color:var(--muted)}
+.editor-tabline{justify-content:flex-start;background:#202c3e;border-bottom:2px solid var(--blue);padding:10px 12px;margin:-12px -12px 4px;font-weight:650}
+.editor-tabline span{margin-left:auto;color:var(--muted);font-size:12px;font-weight:400}
+.exercise-main .editor-shell textarea.editor{min-height:290px}
+.exercise-main .output{min-height:110px;margin-top:5px}
+.exercise-guide{padding:0 16px 16px;background:#1b2636}
+.guide-tabs{margin:0 -16px 16px;padding:12px 14px;border-bottom:1px solid #3b4b61;color:#b9c8dc;font-size:13px}
+.guide-tabs b{color:#fff;border-bottom:2px solid var(--blue);padding-bottom:12px;margin-bottom:-13px}
+.exercise-guide h2{font-size:20px;margin:12px 0}
+.exercise-guide h3{font-size:14px;margin:18px 0 8px}
+.exercise-guide p{line-height:1.6;white-space:pre-wrap}
+.guide-note{border:1px solid #3c4d64;border-radius:8px;padding:12px;margin-top:20px;background:#202d40;font-size:13px}
+.guide-note p{margin:6px 0 0;color:#b8c7d9}
+.exercise-actions{margin-top:4px}
+@media(max-width:950px){.exercise-workspace{grid-template-columns:1fr}.exercise-guide{order:-1}.exercise-main .editor-shell textarea.editor{min-height:220px}}
+
 </style></head><body>
 <header><div class="brand">🐍 Python <span>Lab</span> <small style="font-size:12px;font-weight:500;color:#d6def0">3. faza</small></div><div class="status" id="runtimeStatus">Pythonovo okolje: čakanje</div></header>
 <main>
@@ -400,7 +429,7 @@ function openExercise(id){
  if(e.type==='lab')body=`<label>Koda Python</label><textarea id="labCode" class="editor" spellcheck="false">${esc(e.starter||'')}</textarea><label>Vrednosti za input() (ena na vrstico, če so potrebne)</label><textarea id="labStdin" rows="2" placeholder="Neobvezno">${esc(e.stdin||'')}</textarea><div class="row" style="margin-top:10px"><button id="labRunCheck" onclick="checkLabExercise('${e.id}')">▶ Zaženi in preveri</button><button class="secondary" onclick="runLabPreview('${e.id}')">Samo zaženi</button></div><label>Izpis / napake</label><div id="labOutput" class="output">Izpis bo prikazan tukaj.</div><p class="small muted">Za dokončanje vaje se mora izpis ujemati s pričakovanim rezultatom. Končni presledki se ne upoštevajo.</p>`;
  const verify=e.type==='lab'?'':`<button id="verifyExercise">Preveri</button>`;
  const labButton=e.type==='write'?`<button class="ghost" id="openInLab">Odpri v laboratoriju</button>`:'';
- view.innerHTML=`<button class="ghost" id="backBank">← Nazaj na zbirko vaj</button><div class="small muted" style="margin-top:12px">Vaja ${exercises.findIndex(x=>x.id===id)+1} od ${exercises.length}</div><div class="tag" style="margin-top:7px">${esc(e.topic)} · ${typeLabel(e.type)}</div><h2 style="margin-top:9px">${esc(e.title)}</h2><p>${esc(e.prompt)}</p>${body}<div class="row" style="margin-top:14px">${verify}<button class="secondary" id="hintExercise">Namig</button>${labButton}</div><div id="feedback">${done.includes(id)?`<div class="feedback ok">Ta vaja je že označena kot opravljena.</div>${completionHtml(id)}`:''}</div>`;
+ view.innerHTML=`<div class="exercise-workspace"><section class="exercise-main"><div class="exercise-topline"><button class="ghost" id="backBank">← Nazaj na zbirko vaj</button><span>Vaja ${exercises.findIndex(x=>x.id===id)+1} od ${exercises.length}</span></div><div class="editor-tabline">🐍 ${esc(e.title)} <span>${typeLabel(e.type)}</span></div>${body}<div class="row exercise-actions">${verify}<button class="secondary" id="hintExercise">Namig</button>${labButton}</div><div id="feedback">${done.includes(id)?`<div class="feedback ok">Ta vaja je že označena kot opravljena.</div>${completionHtml(id)}`:''}</div></section><aside class="exercise-guide"><div class="guide-tabs"><b>▣ Vaja</b><span>♧ Namig</span><span>‹/› Rešitev</span></div><div class="tag">${esc(e.topic)} · ${typeLabel(e.type)}</div><h2>${esc(e.title)}</h2><h3>Navodila</h3><p>${esc(e.prompt)}</p><div class="guide-note"><b>Kako začeti?</b><p>Preberi navodila, napiši rešitev v urejevalnik in zaženi program. Rezultat se prikaže v spodnjem izpisu.</p></div></aside></div>`;
  enhanceEditors(view);
  document.getElementById('backBank').onclick=showBank;
  if(e.type==='fill'){Array.from({length:(String(e.code||'').match(/\[\d+\]/g)||[]).length},(_,i)=>document.getElementById('a'+i)).filter(Boolean).forEach(input=>input.addEventListener('input',()=>updateFillPreview(e)));updateFillPreview(e);}
