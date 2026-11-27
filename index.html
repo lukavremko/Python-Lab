@@ -15,7 +15,7 @@
   --ink:#e5ecf7;
   --muted:#9fb0c7;
   --line:#334155;
-  --blue:#5c8df6;
+  --blue:#6495ED;
   --blue-soft:#243a5e;
   --green:#2dbb82;
   --green-soft:#15382e;
@@ -689,6 +689,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin:20px 0 36px}
         <h3>Meni</h3>
         <button class="nav active" id="nBank" onclick="showBank()">📚 Zbirka vaj</button>
         <button class="nav" id="nLab" onclick="showLab()">⌨️ Prosto okolje</button>
+        <button class="nav" id="nCheatsheet" onclick="showCheatsheet()">📖 Cheatsheet</button>
         <button class="nav" id="nMixed" onclick="showMixedLab()">🧩 Mešani izzivi</button>
         <button class="nav" id="nTurtle" onclick="showTurtleExercises()">🐢 Turtle · Risanje</button>
         <div class="sidebar-section-label">Samostojno delo</div>
@@ -1053,7 +1054,7 @@ function openTeacherFromLogin(){
   showTeacher();
 }
 function nav(which){
-  ['Bank','Lab','Mixed','Turtle','Tasks','Teacher'].forEach(x => {
+  ['Bank','Lab','Cheatsheet','Mixed','Turtle','Tasks','Teacher'].forEach(x => {
     const el = $('n' + x);
     if(el) el.classList.toggle('active', x.toLowerCase() === which);
   });
@@ -1689,6 +1690,60 @@ function wrongAnswer(id, count, actualOutput = null){
     ${diffHtml}`;
 }
 
+
+function previewTeacherExercise(id){
+  if(activeRole !== 'teacher') return;
+  const e = exercises.find(x => x.id === id);
+  if(!e) return;
+  const sameTopic = exercises.filter(x => x.topic === e.topic && !String(x.id || '').toLowerCase().startsWith('sql'));
+  activeNavContext = {mode:'bank', topic:e.topic, ids:sameTopic.map(x => x.id)};
+  openExercise(id);
+}
+function normalizedPyOutput(value){
+  return String(value ?? '').replace(/\r\n/g,'\n').trim();
+}
+async function teacherCheckPythonExercise(e, submission){
+  const expectedAnswers = Array.isArray(e.answers) ? e.answers : [];
+  const norm = v => String(v ?? '').trim();
+  if(e.type === 'fill'){
+    const actual = submission.answers || [];
+    const ok = actual.length === expectedAnswers.length && actual.every((v,i) => norm(expectedAnswers[i]) === norm(v));
+    return {correct:ok, detail:ok ? '' : 'Preveri dopolnjena mesta in natančnost zapisa.'};
+  }
+  if(e.type === 'quiz' || e.type === 'predict'){
+    const ok = Number(submission.choice) === Number(e.correct);
+    return {correct:ok, detail:ok ? '' : 'Izbrani odgovor ni pravilen.'};
+  }
+  if(e.type === 'reorder'){
+    const actual = submission.order || [], expected = e.correctOrder || [];
+    const ok = expected.length === actual.length && expected.every((v,i)=>Number(v)===Number(actual[i]));
+    return {correct:ok, detail:ok ? '' : 'Vrstice še niso v pravilnem zaporedju.'};
+  }
+  if(e.type === 'debug'){
+    const answer = norm(submission.answer).replace(/\s+/g,' ');
+    const candidates = expectedAnswers.length ? expectedAnswers : (e.solution ? [e.solution] : []);
+    const ok = candidates.some(a => norm(a).replace(/\s+/g,' ') === answer);
+    return {correct:ok, detail:ok ? '' : 'Preveri popravljeno vrstico in primerjaj jo z namigom.'};
+  }
+  if(e.type === 'write' || e.type === 'lab'){
+    const code = String(submission.code || '');
+    const stdin = e.type === 'write' ? ($('writeStdin')?.value || e.stdin || '') : ($('labStdin')?.value || e.stdin || '');
+    const output = await executePython(code, stdin);
+    const outputEl = $(e.type === 'write' ? 'writeOutput' : 'labOutput');
+    if(outputEl){ outputEl.className='output'; outputEl.textContent=output || 'Program ni ustvaril izpisa.'; }
+    const expected = e.expectedOutput;
+    if(typeof expected === 'string' && expected.length){
+      const ok = normalizedPyOutput(output) === normalizedPyOutput(expected);
+      return {correct:ok, detail:ok ? '' : 'Program se je izvedel, vendar se izpis razlikuje od pričakovanega.', output};
+    }
+    const required = Array.isArray(e.required) ? e.required : [];
+    if(!required.length) return {correct:false, detail:'Program se je izvedel, vendar vaja nima nastavljenega pričakovanega izpisa ali pravil, zato pravilnosti ni mogoče samodejno potrditi.', output};
+    const missing = required.filter(token => !code.includes(String(token)));
+    return {correct:missing.length===0, detail:missing.length ? 'Manjkajo zahtevani elementi: '+missing.join(', ') : 'Program se je izvedel in vsebuje zahtevane elemente. Preverjanje je osnovno, ker natančen pričakovani izpis ni določen.', output};
+  }
+  return {correct:false, detail:'Za to vrsto vaje ni na voljo lokalnega preverjanja.'};
+}
+
 async function submitExercise(id, submission, actualOutput = null){
   if(activeRole === 'teacher'){
     const fb = $('feedback') || $('turtleFeedback');
@@ -1744,9 +1799,16 @@ async function checkExercise(id){
   const button = $('verifyExercise');
   if(button) button.disabled = true;
   try{
+    if(activeRole === 'teacher'){
+      const result = await teacherCheckPythonExercise(e, submission);
+      if(fb) fb.innerHTML = result.correct
+        ? '<div class="feedback ok">✓ Pravilen odgovor! Učiteljski način: poskus ni shranjen.</div>'
+        : `<div class="feedback bad">${esc(result.detail || 'Odgovor še ni pravilen.')} <span class="small">Učiteljski način: poskus ni shranjen.</span></div>`;
+      return;
+    }
     await submitExercise(id, submission);
   }catch(err){
-    if(fb) fb.innerHTML = `<div class="feedback bad">Odgovora ni bilo mogoče preveriti v spletu: ${esc(err.message || String(err))}</div>`;
+    if(fb) fb.innerHTML = `<div class="feedback bad">Odgovora ni bilo mogoče preveriti: ${esc(err.message || String(err))}</div>`;
   }finally{
     if(button) button.disabled = false;
   }
@@ -2101,6 +2163,88 @@ function showLab(prefill=''){
   enhanceEditors($('view'));
   if(/(^|\n)\s*(import turtle|from turtle import)/m.test(initial)) enableFreeTurtle(false);
 }
+
+const PY_CHEATSHEET = [
+  {group:'Izpis in vnos',items:[
+    ['print()','Izpiše besedilo ali vrednost spremenljivke.','print("Živjo!")'],
+    ['input()','Pridobi vnos uporabnika. Rezultat je vedno besedilo (str).','ime = input("Kako ti je ime? ")'],
+  ]},
+  {group:'Pretvorba podatkovnih tipov',items:[
+    ['int()','Pretvori vrednost v celo število.','starost = int(input("Starost: "))'],
+    ['float()','Pretvori vrednost v decimalno število.','cena = float(input("Cena: "))'],
+    ['str()','Pretvori vrednost v besedilo.','opis = str(25)'],
+    ['bool()','Pretvori vrednost v True ali False.','aktiven = bool(1)'],
+  ]},
+  {group:'Besedilo in dolžina',items:[
+    ['len()','Vrne število znakov v besedilu ali število elementov v zbirki.','print(len("Python"))  # 6'],
+    ['.upper()','Vrne besedilo z velikimi črkami.','ime = "ana".upper()  # ANA'],
+    ['.lower()','Vrne besedilo z malimi črkami.','ime = "ANA".lower()  # ana'],
+  ]},
+  {group:'Pogoji',items:[
+    ['if','Izvede blok kode, če je pogoj resničen.','if starost >= 18:\n    print("Polnoleten/-a")'],
+    ['elif','Preveri dodaten pogoj, če prejšnji pogoji niso bili izpolnjeni.','if tocke >= 90:\n    print("Odlično")\nelif tocke >= 50:\n    print("Opravljeno")'],
+    ['else','Izvede se, če noben prejšnji pogoj ni bil resničen.','if x > 0:\n    print("Pozitivno")\nelse:\n    print("Ni pozitivno")'],
+  ]},
+  {group:'Zanke',items:[
+    ['while','Ponavlja blok kode, dokler je pogoj resničen. Poskrbi, da se pogoj lahko spremeni.','stevec = 0\nwhile stevec < 3:\n    print(stevec)\n    stevec += 1'],
+    ['for','Ponavlja blok kode za vsak element v zaporedju.','for ime in ["Ana", "Luka"]:\n    print(ime)'],
+  ]},
+  {group:'Operatorji in oklepaji',items:[
+    ['%','Ostanek pri celoštevilskem deljenju. Uporabno npr. za preverjanje sodosti.','print(10 % 3)  # 1\nif stevilo % 2 == 0:\n    print("Sodo")'],
+    ['/','Navadno deljenje. Rezultat je praviloma tipa float.','print(7 / 2)  # 3.5'],
+    ['[ ]','Oglati oklepaji: ustvarjanje seznamov in dostop do elementa po indeksu. Indeksi se začnejo z 0.','imena = ["Ana", "Luka"]\nprint(imena[0])  # Ana'],
+    ['{ }','Zaviti oklepaji: slovar ključ-vrednost ali množica.','dijak = {"ime": "Ana", "starost": 16}\nprint(dijak["ime"])'],
+  ]}
+];
+function showCheatsheet(){
+  nav('cheatsheet');
+  setTitleBar('Python · Cheatsheet');
+  $('view').innerHTML = `
+    <span class="tag">Hiter pregled · Python</span>
+    <h2 style="margin-top:8px">Cheatsheet – osnovne funkcije in ukazi</h2>
+    <p class="muted small">Kratek priročnik z razlago in primeri. Primer lahko označiš in kopiraš v urejevalnik.</p>
+    <input id="cheatSearch" type="search" placeholder="Išči funkcijo, ukaz ali pojem …" oninput="filterCheatsheet()" style="margin:8px 0 14px">
+    <div id="cheatGroups">${PY_CHEATSHEET.map((g,gi)=>`
+      <section class="cardtask cheat-group" data-cheat-group="${gi}" style="margin-bottom:12px">
+        <h3>${esc(g.group)}</h3>
+        <div class="stack">${g.items.map(([name,desc,example])=>`
+          <article class="cardtask cheat-item" data-cheat-text="${esc((name+' '+desc+' '+example).toLowerCase())}" style="background:#172233">
+            <div class="row between"><b><code class="inline-code">${esc(name)}</code></b><button class="ghost sm" type="button" onclick="copyCheatExample(this)">Kopiraj primer</button></div>
+            <p class="small" style="margin:7px 0">${esc(desc)}</p>
+            <pre class="code cheat-example" style="margin:0;white-space:pre-wrap">${esc(example)}</pre>
+          </article>`).join('')}</div>
+      </section>`).join('')}
+    </div>
+    <section class="cardtask">
+      <h3>Kako napisati oklepaje na tipkovnici?</h3>
+      <p class="small muted">Razporeditev tipk je odvisna od jezika tipkovnice in operacijskega sistema. Spodnje znake lahko kopiraš neposredno.</p>
+      <div class="row">
+        <button class="secondary" type="button" onclick="copyCheatText('[]')">Kopiraj [ ]</button>
+        <button class="secondary" type="button" onclick="copyCheatText('{}')">Kopiraj { }</button>
+        <button class="secondary" type="button" onclick="copyCheatText('()')">Kopiraj ( )</button>
+      </div>
+      <p class="small muted" style="margin-top:8px">Na Macu in Windowsu se kombinacije razlikujejo glede na izbrano razporeditev. Če jih ne najdeš, uporabi zaslonski pregledovalnik tipkovnice in poišči znaka [ ] oziroma { }.</p>
+    </section>`;
+}
+function filterCheatsheet(){
+  const q = ($('cheatSearch')?.value || '').trim().toLowerCase();
+  document.querySelectorAll('.cheat-item').forEach(el=>el.classList.toggle('hidden', !el.dataset.cheatText.includes(q)));
+  document.querySelectorAll('.cheat-group').forEach(group=>group.classList.toggle('hidden', !group.querySelector('.cheat-item:not(.hidden)')));
+}
+function copyCheatExample(button){
+  const text = button.closest('.cheat-item')?.querySelector('.cheat-example')?.textContent || '';
+  copyCheatText(text);
+  const old = button.textContent; button.textContent = 'Kopirano ✓';
+  setTimeout(()=>button.textContent=old,1200);
+}
+function copyCheatText(value){
+  if(navigator.clipboard?.writeText) navigator.clipboard.writeText(value).catch(()=>{});
+  else {
+    const ta=document.createElement('textarea'); ta.value=value; document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy')}catch(_){} ta.remove();
+  }
+}
+
 function enableFreeTurtle(insertStarter = true){
   const panel = $('freeTurtlePanel'), button = $('freeTurtleButton'), code = $('code');
   if(!panel || !code) return;
@@ -2379,9 +2523,21 @@ async function checkLabExercise(id){
   clearEditorError($('labCode'));
   b.disabled = true; o.className = 'output'; o.textContent = 'Izvajanje in preverjanje …';
   try{
-    const out = await executePython($('labCode').value, $('labStdin')?.value || '');
+    const code = $('labCode').value;
+    const out = await executePython(code, $('labStdin')?.value || '');
     o.textContent = out || 'Program ni ustvaril izpisa.';
-    await submitExercise(id, {output: out}, out);
+    if(activeRole === 'teacher'){
+      const e = exercises.find(x => x.id === id) || {};
+      const expected = e.expectedOutput;
+      const hasExpected = typeof expected === 'string' && expected.length;
+      const required = Array.isArray(e.required) ? e.required : [];
+      const correct = hasExpected ? normalizedPyOutput(out) === normalizedPyOutput(expected) : (required.length > 0 && required.every(token => code.includes(String(token))));
+      if(fb) fb.innerHTML = correct
+        ? `<div class="feedback ok">✓ Program se je izvedel in ustreza preverjanju.${hasExpected ? '' : ' Preverjanje osnovno: zahtevani elementi so prisotni.'} Učiteljski način: poskus ni shranjen.</div>`
+        : `<div class="feedback ${!hasExpected && !required.length ? 'hint' : 'bad'}">${!hasExpected && !required.length ? 'Program se je izvedel, vendar ni določen pričakovani izpis ali seznam zahtevanih elementov; pravilnosti ni mogoče samodejno potrditi.' : 'Program se je izvedel, vendar ne ustreza pričakovanemu rezultatu.'} Učiteljski način: poskus ni shranjen.</div>`;
+    } else {
+      await submitExercise(id, {output: out}, out);
+    }
   }catch(err){
     o.className = 'output err'; o.textContent = String(err);
     markEditorError('labCode', err);
@@ -2574,6 +2730,7 @@ async function loadTeacherDashboard(){
           <div class="row between cardtask">
             <div><b>${esc(e.title)}</b><div class="small muted">${esc(exerciseLevelLabel(e))} · ${esc(e.topic)} · ${typeLabel(e.type)}</div></div>
             <div class="row">
+              <button class="ghost sm" onclick="previewTeacherExercise('${esc(e.id)}')">▶ Preizkusi</button>
               <button class="secondary sm" onclick="editExercise('${esc(e.id)}')">Uredi</button>
               <button class="danger sm" onclick="deleteExercise('${esc(e.id)}')">Izbriši</button>
             </div>
