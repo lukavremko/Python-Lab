@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SQL Lab · Učno okolje SQL</title>
 <style>
-:root{--bg:#f4f6fb;--panel:#fff;--ink:#172033;--muted:#667085;--line:#dfe4ee;--blue:#3157d5;--green:#16845b;--red:#bd3434;--soft:#eef2ff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}header{background:#17264b;color:white;padding:17px 20px}header .wrap,main{max-width:1100px;margin:auto}.brand{font-size:21px;font-weight:750}.sub{color:#d5ddf7;font-size:13px}.wrap{padding:0 18px}main{padding:22px 18px}.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 3px 14px #1c2a4510}.hidden{display:none!important}h1,h2,h3{line-height:1.2}h2{font-size:22px;margin:6px 0 10px}h3{font-size:17px;margin:0 0 10px}.muted,.small{color:var(--muted)}.small{font-size:12px}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}button{background:var(--blue);border:0;border-radius:9px;padding:10px 14px;color:white;font-weight:650;cursor:pointer}button.secondary{background:#e9edfb;color:#263d91}button.ghost{background:transparent;color:var(--blue);border:1px solid var(--line)}button:disabled{opacity:.55;cursor:wait}input,select,textarea{width:100%;padding:10px 11px;border:1px solid #cfd6e3;border-radius:8px;background:#fff;color:var(--ink);font:inherit}label{display:block;font-weight:650;font-size:13px;margin:11px 0 5px}.editor{min-height:190px;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:#101827;color:#e8edf7;tab-size:2}.output{background:#101827;color:#dce7f8;border-radius:9px;padding:12px;min-height:65px;overflow:auto;white-space:pre-wrap;font:13px/1.5 ui-monospace,monospace}.output.err{color:#ffb9b9}.tag{display:inline-block;background:var(--soft);color:#314da5;padding:4px 9px;border-radius:99px;font-size:12px;font-weight:650}.progress{height:8px;background:#e9edf5;border-radius:99px;overflow:hidden}.progress>div{height:100%;background:var(--green);width:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.exercise{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center;justify-content:space-between}.exercise button{white-space:nowrap}.feedback{padding:11px;border-radius:9px;margin-top:12px}.ok{background:#e8f7ef;color:#126342}.bad{background:#fff0ef;color:#9e2c2c}.hint{background:#fff7df;color:#74520a}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}th{background:#f7f8fb}.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}.bar button.active{background:#17264b}.sql-result{overflow:auto;margin-top:10px}.footer{font-size:12px;color:var(--muted);text-align:center;padding:25px}@povprecje(max-width:600px){main{padding:14px 10px}.panel,.card{padding:14px}.exercise{align-items:flex-start}.editor{min-height:160px}}
+:root{--bg:#f4f6fb;--panel:#fff;--ink:#172033;--muted:#667085;--line:#dfe4ee;--blue:#3157d5;--green:#16845b;--red:#bd3434;--soft:#eef2ff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}header{background:#17264b;color:white;padding:17px 20px}header .wrap,main{max-width:1100px;margin:auto}.brand{font-size:21px;font-weight:750}.sub{color:#d5ddf7;font-size:13px}.wrap{padding:0 18px}main{padding:22px 18px}.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 3px 14px #1c2a4510}.hidden{display:none!important}h1,h2,h3{line-height:1.2}h2{font-size:22px;margin:6px 0 10px}h3{font-size:17px;margin:0 0 10px}.muted,.small{color:var(--muted)}.small{font-size:12px}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}button{background:var(--blue);border:0;border-radius:9px;padding:10px 14px;color:white;font-weight:650;cursor:pointer}button.secondary{background:#e9edfb;color:#263d91}button.ghost{background:transparent;color:var(--blue);border:1px solid var(--line)}button:disabled{opacity:.55;cursor:wait}input,select,textarea{width:100%;padding:10px 11px;border:1px solid #cfd6e3;border-radius:8px;background:#fff;color:var(--ink);font:inherit}label{display:block;font-weight:650;font-size:13px;margin:11px 0 5px}.editor{min-height:190px;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:#101827;color:#e8edf7;tab-size:2}.output{background:#101827;color:#dce7f8;border-radius:9px;padding:12px;min-height:65px;overflow:auto;white-space:pre-wrap;font:13px/1.5 ui-monospace,monospace}.output.err{color:#ffb9b9}.tag{display:inline-block;background:var(--soft);color:#314da5;padding:4px 9px;border-radius:99px;font-size:12px;font-weight:650}.progress{height:8px;background:#e9edf5;border-radius:99px;overflow:hidden}.progress>div{height:100%;background:var(--green);width:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.exercise{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center;justify-content:space-between}.exercise button{white-space:nowrap}.feedback{padding:11px;border-radius:9px;margin-top:12px}.ok{background:#e8f7ef;color:#126342}.bad{background:#fff0ef;color:#9e2c2c}.hint{background:#fff7df;color:#74520a}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}th{background:#f7f8fb}.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}.bar button.active{background:#17264b}.sql-result{overflow:auto;margin-top:10px}.footer{font-size:12px;color:var(--muted);text-align:center;padding:25px}@media(max-width:600px){main{padding:14px 10px}.panel,.card{padding:14px}.exercise{align-items:flex-start}.editor{min-height:160px}}
 
 .editor-shell{display:grid;grid-template-columns:44px minmax(0,1fr);border:1px solid #263854;border-radius:10px;overflow:hidden;background:#101827;margin:8px 0 12px;min-width:0}
 .editor-toolbar{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;padding:6px 9px;background:#1b2941;color:#cbd5e1;font-size:12px}
@@ -9,18 +9,67 @@
 .editor-gutter{grid-column:1;grid-row:2;background:#0b1423;color:#77849a;text-align:right;padding:10px 7px;font:14px/1.5 ui-monospace,monospace;white-space:pre;overflow:hidden;user-select:none}.editor-gutter span{display:block;height:1.5em}.editor-gutter span.error{background:#8d2633;color:white;border-radius:3px}
 .editor-shell textarea.editor{grid-column:2;grid-row:2;width:100%;min-width:0;min-height:190px;margin:0;border:0;border-radius:0;padding:10px;background:#101827;color:#e8edf7;font:14px/1.5 ui-monospace,monospace;white-space:pre;overflow:auto;resize:vertical;outline:none}
 .editor-shell.has-error{border-color:#bd3434}
-@povprecje(max-width:600px){.editor-shell{grid-template-columns:36px minmax(0,1fr)}.editor-shell textarea.editor{font-size:12px}}
+@media(max-width:600px){.editor-shell{grid-template-columns:36px minmax(0,1fr)}.editor-shell textarea.editor{font-size:12px}}
 .predict-query{white-space:pre-wrap;background:#101827;color:#e8edf7;border-radius:9px;padding:12px;overflow:auto}.predict-options{display:grid;gap:9px;margin:12px 0}.predict-option{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:9px;padding:11px;font-weight:400;cursor:pointer}.predict-option input{width:auto;margin-top:4px}.predict-option span{min-width:0;white-space:pre-wrap;font:12px/1.45 ui-monospace,monospace}.fragment-list{display:grid;gap:8px;margin:12px 0}.fragment-row{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:9px}.fragment-row code{flex:1;white-space:pre-wrap;overflow-wrap:anywhere}.fragment-number{font-weight:700;color:var(--muted);min-width:20px}.fragment-controls{display:flex;gap:5px}.fragment-controls button{padding:5px 9px}
 .exercise-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:14px 0}
 .exercise-filters label{margin:0 0 5px;font-size:12px;color:var(--muted)}
 .filter-summary{font-size:12px;color:var(--muted);margin:8px 0 12px}
+
+
+/* Python & SQL Lab — VS Code-inspired workspace v1 */
+:root{color-scheme:dark;--bg:#0f141d;--panel:#1a2230;--ink:#e3eaf5;--muted:#a3afc1;--line:#354155;--blue:#287be8;--green:#2dbb82;--red:#ef6672;--navy:#151c29;--soft:#263a58}
+body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif}
+header{background:#171f2d;border-bottom:1px solid #354155;padding:11px 22px;max-width:none}
+header .brand{letter-spacing:.2px}
+main{max-width:none;width:100%;margin:0;padding:12px}
+.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:9px;box-shadow:none;color:var(--ink)}
+.cardtask,.exercise,.option,.reorder-item,.fragment-row,.predict-option{background:#202b3b;border-color:var(--line)}
+button{background:var(--blue);color:white;border-radius:6px}button.secondary{background:#2c3b53;color:#e2eaff}button.ghost{background:#202b3b;color:#dce6f8;border-color:#43536a}
+button:hover:not(:disabled){filter:brightness(1.15)}
+input,select,textarea{background:#101925;color:#e6edfa;border:1px solid #40506a;border-radius:6px}
+input:focus,select:focus,textarea:focus{outline:1px solid #4b93ff;outline-offset:0}
+.muted,.small{color:var(--muted)}.tag,.pill{background:#263a58;color:#a9caff}.pill.sel{background:#214875;color:#e7f0ff}
+.progress{background:#354155}.progress div,.progress>div{background:#28b881}
+.output,.code,.predict-query,.editor{background:#0e1622;color:#e5edfa;border:1px solid #344359}
+.feedback.ok,.ok{background:#173d33;color:#9aefc5}.feedback.bad,.bad{background:#4b2730;color:#ffd0d4}.feedback.hint,.hint{background:#473a22;color:#ffe1a1}
+.editor-shell{border-color:#344359;background:#0e1622;border-radius:5px;box-shadow:0 0 0 1px #111a27}
+.editor-toolbar{background:#202c3e;border-bottom:1px solid #35465d}.editor-gutter{background:#111a27}
+.editor-shell textarea.editor{background:#0e1622;color:#e5edfa;min-height:310px}
+.editor-help{background:#202c3e}
+#view{min-width:0}#view h2{font-weight:650}#view .editor-shell{margin-top:12px}
+#login{background:#1a2433!important;box-shadow:0 20px 70px #0005}
+#login input{background:#101925}
+#view .output{min-height:105px;white-space:pre-wrap}
+.vsc-statusbar{position:fixed;bottom:0;left:0;right:0;z-index:80;background:#1766bd;color:#fff;display:flex;justify-content:space-between;gap:15px;padding:4px 16px;font-size:11px;pointer-events:none}
+body{padding-bottom:26px}
+.vsc-titlebar{display:flex;align-items:center;gap:10px;font-size:12px;color:#9eb4d2;padding:9px 13px;background:#182232;border-bottom:1px solid #344359;letter-spacing:.1px}
+.vsc-dot{width:9px;height:9px;border-radius:50%;background:#4b9bff;display:inline-block}
+.vsc-view-wrap{min-width:0}
+.vsc-view-wrap>.panel{border-top-left-radius:0;border-top-right-radius:0}
+.vsc-view-wrap>#view.panel{border-top-left-radius:0;border-top-right-radius:0}
+#view .exercise:hover,#view .cardtask:hover{border-color:#5087d0;background:#25344a}
+@media(max-width:800px){main{padding:8px}.vsc-statusbar{font-size:10px}.vsc-titlebar{padding:8px}.editor-shell textarea.editor{min-height:220px}}
+
+
+header .wrap{max-width:none;padding:0 6px}
+#app{display:grid;grid-template-columns:235px minmax(0,1fr);gap:9px;align-items:start}
+#app>.panel:first-child{grid-column:1/-1;margin-bottom:0;padding:12px 17px}
+#app>.bar{grid-column:1;grid-row:2;display:flex;flex-direction:column;position:sticky;top:10px;background:#1a2230;border:1px solid var(--line);border-radius:8px;padding:12px;min-height:calc(100vh - 175px);margin:0}
+#app>.bar:before{content:'RAZISKOVALEC · SQL';font-size:11px;color:#a3b6d1;letter-spacing:1.1px;padding:4px 8px 12px}
+#app>.bar button{text-align:left;width:100%;background:transparent;color:#c2cee0}
+#app>.bar button.active{background:#25436b;color:white;border-left:3px solid #4d9bff}
+#app>.vsc-view-wrap{grid-column:2;grid-row:2;min-width:0}
+#app>.vsc-view-wrap>#view>.panel{min-height:calc(100vh - 175px);padding:18px}
+#teacher .panel{background:#1a2230}
+th{background:#263448;color:#e3edff}td{border-color:#344359}table{color:#dce7f6}
+@media(max-width:780px){#app{grid-template-columns:1fr}#app>.bar{grid-column:1;grid-row:auto;min-height:0;position:static;flex-direction:row;flex-wrap:wrap}#app>.bar:before{width:100%}#app>.bar button{width:auto}#app>.vsc-view-wrap{grid-column:1;grid-row:auto}}
 
 </style></head><body>
 <header><div class="wrap"><div class="brand">SQL Lab</div><div class="sub">Okolje SQL za razred · SQLite v brskalniku · sinhroniziran napredek</div></div></header>
 <main>
 <section id="login" class="panel" style="max-width:520px;margin:30px auto"><span class="tag">Prijava učencev</span><h2>Vstopi v laboratorij</h2><p class="muted">Vnesi svoje ime in osebno kodo, ki ti jo je dal učitelj. Isti brskalnik lahko uporablja več učencev; vsak ima svojo kodo in svoj napredek.</p><label>Osebna koda (8 znakov)</label><input id="classCode" maxlength="8" autocomplete="one-time-code" placeholder="Npr. A1B2C3D4"><label>Ime ali vzdevek</label><input id="nickname" maxlength="24" placeholder="Tvoj vzdevek"><button id="enterBtn" style="width:100%;margin-top:14px" onclick="enterStudent()">Vstopi v laboratorij</button><p id="loginError" class="small" style="color:var(--red)"></p><button class="ghost" onclick="showTeacherLogin()">Prijava za učitelje</button></section>
 <section id="app" class="hidden"><div class="panel"><div class="row between"><div><b id="hello">Učenec</b><div class="small">Napredek se samodejno shranjuje v spletu.</div></div><button class="ghost" onclick="exitCurrentApp()">Odjava / zamenjaj učenca</button></div><div class="row between" style="margin-top:14px"><span id="progressText" class="small">0 / 235 opravljenih</span><span id="progressPct" class="tag">0%</span></div><div class="progress" style="margin-top:7px"><div id="progressBar"></div></div></div>
-<div class="bar"><button id="tabExercises" class="active" onclick="showExercises()">Vaje</button><button id="tabFree" class="secondary" onclick="showFreeLab()">Prosto okolje</button></div><section id="view"></section></section>
+<div class="bar"><button id="tabExercises" class="active" onclick="showExercises()">▤ Vaje</button><button id="tabTasks" class="secondary" onclick="showTasks()">▣ Domače naloge</button><button id="tabFree" class="secondary" onclick="showFreeLab()">⌨ Prosto okolje</button></div><section id="view"></section></section>
 <section id="teacher" class="hidden"><div class="panel"><div class="row between"><div><span class="tag">Učiteljsko okolje</span><h2>Upravljanje SQL Laba</h2></div><button class="ghost" onclick="teacherLogout()">Odjava</button></div><div id="teacherContent"></div></div></section>
 </main><div class="footer">SQL Lab · SQLite se izvaja v brskalniku · Učni vzorčni podatki</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
@@ -187,7 +236,7 @@ async function logoutStudent(){clearActiveStudentForThisTab();studentId=null;cla
 async function showTeacherLogin(){ $('login').classList.add('hidden');$('teacher').classList.remove('hidden');$('teacherContent').innerHTML=`<label>E-pošta učitelja</label><input id="tEmail" type="email"><label>Geslo</label><input id="tPassword" type="password"><button onclick="teacherSignIn()">Prijavi se</button><p id="tError" class="small" style="color:var(--red)"></p>`;}
 async function teacherSignIn(){try{const {data,error}=await teacherSb.auth.signInWithPassword({email:$('tEmail').value.trim(),password:$('tPassword').value});if(error)throw error;teacherUser=data.user;const p=await teacherSb.from('teacher_profiles').select('user_id').eq('user_id',teacherUser.id).maybeSingle();if(p.error)throw p.error;if(!p.data)throw Error('Ta račun nima učiteljskih pravic.');await loadTeacherPanel();}catch(e){$('tError').textContent=e.message||e;}}
 async function loadTeacherPanel(){const [c,s,p]=await Promise.all([teacherSb.from('classes').select('id,name,course_type,max_students').eq('course_type','sql').order('name'),teacherSb.from('student_profiles').select('user_id,class_id,nickname'),teacherSb.from('student_progress').select('student_id,exercise_id,attempts,completed,hints_used,updated_at')]);if(c.error||s.error||p.error)throw(c.error||s.error||p.error);teacherClasses=c.data||[];const students=s.data||[],rows=p.data||[];const classStats=teacherClasses.map(cls=>{const members=students.filter(st=>st.class_id===cls.id);const ids=new Set(members.map(st=>st.user_id));const pr=rows.filter(x=>ids.has(x.student_id)&&x.exercise_id.startsWith('sql'));const completed=pr.filter(x=>x.completed).length;const possible=members.length*235;return {name:cls.name,capacity:cls.max_students||30,students:members.length,completed,rate:possible?Math.round(completed/possible*100):0,attempts:pr.reduce((a,x)=>a+(x.attempts||0),0)};});$('teacherContent').innerHTML=`<h3>Uvozi vseh 235 vaj SQL</h3><p class="muted small">Izberi razred SQL in naloži datoteko JSON z 235 vajami. Uvoz je potreben tudi po migraciji za ločitev programov, saj migracija ne vstavi vaj. Rešitve se shranijo v zasebno tabelo exercise_keys.</p><label>Ciljni razred</label><select id="targetClass">${teacherClasses.map(c=>`<option value="${c.id}">${esc(c.name)} · SQL</option>`).join('')}</select><label>Datoteka JSON</label><input id="sqlFile" type="file" accept=".json,application/json"><button style="margin-top:10px" onclick="importSQLExercises()">Uvozi vaje SQL</button><p id="importMessage" class="small"></p><div class="row" style="margin-top:12px"><button class="secondary" onclick="startTeacherPractice()">Odpri vaje v učiteljskem načinu</button><button class="ghost" onclick="startTeacherFreeLab()">Odpri prosto okolje</button></div><p class="small muted">Učiteljski način posnema izkušnjo učenca: vaje lahko rešuješ in preverjaš, ne da bi beležil poskuse ali spreminjal napredek razreda.</p><h3 style="margin-top:22px">Statistika po razredih</h3><div style="overflow:auto"><table><thead><tr><th>Razred</th><th>Učenci / kapaciteta</th><th>Opravljene vaje</th><th>Povprečni napredek</th><th>Poskusi</th></tr></thead><tbody>${classStats.map(x=>`<tr><td>${esc(x.name)}</td><td>${x.students} / ${x.capacity}</td><td>${x.completed}</td><td>${x.rate}%</td><td>${x.attempts}</td></tr>`).join('')}</tbody></table></div><h3 style="margin-top:22px">Napredek posameznikov</h3><p class="small muted">Poskusi, opravljene vaje in namigi, zabeleženi za vsakega učenca.</p><div style="overflow:auto"><table><thead><tr><th>Razred</th><th>Vzdevek</th><th>Opravljeno</th><th>Poskusi</th><th>Namigi</th></tr></thead><tbody>${students.filter(st=>teacherClasses.some(x=>x.id===st.class_id)).map(st=>{const cls=teacherClasses.find(x=>x.id===st.class_id);const pr=rows.filter(x=>x.student_id===st.user_id&&x.exercise_id.startsWith('sql'));return `<tr><td>${esc(cls?.name||'')}</td><td>${esc(st.nickname)}</td><td>${pr.filter(x=>x.completed).length}/235</td><td>${pr.reduce((a,x)=>a+(x.attempts||0),0)}</td><td>${pr.reduce((a,x)=>a+(x.hints_used||0),0)}</td></tr>`}).join('')}</tbody></table></div><p class="small muted">To okolje prikazuje samo razrede in napredek pri SQL-u. Podatki Pythona ostanejo ločeni.</p>`;}
-async function importSQLExercises(){const file=$('sqlFile').files[0],class_id=$('targetClass').value,msg=$('importMessage');if(!file||!class_id){msg.textContent='Izberi razred in datoteko JSON.';return;}try{const d=JSON.parse(await file.text());if(!Array.isArray(d.exercises)||d.exercises.length!==235)throw Error('Datoteka mora vsebovati natanko 235 vaj.');const valid=d.exercises.map((e,i)=>({exercise:{id:String(e.id).toLowerCase(),class_id,created_by:teacherUser.id,topic:e.topic,title:e.title,exercise_type:'lab',prompt:e.prompt,content:{type:e.type||'lab',starter:e.starter||'',hint:e.hint||'',options:e.options||null,fragments:e.fragments||null,query:e.query||null},sort_order:Number(e.sort_order)||i+1,is_published:true},key:{exercise_id:String(e.id).toLowerCase(),content:{solution:e.solution||((e.type==='predict')?'Referenčna poizvedba':(e.type==='reorder')?'Razvrsti dele kode':''),expectedOutput:e.expectedOutput||null,explain:e.explain||''}}}));for(let i=0;i<valid.length;i+=30){const batch=valid.slice(i,i+30);let r=await teacherSb.from('exercises').upsert(batch.map(x=>x.exercise),{onConflict:'id'});if(r.error)throw r.error;r=await teacherSb.from('exercise_keys').upsert(batch.map(x=>x.key),{onConflict:'exercise_id'});if(r.error)throw r.error;msg.textContent=`Uvažanje: ${Math.min(i+30,235)} / 235`; }msg.textContent='Uvoz je končan: '+valid.length+' vaj SQL je bilo naloženih oziroma posodobljenih v izbranem razredu. Učenci lahko zdaj znova naložijo stran.';await loadTeacherPanel();}catch(e){msg.textContent='Uvoz ni uspel: '+(e.message||e);}}
+async function importSQLExercises(){const file=$('sqlFile').files[0],class_id=$('targetClass').value,msg=$('importMessage');if(!file||!class_id){msg.textContent='Izberi razred in datoteko JSON.';return;}try{const d=JSON.parse(await file.text());if(!Array.isArray(d.exercises)||d.exercises.length!==235)throw Error('Datoteka mora vsebovati natanko 235 vaj.');const valid=d.exercises.map((e,i)=>({exercise:{id:String(e.id).toLowerCase(),class_id,created_by:teacherUser.id,topic:e.topic,title:e.title,exercise_type:'lab',prompt:e.prompt,content:{type:e.type||'lab',level:(/beginner|basic|base/i.test(String(e.level||d.level||'beginner'))?'Osnovna raven':String(e.level||d.level||'Osnovna raven')),starter:e.starter||'',hint:e.hint||'',options:e.options||null,fragments:e.fragments||null,query:e.query||null},sort_order:Number(e.sort_order)||i+1,is_published:true},key:{exercise_id:String(e.id).toLowerCase(),content:{solution:e.solution||((e.type==='predict')?'Referenčna poizvedba':(e.type==='reorder')?'Razvrsti dele kode':''),expectedOutput:e.expectedOutput||null,explain:e.explain||''}}}));for(let i=0;i<valid.length;i+=30){const batch=valid.slice(i,i+30);let r=await teacherSb.from('exercises').upsert(batch.map(x=>x.exercise),{onConflict:'id'});if(r.error)throw r.error;r=await teacherSb.from('exercise_keys').upsert(batch.map(x=>x.key),{onConflict:'exercise_id'});if(r.error)throw r.error;msg.textContent=`Uvažanje: ${Math.min(i+30,235)} / 235`; }msg.textContent='Uvoz je končan: '+valid.length+' vaj SQL je bilo naloženih oziroma posodobljenih v izbranem razredu. Učenci lahko zdaj znova naložijo stran.';await loadTeacherPanel();}catch(e){msg.textContent='Uvoz ni uspel: '+(e.message||e);}}
 async function startTeacherPractice(){
  const target=$('targetClass');const selectedId=target?.value;
  if(!selectedId){const m=$('importMessage');if(m)m.textContent='Pred odpiranjem vaj ustvari ali izberi razred SQL.';return;}
@@ -234,4 +283,80 @@ async function resumeSqlTeacherFromLink(){
  return true;
 }
 (async()=>{const teacherOpened=await resumeSqlTeacherFromLink();if(!teacherOpened)resumeSqlStudent();})();
-</script></body></html>
+</script>
+<script>
+/* Decorative workbench chrome. No changes to authentication or execution. */
+(function(){
+ const app=document.getElementById('app');if(!app)return;
+ const view=document.getElementById('view');
+ if(view){
+  const parent=view.parentElement;
+  const wrap=document.createElement('div');wrap.className='vsc-view-wrap';
+  parent.insertBefore(wrap,view);
+  const bar=document.createElement('div');bar.className='vsc-titlebar';
+  bar.innerHTML='<span class="vsc-dot"></span><span id="vsc-file-title">poizvedba.sql</span><span style="margin-left:auto">● &nbsp; SQL</span>';
+  wrap.append(bar,view);
+  const obs=new MutationObserver(()=>{const t=view.querySelector('h2');const el=document.getElementById('vsc-file-title');if(t&&el)el.textContent=t.textContent.slice(0,65)+' · poizvedba.sql';});
+  obs.observe(view,{childList:true,subtree:false});
+ }
+ const status=document.createElement('div');status.className='vsc-statusbar';
+ status.innerHTML='<span>◈ &nbsp; SQL Lab &nbsp; · &nbsp; Učno okolje</span><span>SQLite &nbsp; · &nbsp; UTF-8 &nbsp; · &nbsp; SL</span>';
+ document.body.appendChild(status);
+})();
+</script>
+
+<script>
+/* V2: SQL catalog organised by level and ordered topics; tasks remain a separate area. */
+(function(){
+ const BASE='Osnovna raven';
+ const escText=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ window.sqlLevelLabel=function(e){
+   const raw=String(e?.level||e?.difficulty||e?.content?.level||'').trim().toLowerCase();
+   if(!raw||/^(beginner|basic|base|osnovna raven|osnovna|osnovni)$/.test(raw))return BASE;
+   if(/intermediate|intermedio|srednja/.test(raw))return 'Srednja raven';
+   if(/advanced|avanzato|napredna/.test(raw))return 'Napredna raven';
+   return String(e.level||e.difficulty||BASE);
+ };
+ window.__sqlSelectedTopic=null;
+ window.tabs=function(which){
+   const ex=$('tabExercises'),tasks=$('tabTasks'),free=$('tabFree');
+   if(ex)ex.className=which==='ex'?'active':'secondary';
+   if(tasks)tasks.className=which==='tasks'?'active':'secondary';
+   if(free)free.className=which==='free'?'active':'secondary';
+ };
+ window.showExercises=function(){
+   tabs('ex');window.__sqlSelectedTopic=null;
+   const levels=[...new Set(exercises.map(sqlLevelLabel))];if(!levels.length)levels.push(BASE);
+   const preferred=levels.includes(BASE)?BASE:levels[0];
+   $('view').innerHTML=`<div class="panel"><span class="tag">SQL · zbirka vaj</span><h2>Vaje SQL</h2><p class="muted">Najprej izberi učno raven, nato temo. Teme sledijo didaktičnemu vrstnemu redu; do vseh lahko dostopaš brez obveznega zaključevanja prejšnjih tem.</p><div class="level-toolbar"><div><label for="sqlLevelFilter">Učna raven</label><select id="sqlLevelFilter" onchange="renderExercises()">${levels.map(l=>`<option value="${escText(l)}">${escText(l)}</option>`).join('')}</select></div><span class="tag">${exercises.length} vaj skupaj</span><span class="tag">${exercises.filter(e=>progress[e.id]?.completed).length} opravljenih</span></div><div id="filterSummary" class="filter-summary"></div><div id="exerciseList"></div></div>`;
+   $('sqlLevelFilter').value=preferred;renderExercises();
+ };
+ window.renderExercises=function(){
+   const level=$('sqlLevelFilter')?.value||BASE;
+   const list=exercises.filter(e=>sqlLevelLabel(e)===level).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0));
+   const summary=$('filterSummary');if(summary)summary.textContent=`${level} · ${list.length} vaj. Izberi temo za prikaz vaj.`;
+   const target=$('exerciseList');if(!target)return;
+   if(window.__sqlSelectedTopic && !list.some(e=>e.topic===window.__sqlSelectedTopic))window.__sqlSelectedTopic=null;
+   if(!window.__sqlSelectedTopic){
+     const groups=[];const map=new Map();list.forEach(e=>{const key=e.topic||'Druge teme';if(!map.has(key)){const g={topic:key,items:[]};map.set(key,g);groups.push(g);}map.get(key).items.push(e);});
+     target.innerHTML=`<div class="topic-grid">${groups.map(g=>{const completed=g.items.filter(e=>progress[e.id]?.completed).length;const pct=g.items.length?Math.round(completed/g.items.length*100):0;return `<button class="topic-card" onclick='openSqlTopic(${JSON.stringify(g.topic).replace(/</g,'\\u003c').replace(/'/g,'&#39;')})'><strong>${escText(g.topic)}</strong><span class="topic-meta">${g.items.length} vaj · ${completed} opravljenih</span><div class="topic-progress"><span style="width:${pct}%"></span></div></button>`;}).join('')}</div>`||'<p class="muted">Za to raven še ni vaj.</p>';
+     return;
+   }
+   const topic=window.__sqlSelectedTopic,items=list.filter(e=>e.topic===topic);
+   target.innerHTML=`<button class="ghost catalog-back" onclick="backToSqlTopics()">← Vse teme</button><h3>${escText(topic)}</h3><p class="small muted">${items.filter(e=>progress[e.id]?.completed).length} od ${items.length} opravljenih. Vsako vajo lahko odpreš samostojno.</p><div class="stack">${items.map(e=>`<div class="catalog-exercise"><div class="details"><b>${escText(e.title)}</b><small>${escText(e.exercise_type||e.type||'SQL')} · ${progress[e.id]?.completed?'Opravljeno':'Za rešiti'} · ${progress[e.id]?.attempts||0} poskusov</small></div><button onclick="openExercise('${escText(e.id)}')">Odpri</button></div>`).join('')}</div>`;
+ };
+ window.openSqlTopic=function(topic){window.__sqlSelectedTopic=topic;renderExercises();};
+ window.backToSqlTopics=function(){window.__sqlSelectedTopic=null;renderExercises();};
+ window.showTasks=function(){
+   tabs('tasks');
+   $('view').innerHTML=`<div class="panel"><span class="tag">SQL · samostojno delo</span><h2>Domače naloge</h2><p class="muted">Ta prostor je ločen od zbirke vaj. Tukaj bodo prikazane domače naloge, ki jih učitelj dodeli tvojemu razredu.</p><div class="task-empty"><div class="task-icon">📝</div><h3>Prostor za domače naloge</h3><p class="task-note">Vsaka naloga bo razdeljena na korake, z vodilnimi navodili, postopnimi namigi in povezavami do vaj SQL, ki ste jih že reševali pri pouku. Rešitve ne bodo prikazane neposredno.</p><p class="small muted">Domače naloge in njihov napredek bodo shranjeni ločeno od običajnih vaj.</p><span class="tag">Sistem domačih nalog še ni vzpostavljen</span></div></div>`;
+ };
+ // Carry the exercise level into future JSON imports; old records default to the base level.
+ const oldLoadExercises=window.loadExercises;
+ if(typeof oldLoadExercises==='function'){
+   window.loadExercises=async function(){await oldLoadExercises();exercises=exercises.map(e=>({...e,level:sqlLevelLabel(e)}));};
+ }
+ const oldRunFree=window.showFreeLab;
+})();
+</script>
+</body></html>

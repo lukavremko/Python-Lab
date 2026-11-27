@@ -33,6 +33,51 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin:25px}
 .exercise-filters label{margin:0 0 5px;font-size:12px;color:var(--muted)}
 .filter-summary{font-size:12px;color:var(--muted);margin:8px 0 12px}
 
+
+/* Python & SQL Lab — VS Code-inspired workspace v1 */
+:root{color-scheme:dark;--bg:#0f141d;--panel:#1a2230;--ink:#e3eaf5;--muted:#a3afc1;--line:#354155;--blue:#287be8;--green:#2dbb82;--red:#ef6672;--navy:#151c29;--soft:#263a58}
+body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif}
+header{background:#171f2d;border-bottom:1px solid #354155;padding:11px 22px;max-width:none}
+header .brand{letter-spacing:.2px}
+main{max-width:none;width:100%;margin:0;padding:12px}
+.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:9px;box-shadow:none;color:var(--ink)}
+.cardtask,.exercise,.option,.reorder-item,.fragment-row,.predict-option{background:#202b3b;border-color:var(--line)}
+button{background:var(--blue);color:white;border-radius:6px}button.secondary{background:#2c3b53;color:#e2eaff}button.ghost{background:#202b3b;color:#dce6f8;border-color:#43536a}
+button:hover:not(:disabled){filter:brightness(1.15)}
+input,select,textarea{background:#101925;color:#e6edfa;border:1px solid #40506a;border-radius:6px}
+input:focus,select:focus,textarea:focus{outline:1px solid #4b93ff;outline-offset:0}
+.muted,.small{color:var(--muted)}.tag,.pill{background:#263a58;color:#a9caff}.pill.sel{background:#214875;color:#e7f0ff}
+.progress{background:#354155}.progress div,.progress>div{background:#28b881}
+.output,.code,.predict-query,.editor{background:#0e1622;color:#e5edfa;border:1px solid #344359}
+.feedback.ok,.ok{background:#173d33;color:#9aefc5}.feedback.bad,.bad{background:#4b2730;color:#ffd0d4}.feedback.hint,.hint{background:#473a22;color:#ffe1a1}
+.editor-shell{border-color:#344359;background:#0e1622;border-radius:5px;box-shadow:0 0 0 1px #111a27}
+.editor-toolbar{background:#202c3e;border-bottom:1px solid #35465d}.editor-gutter{background:#111a27}
+.editor-shell textarea.editor{background:#0e1622;color:#e5edfa;min-height:310px}
+.editor-help{background:#202c3e}
+#view{min-width:0}#view h2{font-weight:650}#view .editor-shell{margin-top:12px}
+#login{background:#1a2433!important;box-shadow:0 20px 70px #0005}
+#login input{background:#101925}
+#view .output{min-height:105px;white-space:pre-wrap}
+.vsc-statusbar{position:fixed;bottom:0;left:0;right:0;z-index:80;background:#1766bd;color:#fff;display:flex;justify-content:space-between;gap:15px;padding:4px 16px;font-size:11px;pointer-events:none}
+body{padding-bottom:26px}
+.vsc-titlebar{display:flex;align-items:center;gap:10px;font-size:12px;color:#9eb4d2;padding:9px 13px;background:#182232;border-bottom:1px solid #344359;letter-spacing:.1px}
+.vsc-dot{width:9px;height:9px;border-radius:50%;background:#4b9bff;display:inline-block}
+.vsc-view-wrap{min-width:0}
+.vsc-view-wrap>.panel{border-top-left-radius:0;border-top-right-radius:0}
+.vsc-view-wrap>#view.panel{border-top-left-radius:0;border-top-right-radius:0}
+#view .exercise:hover,#view .cardtask:hover{border-color:#5087d0;background:#25344a}
+@media(max-width:800px){main{padding:8px}.vsc-statusbar{font-size:10px}.vsc-titlebar{padding:8px}.editor-shell textarea.editor{min-height:220px}}
+
+
+#app>.row.between{padding:8px 12px!important;margin-bottom:8px!important;background:#192333;border:1px solid var(--line);border-radius:7px}
+#app>.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:8px;align-items:start}
+#app>.layout>aside{position:sticky;top:10px;min-height:calc(100vh - 160px);padding:12px}
+#app>.layout>aside h3{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#b8c7dd}
+#app>.layout>aside .nav{display:block;border-radius:5px;text-align:left;padding:10px;background:transparent;color:#b9c8dc}
+#app>.layout>aside .nav.active{background:#25436b;color:white;border-left:3px solid #4d9bff}
+#app>.layout>.vsc-view-wrap>#view{min-height:calc(100vh - 165px);padding:18px}
+@media(max-width:780px){#app>.layout{grid-template-columns:1fr}#app>.layout>aside{position:static;min-height:auto}}
+
 </style></head><body>
 <header><div class="brand">🐍 Python <span>Lab</span> <small style="font-size:12px;font-weight:500;color:#d6def0">3. faza</small></div><div class="status" id="runtimeStatus">Pythonovo okolje: čakanje</div></header>
 <main>
@@ -46,7 +91,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin:25px}
 <div class="row between" style="margin-bottom:16px"><div><h1>Učno okolje</h1><div class="muted small" id="hello"></div></div><button class="ghost" onclick="logout()">Odjava / zamenjaj učenca</button></div>
 <div class="layout">
 <aside class="panel">
-<h3>Meni</h3><button class="nav active" id="nBank" onclick="showBank()">📚 Zbirka vaj</button><button class="nav" id="nLab" onclick="showLab()">⌨️ Pythonovo okolje</button><button class="nav" id="nMixed" onclick="showMixedLab()">🧩 Mešani izzivi</button><button class="nav" id="nTurtle" onclick="showTurtleExercises()">🐢 Turtle · Risanje</button><button class="nav" id="nTeacher" onclick="showTeacher()">🛠 Učiteljsko okolje</button>
+<h3>Meni</h3><button class="nav active" id="nBank" onclick="showBank()">📚 Zbirka vaj</button><button class="nav" id="nLab" onclick="showLab()">⌨️ Pythonovo okolje</button><button class="nav" id="nMixed" onclick="showMixedLab()">🧩 Mešani izzivi</button><button class="nav" id="nTurtle" onclick="showTurtleExercises()">🐢 Turtle · Risanje</button><div class="sidebar-section-label">Samostojno delo</div><button class="nav" id="nTasks" onclick="showTasks()">📝 Domače naloge</button><button class="nav" id="nTeacher" onclick="showTeacher()">🛠 Učiteljsko okolje</button>
 <hr style="border:0;border-top:1px solid var(--line);margin:15px 0"><b>Tvoja učna pot</b><div class="progress" style="margin:9px 0"><div id="pbar" style="width:0%"></div></div><div class="small muted" id="ptext">0 opravljenih vaj</div>
 <div class="small muted" style="margin-top:17px">Tvoj napredek je sinhroniziran z zbirko podatkov razreda.</div>
 </aside>
@@ -145,7 +190,8 @@ function toDatabaseExercise(e, ownerId){
     code:e.code||'',
     options:Array.isArray(e.options)?e.options:[],
     starter:e.starter||'',
-    stdin:e.stdin||''
+    stdin:e.stdin||'',
+    level:e.level||'Osnovna raven'
   };
   const keys={
     answers:Array.isArray(e.answers)?e.answers:[],
@@ -827,4 +873,81 @@ async function resumePythonStudent(){
 }
 if(new URLSearchParams(window.location.search).get('access')==='teacher'){openTeacherFromLogin();showTeacher();}
 else resumePythonStudent();
-</script></body></html>
+</script>
+<script>
+/* Decorative workbench chrome. No changes to authentication or execution. */
+(function(){
+ const app=document.getElementById('app');if(!app)return;
+ const view=document.getElementById('view');
+ if(view){
+  const parent=view.parentElement;
+  const wrap=document.createElement('div');wrap.className='vsc-view-wrap';
+  parent.insertBefore(wrap,view);
+  const bar=document.createElement('div');bar.className='vsc-titlebar';
+  bar.innerHTML='<span class="vsc-dot"></span><span id="vsc-file-title">main.py</span><span style="margin-left:auto">● &nbsp; Python</span>';
+  wrap.append(bar,view);
+  const obs=new MutationObserver(()=>{const t=view.querySelector('h2');const el=document.getElementById('vsc-file-title');if(t&&el)el.textContent=t.textContent.slice(0,65)+' · main.py';});
+  obs.observe(view,{childList:true,subtree:false});
+ }
+ const status=document.createElement('div');status.className='vsc-statusbar';
+ status.innerHTML='<span>◈ &nbsp; Python Lab &nbsp; · &nbsp; Učno okolje</span><span>Pyodide &nbsp; · &nbsp; UTF-8 &nbsp; · &nbsp; SL</span>';
+ document.body.appendChild(status);
+})();
+</script>
+
+<script>
+/* V2: didactic catalog. All students may open topics in any order. */
+(function(){
+ const LEVEL_BASE='Osnovna raven';
+ const escText=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ window.exerciseLevelLabel=function(e){
+   const raw=String(e?.level||e?.difficulty||e?.content?.level||'').trim().toLowerCase();
+   if(!raw||/^(base|basic|beginner|osnovna raven|osnovna|osnovni)$/.test(raw))return LEVEL_BASE;
+   if(/intermediate|intermedio|srednja/.test(raw))return 'Srednja raven';
+   if(/advanced|avanzato|napredna/.test(raw))return 'Napredna raven';
+   return String(e.level||e.difficulty||LEVEL_BASE);
+ };
+ window.__pythonSelectedTopic=null;
+ window.nav=function(which){
+   ['Bank','Lab','Mixed','Turtle','Tasks','Teacher'].forEach(x=>{const el=document.getElementById('n'+x);if(el)el.classList.toggle('active',x.toLowerCase()===which);});
+ };
+ window.showBank=function(){
+   nav('bank');window.__pythonSelectedTopic=null;
+   const all=exercises.filter(e=>!String(e.id||'').toLowerCase().startsWith('sql'));
+   const levels=[...new Set(all.map(exerciseLevelLabel))];
+   if(!levels.length)levels.push(LEVEL_BASE);
+   const preferred=levels.includes(LEVEL_BASE)?LEVEL_BASE:levels[0];
+   view.innerHTML=`<span class="tag">Python · zbirka vaj</span><h2 style="margin-top:10px">Zbirka vaj</h2><p class="muted">Najprej izberi raven, nato temo. Teme so razvrščene po učnem zaporedju, vendar lahko kadarkoli odpreš katerokoli temo. Napredek se shranjuje ločeno za vsako vajo.</p><div class="level-toolbar"><div><label for="pyLevelFilter">Učna raven</label><select id="pyLevelFilter" onchange="renderBank()">${levels.map(l=>`<option value="${escText(l)}">${escText(l)}</option>`).join('')}</select></div><span class="tag">${all.length} vaj skupaj</span><span class="tag">${done.filter(id=>all.some(e=>e.id===id)).length} opravljenih</span></div><div id="bankSummary" class="filter-summary"></div><div id="bankList"></div>`;
+   document.getElementById('pyLevelFilter').value=preferred;
+   renderBank();updateProgress();
+ };
+ window.renderBank=function(){
+   const all=exercises.filter(e=>!String(e.id||'').toLowerCase().startsWith('sql'));
+   const level=document.getElementById('pyLevelFilter')?.value||LEVEL_BASE;
+   const list=all.filter(e=>exerciseLevelLabel(e)===level).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0));
+   const summary=document.getElementById('bankSummary');if(summary)summary.textContent=`${level} · ${list.length} vaj. Izberi temo za prikaz vaj.`;
+   const target=document.getElementById('bankList');if(!target)return;
+   if(window.__pythonSelectedTopic && !list.some(e=>e.topic===window.__pythonSelectedTopic))window.__pythonSelectedTopic=null;
+   if(!window.__pythonSelectedTopic){
+     const groups=[];const byTopic=new Map();
+     list.forEach(e=>{const key=e.topic||'Druge teme';if(!byTopic.has(key)){const g={topic:key,items:[]};byTopic.set(key,g);groups.push(g);}byTopic.get(key).items.push(e);});
+     target.innerHTML=`<div class="topic-grid">${groups.map(g=>{const completed=g.items.filter(e=>done.includes(e.id)).length;const pct=g.items.length?Math.round(completed/g.items.length*100):0;return `<button class="topic-card" onclick='openPythonTopic(${JSON.stringify(g.topic).replace(/</g,'\\u003c').replace(/'/g,'&#39;')})'><strong>${escText(g.topic)}</strong><span class="topic-meta">${g.items.length} vaj · ${completed} opravljenih</span><div class="topic-progress"><span style="width:${pct}%"></span></div></button>`;}).join('')}</div>`||'<p class="muted">Za to raven še ni vaj.</p>';
+     return;
+   }
+   const topic=window.__pythonSelectedTopic;const items=list.filter(e=>e.topic===topic);
+   target.innerHTML=`<button class="ghost catalog-back" onclick="backToPythonTopics()">← Vse teme</button><h3>${escText(topic)}</h3><p class="small muted">${items.filter(e=>done.includes(e.id)).length} od ${items.length} opravljenih. Lahko odpreš vsako vajo, ne glede na vrstni red.</p><div class="stack">${items.map(e=>{const turtle=isTurtleExercise(e);return `<div class="catalog-exercise"><div class="details"><b>${escText(e.title)}</b><small>${escText(typeLabel(e.type))} · ${done.includes(e.id)?'Opravljeno':'Za rešiti'}</small></div><button onclick="${turtle?'openTurtleExercise':'openExercise'}('${escText(e.id)}')">${turtle?'Nariši':'Odpri'}</button></div>`;}).join('')}</div>`;
+ };
+ window.openPythonTopic=function(topic){window.__pythonSelectedTopic=topic;renderBank();};
+ window.backToPythonTopics=function(){window.__pythonSelectedTopic=null;renderBank();};
+ window.showTasks=function(){
+   nav('tasks');
+   view.innerHTML=`<span class="tag">Python · samostojno delo</span><h2 style="margin-top:10px">Domače naloge</h2><p class="muted">Ta prostor je ločen od zbirke vaj. Tukaj bodo prikazane domače naloge, ki jih učitelj dodeli tvojemu razredu.</p><div class="task-empty"><div class="task-icon">📝</div><h3>Prostor za domače naloge</h3><p class="task-note">Vsaka naloga bo razdeljena na jasne korake. Navodila bodo vodila do rešitve, ne da bi razkrila celotno kodo. Posamezni koraki bodo lahko vsebovali povezave do vaj, ki ste jih že reševali pri pouku, in postopne namige.</p><p class="small muted">Naloge in njihov napredek bodo shranjeni ločeno od vaj običajne zbirke.</p><span class="tag">Sistem domačih nalog še ni vzpostavljen</span></div>`;
+ };
+ // Preserve level metadata when a teacher creates or re-imports an exercise.
+ const oldToDatabaseExercise=window.toDatabaseExercise;
+ if(typeof oldToDatabaseExercise==='function'){
+   window.toDatabaseExercise=function(e,ownerId){const r=oldToDatabaseExercise(e,ownerId);r.exercise.content.level=exerciseLevelLabel(e);return r;};
+ }
+})();
+</script>
+</body></html>
