@@ -78,6 +78,38 @@ body{padding-bottom:26px}
 #app>.layout>.vsc-view-wrap>#view{min-height:calc(100vh - 165px);padding:18px}
 @media(max-width:780px){#app>.layout{grid-template-columns:1fr}#app>.layout>aside{position:static;min-height:auto}}
 
+
+/* V3: neutral steel-blue palette and single-column topic rows */
+header .brand span{color:#afbdcc!important}
+.vsc-titlebar{color:#b6c3d1!important}
+.editor-shell textarea.editor:focus{box-shadow:inset 0 0 0 1px #8296aa!important}
+.editor-shell textarea.editor:focus-visible{outline:1px solid #8296aa!important}
+
+:root{--blue:#61778e;--soft:#293747}
+button{background:var(--blue)!important;color:#f6f8fb!important}
+button.secondary{background:#354456!important;color:#e2e9f0!important}
+button.ghost{background:#222d3a!important;color:#d9e1ea!important;border-color:#465568!important}
+button.danger{background:#4a3036!important;color:#ffd9dc!important}
+button:hover:not(:disabled){filter:brightness(1.12)}
+button:focus-visible,input:focus,select:focus,textarea:focus{outline:1px solid #91a3b7;outline-offset:1px}
+.tag,.pill{background:#2b3949!important;color:#d0dbe6!important;border-color:#536477!important}
+.pill.sel{background:#3b4d62!important;color:#f1f5f9!important;border-color:#8294a8!important}
+.vsc-statusbar{background:#40566d!important;color:#f2f5f8!important}
+.vsc-dot{background:#879bb0!important}
+#app>.layout>aside .nav.active,#app>.bar button.active{background:#34465a!important;color:#f3f6fa!important;border-left-color:#8a9db1!important}
+#view .exercise:hover,#view .cardtask:hover{border-color:#6c8095!important;background:#293646!important}
+.topic-grid{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.topic-card{width:100%;display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:5px 14px;text-align:left!important;padding:12px 15px!important;border:1px solid #425165!important;border-radius:7px!important;background:#202b38!important;color:#e1e8f0!important;box-shadow:none!important}
+.topic-card strong{font-size:14px;font-weight:650;min-width:0}
+.topic-card .topic-meta{font-size:12px;color:#aebdcd;white-space:nowrap}
+.topic-card .topic-progress{grid-column:1/-1;display:block;height:4px;background:#3c4a59;border-radius:99px;overflow:hidden;margin-top:3px}
+.topic-card .topic-progress span{display:block;height:100%;background:#8297ad;border-radius:99px}
+.topic-card:hover{background:#2a3949!important;border-color:#71859a!important}
+.catalog-exercise{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border:1px solid #3d4b5d;border-radius:7px;background:#202b38}
+.catalog-exercise .details{display:flex;flex-direction:column;gap:3px;min-width:0}
+.catalog-exercise small{font-size:12px;color:#aebdcd}
+.catalog-back{margin-bottom:12px}
+
 </style></head><body>
 <header><div class="brand">🐍 Python <span>Lab</span> <small style="font-size:12px;font-weight:500;color:#d6def0">3. faza</small></div><div class="status" id="runtimeStatus">Pythonovo okolje: čakanje</div></header>
 <main>
@@ -777,10 +809,17 @@ async function loadTeacherDashboard(){
    }).join('');
    return `<div class="cardtask"><div class="row between"><div><b>${esc(c.name)}</b><div class="small muted">${isSql?'Okolje SQL':'Python Lab'} · ${members.length}/${c.max_students||30} učencev · ${c.is_active?'Aktiven':'Neaktiven'}</div></div><span class="tag">${classTotal} vaj</span></div><div class="row" style="margin-top:8px"><button class="ghost" onclick="issueStudentCodes('${c.id}')">Ustvari nove neuporabljene kode</button></div><div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th align="left">Vzdevek</th><th align="left">Opravljene vaje</th><th align="left">Napredek</th><th align="left">Poskusi</th></tr></thead><tbody>${memberRows||'<tr><td colspan="4" class="muted">Noben učenec še ni vpisan.</td></tr>'}</tbody></table></div></div>`;
   }).join('');
+  // Only these ten IDs belong to the new SQL extension; SQL-class records are never cleanup candidates.
+  const pythonClassIds=new Set(teacherClasses.filter(c=>c.course_type==='python').map(c=>c.id));
+  const sqlIdPattern=/^sql(?:23[6-9]|24[0-5])$/;
+  const misplacedSqlExercises=exercises.filter(e=>sqlIdPattern.test(String(e.id||''))&&e.class_id&&pythonClassIds.has(e.class_id));
+  const globalSqlExercises=exercises.filter(e=>sqlIdPattern.test(String(e.id||''))&&!e.class_id);
+  const misplacedSqlCard=`<div class="cardtask" style="margin-top:12px;border-color:${misplacedSqlExercises.length?'#866f54':'var(--line)'}"><h3>Odstrani napačno uvožene vaje SQL</h3><p class="small muted">Orodje preverja samo ID-je sql236–sql245. Izbrisalo bo samo zapise, ki so neposredno dodeljeni razredom Python. Zapisi, dodeljeni razredom SQL, ostanejo nedotaknjeni.</p>${misplacedSqlExercises.length?`<p><b>Najdenih zapisov v razredih Python: ${misplacedSqlExercises.length}</b></p><div class="small muted">${misplacedSqlExercises.map(e=>`${esc(e.id)} · ${esc(e.title)} · ${esc(teacherClasses.find(c=>c.id===e.class_id)?.name||'Python razred')}`).join('<br>')}</div><button class="danger" style="margin-top:10px" onclick="removeMisplacedSqlExercises()">Odstrani samo vnose iz razredov Python</button>`:'<p class="small">Ni najdenih zapisov sql236–sql245, dodeljenih razredom Python.</p>'}${globalSqlExercises.length?`<div class="feedback hint"><b>${globalSqlExercises.length} vnosov je v globalni zbirki.</b><p>Globalni vnosi so skupni in lahko vplivajo tudi na SQL Lab. Ne bomo jih izbrisali: lahko jih premaknemo v izbrani razred SQL, da ne bodo več globalni.</p><div class="small">${globalSqlExercises.map(e=>`${esc(e.id)} · ${esc(e.title)}`).join('<br>')}</div>${teacherClasses.some(c=>c.course_type==='sql')?`<label for="sqlCleanupTargetClass">Ciljni razred SQL</label><select id="sqlCleanupTargetClass">${teacherClasses.filter(c=>c.course_type==='sql').map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select><button class="secondary" style="margin-top:9px" onclick="moveGlobalSqlExercisesToSqlClass()">Premakni globalne vaje v razred SQL</button>`:'<p class="small">Najprej ustvari razred SQL. Nato bo mogoče te vnose premakniti vanj.</p>'}</div>`:''}</div>`;
   view.innerHTML=`<div class="row between"><div><span class="tag">Učiteljsko okolje · ${esc(teacherProfile?.display_name||'Učitelj')}</span><h2 style="margin-top:9px">Upravljanje razredov in napredka</h2></div><button class="ghost" onclick="teacherLogout()">Izhod iz učiteljskega okolja</button></div>
   <div class="grid2" style="margin:14px 0"><div class="cardtask"><b>${teacherClasses.length}</b><div class="small muted">Razredi</div></div><div class="cardtask"><b>${students.length}</b><div class="small muted">Registrirani učenci</div></div><div class="cardtask"><b>${total}</b><div class="small muted">Objavljene vaje</div></div><div class="cardtask"><b>${progress.filter(p=>p.completed).length}</b><div class="small muted">Zabeležena dokončanja</div></div></div>
   <div class="cardtask"><h3>Ustvari razred</h3><div class="grid2"><div><label>Ime razreda</label><input id="newClassName" placeholder="Npr. 3A – računalništvo"></div><div><label>Največje število učencev</label><input id="newClassCapacity" type="number" min="1" max="100" value="25"></div><div><label>Vrsta laboratorija</label><select id="newClassType"><option value="python">Python</option><option value="sql">SQL</option></select></div></div><p class="small muted">Sistem bo za vsako mesto ustvaril enolično osebno kodo. Vsako kodo lahko uporabi samo en učenec.</p><button style="margin-top:10px" onclick="createClass()">Ustvari razred in kode</button><p id="classCreateMessage" class="small muted"></p></div>
   <div class="cardtask" style="margin-top:12px"><h3>Zbirka vaj</h3><p class="small muted">${exercises.length} vaj je naloženih. Uvozi datoteko JSON z zbirko ali dodatni paket, na primer 30 mešanih izzivov. Rešitve bodo shranjene v tabeli, ki učencem ni dostopna za branje.</p><div class="row"><button onclick="document.getElementById('importFile').click()">Uvozi JSON z vajami (zbirka ali dodatni paket)</button><button class="secondary" onclick="exportData()">Izvozi zbirko</button><input id="importFile" type="file" accept=".json,application/json" class="hidden" onchange="importData(event)"></div><p class="small muted">Datoteke JSON z zbirko ne objavi v javnem repozitoriju GitHub.</p></div>
+  ${misplacedSqlCard}
   <h3 style="margin-top:18px">Statistika po razredih</h3><div class="stack">${classCards||'<p class="muted">Razredov še nisi ustvaril. Uporabi zgornji obrazec.</p>'}</div>
   <h3 style="margin-top:18px">Upravljanje vaj</h3><div class="row"><button class="secondary" onclick="manualForm()">Ustvari vajo</button></div><div class="stack" style="margin-top:10px">${exercises.filter(e=>!String(e.id).toLowerCase().startsWith('sql')).map(e=>`<div class="row between cardtask"><div><b>${esc(e.title)}</b><div class="small muted">${esc(e.topic)} · ${typeLabel(e.type)}</div></div><div class="row"><button class="secondary" onclick="editExercise('${e.id}')">Uredi</button><button class="danger" onclick="deleteExercise('${e.id}')">Izbriši</button></div></div>`).join('')}</div>`;
  }catch(err){view.innerHTML=`<div class="feedback bad">Napaka pri nalaganju podatkov: ${esc(err.message||String(err))}</div><button class="secondary" onclick="showTeacher()">Poskusi znova</button>`;}
@@ -820,6 +859,8 @@ async function saveExerciseToSupabase(e){
  const {error:keyError}=await teacherSb.from('exercise_keys').upsert(records.key,{onConflict:'exercise_id'});if(keyError)throw keyError;
 }
 async function importExercisesToSupabase(items){
+ const misplacedSqlIds=(items||[]).filter(e=>/^sql/i.test(String(e?.id||''))).map(e=>String(e.id));
+ if(misplacedSqlIds.length)throw new Error('Ta datoteka vsebuje vaje SQL ('+misplacedSqlIds.slice(0,10).join(', ')+'). Uporabi uvoz v SQL Lab, ne v Python Lab.');
  const valid=items.filter(validExercise).map((e,index)=>({...e,sort_order:e.sort_order||index+1}));
  if(!valid.length)throw new Error('Datoteka ne vsebuje veljavnih vaj.');
  for(let i=0;i<valid.length;i+=40){
@@ -854,7 +895,37 @@ async function saveManual(id){
 }
 function editExercise(id){if(activeRole!=='teacher')return;const e=exercises.find(x=>x.id===id);if(e)manualForm(e);}
 async function deleteExercise(id){if(activeRole!=='teacher')return;if(!confirm('Ali želiš izbrisati to vajo iz zbirke podatkov?'))return;try{const {error}=await teacherSb.from('exercises').delete().eq('id',id);if(error)throw error;exercises=exercises.filter(x=>x.id!==id);await loadTeacherDashboard();}catch(err){alert('Napaka med brisanjem: '+(err.message||String(err)));}}
-function exportData(){if(activeRole!=='teacher')return;let blob=new Blob([JSON.stringify({version:4,exercises},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='python-lab-varnostna-kopija-vaj.json';a.click();URL.revokeObjectURL(url);}
+function exportData(){if(activeRole!=='teacher')return;const pythonOnly=exercises.filter(e=>!String(e.id||'').toLowerCase().startsWith('sql'));let blob=new Blob([JSON.stringify({version:4,course_type:'python',exported_at:new Date().toISOString(),exercises:pythonOnly},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='python-lab-varnostna-kopija-vaj.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+async function moveGlobalSqlExercisesToSqlClass(){
+ if(activeRole!=='teacher'||!teacherUser)return;
+ const targetId=document.getElementById('sqlCleanupTargetClass')?.value;
+ const sqlClass=teacherClasses.find(c=>c.id===targetId&&c.course_type==='sql');
+ if(!sqlClass){alert('Izberi veljaven razred SQL.');return;}
+ const ids=exercises.filter(e=>/^sql(?:23[6-9]|24[0-5])$/.test(String(e.id||''))&&!e.class_id).map(e=>e.id);
+ if(!ids.length){alert('Ni globalnih zapisov sql236–sql245 za premik.');return;}
+ if(!confirm('Premakniti '+ids.length+' globalnih vaj SQL v razred »'+sqlClass.name+'«?\n\nVaje in rešitve ostanejo ohranjene; spremeni se samo razred, ki jim je dodeljen. Pred premikom priporočamo prenos varnostne kopije iz SQL Lab.'))return;
+ try{
+  const {error}=await teacherSb.from('exercises').update({class_id:sqlClass.id}).in('id',ids).is('class_id',null);
+  if(error)throw error;
+  alert('Globalne vaje so bile premaknjene v razred SQL »'+sqlClass.name+'«. Rešitve niso bile odstranjene.');
+  await loadTeacherDashboard();
+ }catch(err){alert('Premik ni uspel: '+(err.message||String(err))+'. Preveri pravice učitelja in pravila RLS.');}
+}
+async function removeMisplacedSqlExercises(){
+ if(activeRole!=='teacher'||!teacherUser)return;
+ const pythonClassIds=new Set(teacherClasses.filter(c=>c.course_type==='python').map(c=>c.id));
+ const candidates=exercises.filter(e=>/^sql(?:23[6-9]|24[0-5])$/.test(String(e.id||''))&&e.class_id&&pythonClassIds.has(e.class_id));
+ if(!candidates.length){alert('Ni bilo najdenih vaj sql236–sql245 assegnate direttamente a classi Python. Le voci globali condivise con SQL non vengono eliminate da questa procedura.');return;}
+ const ids=candidates.map(e=>e.id);
+ const scopes=candidates.map(e=>`${e.id} (${teacherClasses.find(c=>c.id===e.class_id)?.name||'Python razred'})`).join('\n');
+ if(!confirm('Odstraniti samo te zapise, dodeljene razredom Python?\n\n'+scopes+'\n\nGlobalni zapisi in zapisi razredov SQL niso vključeni. Dejanje izbriše tudi povezane rešitve iz exercise_keys.'))return;
+ try{
+  const keyDel=await teacherSb.from('exercise_keys').delete().in('exercise_id',ids);if(keyDel.error)throw keyDel.error;
+  const exDel=await teacherSb.from('exercises').delete().in('id',ids);if(exDel.error)throw exDel.error;
+  alert('Odstranjenih je bilo '+ids.length+' napačnih vnosov SQL iz razredov Python. Globalni zapisi in zapisi razredov SQL niso bili spremenjeni.');
+  await loadTeacherDashboard();
+ }catch(err){alert('Odstranitev ni uspela: '+(err.message||String(err))+'. Preveri pravice učitelja in pravila RLS.');}
+}
 function importData(ev){if(activeRole!=='teacher')return;let file=ev.target.files[0];if(!file)return;let r=new FileReader();r.onload=async()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.exercises))throw Error('Neveljavna oblika: datoteka JSON mora vsebovati polje exercises z zbirko vaj.');if(confirm('Uvoziti '+d.exercises.length+' vaj v Supabase? Obstoječi ID-ji bodo posodobljeni.'))await importExercisesToSupabase(d.exercises);}catch(e){alert('Uvoz ni uspel: '+(e.message||String(e)));}finally{ev.target.value='';}};r.readAsText(file);}
 async function resumePythonStudent(){
   if(!await restoreStudentClientForThisTab())return;
