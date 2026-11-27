@@ -64,6 +64,38 @@ header .wrap{max-width:none;padding:0 6px}
 th{background:#263448;color:#e3edff}td{border-color:#344359}table{color:#dce7f6}
 @media(max-width:780px){#app{grid-template-columns:1fr}#app>.bar{grid-column:1;grid-row:auto;min-height:0;position:static;flex-direction:row;flex-wrap:wrap}#app>.bar:before{width:100%}#app>.bar button{width:auto}#app>.vsc-view-wrap{grid-column:1;grid-row:auto}}
 
+
+/* V3: neutral steel-blue palette and single-column topic rows */
+header .brand span{color:#afbdcc!important}
+.vsc-titlebar{color:#b6c3d1!important}
+.editor-shell textarea.editor:focus{box-shadow:inset 0 0 0 1px #8296aa!important}
+.editor-shell textarea.editor:focus-visible{outline:1px solid #8296aa!important}
+
+:root{--blue:#61778e;--soft:#293747}
+button{background:var(--blue)!important;color:#f6f8fb!important}
+button.secondary{background:#354456!important;color:#e2e9f0!important}
+button.ghost{background:#222d3a!important;color:#d9e1ea!important;border-color:#465568!important}
+button.danger{background:#4a3036!important;color:#ffd9dc!important}
+button:hover:not(:disabled){filter:brightness(1.12)}
+button:focus-visible,input:focus,select:focus,textarea:focus{outline:1px solid #91a3b7;outline-offset:1px}
+.tag,.pill{background:#2b3949!important;color:#d0dbe6!important;border-color:#536477!important}
+.pill.sel{background:#3b4d62!important;color:#f1f5f9!important;border-color:#8294a8!important}
+.vsc-statusbar{background:#40566d!important;color:#f2f5f8!important}
+.vsc-dot{background:#879bb0!important}
+#app>.layout>aside .nav.active,#app>.bar button.active{background:#34465a!important;color:#f3f6fa!important;border-left-color:#8a9db1!important}
+#view .exercise:hover,#view .cardtask:hover{border-color:#6c8095!important;background:#293646!important}
+.topic-grid{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.topic-card{width:100%;display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:5px 14px;text-align:left!important;padding:12px 15px!important;border:1px solid #425165!important;border-radius:7px!important;background:#202b38!important;color:#e1e8f0!important;box-shadow:none!important}
+.topic-card strong{font-size:14px;font-weight:650;min-width:0}
+.topic-card .topic-meta{font-size:12px;color:#aebdcd;white-space:nowrap}
+.topic-card .topic-progress{grid-column:1/-1;display:block;height:4px;background:#3c4a59;border-radius:99px;overflow:hidden;margin-top:3px}
+.topic-card .topic-progress span{display:block;height:100%;background:#8297ad;border-radius:99px}
+.topic-card:hover{background:#2a3949!important;border-color:#71859a!important}
+.catalog-exercise{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border:1px solid #3d4b5d;border-radius:7px;background:#202b38}
+.catalog-exercise .details{display:flex;flex-direction:column;gap:3px;min-width:0}
+.catalog-exercise small{font-size:12px;color:#aebdcd}
+.catalog-back{margin-bottom:12px}
+
 </style></head><body>
 <header><div class="wrap"><div class="brand">SQL Lab</div><div class="sub">Okolje SQL za razred · SQLite v brskalniku · sinhroniziran napredek</div></div></header>
 <main>
@@ -236,7 +268,50 @@ function resetFree(){if(window.freeDb)window.freeDb.close();window.freeDb=newDB(
 async function logoutStudent(){clearActiveStudentForThisTab();studentId=null;classId=null;className='';studentName='';$('app').classList.add('hidden');$('login').classList.remove('hidden');$('loginError').textContent='';}
 async function showTeacherLogin(){ $('login').classList.add('hidden');$('teacher').classList.remove('hidden');$('teacherContent').innerHTML=`<label>E-pošta učitelja</label><input id="tEmail" type="email"><label>Geslo</label><input id="tPassword" type="password"><button onclick="teacherSignIn()">Prijavi se</button><p id="tError" class="small" style="color:var(--red)"></p>`;}
 async function teacherSignIn(){try{const {data,error}=await teacherSb.auth.signInWithPassword({email:$('tEmail').value.trim(),password:$('tPassword').value});if(error)throw error;teacherUser=data.user;const p=await teacherSb.from('teacher_profiles').select('user_id').eq('user_id',teacherUser.id).maybeSingle();if(p.error)throw p.error;if(!p.data)throw Error('Ta račun nima učiteljskih pravic.');await loadTeacherPanel();}catch(e){$('tError').textContent=e.message||e;}}
-async function loadTeacherPanel(){const [c,s,p]=await Promise.all([teacherSb.from('classes').select('id,name,course_type,max_students').eq('course_type','sql').order('name'),teacherSb.from('student_profiles').select('user_id,class_id,nickname'),teacherSb.from('student_progress').select('student_id,exercise_id,attempts,completed,hints_used,updated_at')]);if(c.error||s.error||p.error)throw(c.error||s.error||p.error);teacherClasses=c.data||[];const students=s.data||[],rows=p.data||[];const classStats=teacherClasses.map(cls=>{const members=students.filter(st=>st.class_id===cls.id);const ids=new Set(members.map(st=>st.user_id));const pr=rows.filter(x=>ids.has(x.student_id)&&x.exercise_id.startsWith('sql'));const completed=pr.filter(x=>x.completed).length;const possible=members.length*SQL_TOTAL_EXERCISES;return {name:cls.name,capacity:cls.max_students||30,students:members.length,completed,rate:possible?Math.round(completed/possible*100):0,attempts:pr.reduce((a,x)=>a+(x.attempts||0),0)};});$('teacherContent').innerHTML=`<h3>Uvozi vaje SQL</h3><p class="muted small">Naloži JSON z vajami SQL. Lahko uvoziš celotno zbirko ali samo dodatek z novimi vajami. Vaje z enakimi ID-ji bodo posodobljene, druge obstoječe vaje pa bodo ostale nespremenjene. Rešitve se shranijo v zasebno tabelo exercise_keys.</p><label>Ciljni razred</label><select id="targetClass">${teacherClasses.map(c=>`<option value="${c.id}">${esc(c.name)} · SQL</option>`).join('')}</select><label>Datoteka JSON</label><input id="sqlFile" type="file" accept=".json,application/json"><button style="margin-top:10px" onclick="importSQLExercises()">Uvozi izbrani JSON</button><p id="importMessage" class="small"></p><div class="row" style="margin-top:12px"><button class="secondary" onclick="startTeacherPractice()">Odpri vaje v učiteljskem načinu</button><button class="ghost" onclick="startTeacherFreeLab()">Odpri prosto okolje</button></div><p class="small muted">Učiteljski način posnema izkušnjo učenca: vaje lahko rešuješ in preverjaš, ne da bi beležil poskuse ali spreminjal napredek razreda.</p><h3 style="margin-top:22px">Statistika po razredih</h3><div style="overflow:auto"><table><thead><tr><th>Razred</th><th>Učenci / kapaciteta</th><th>Opravljene vaje</th><th>Povprečni napredek</th><th>Poskusi</th></tr></thead><tbody>${classStats.map(x=>`<tr><td>${esc(x.name)}</td><td>${x.students} / ${x.capacity}</td><td>${x.completed}</td><td>${x.rate}%</td><td>${x.attempts}</td></tr>`).join('')}</tbody></table></div><h3 style="margin-top:22px">Napredek posameznikov</h3><p class="small muted">Poskusi, opravljene vaje in namigi, zabeleženi za vsakega učenca.</p><div style="overflow:auto"><table><thead><tr><th>Razred</th><th>Vzdevek</th><th>Opravljeno</th><th>Poskusi</th><th>Namigi</th></tr></thead><tbody>${students.filter(st=>teacherClasses.some(x=>x.id===st.class_id)).map(st=>{const cls=teacherClasses.find(x=>x.id===st.class_id);const pr=rows.filter(x=>x.student_id===st.user_id&&x.exercise_id.startsWith('sql'));return `<tr><td>${esc(cls?.name||'')}</td><td>${esc(st.nickname)}</td><td>${pr.filter(x=>x.completed).length}/${SQL_TOTAL_EXERCISES}</td><td>${pr.reduce((a,x)=>a+(x.attempts||0),0)}</td><td>${pr.reduce((a,x)=>a+(x.hints_used||0),0)}</td></tr>`}).join('')}</tbody></table></div><p class="small muted">To okolje prikazuje samo razrede in napredek pri SQL-u. Podatki Pythona ostanejo ločeni.</p>`;}
+async function loadTeacherPanel(){const [c,s,p]=await Promise.all([teacherSb.from('classes').select('id,name,course_type,max_students').eq('course_type','sql').order('name'),teacherSb.from('student_profiles').select('user_id,class_id,nickname'),teacherSb.from('student_progress').select('student_id,exercise_id,attempts,completed,hints_used,updated_at')]);if(c.error||s.error||p.error)throw(c.error||s.error||p.error);teacherClasses=c.data||[];const students=s.data||[],rows=p.data||[];const classStats=teacherClasses.map(cls=>{const members=students.filter(st=>st.class_id===cls.id);const ids=new Set(members.map(st=>st.user_id));const pr=rows.filter(x=>ids.has(x.student_id)&&x.exercise_id.startsWith('sql'));const completed=pr.filter(x=>x.completed).length;const possible=members.length*SQL_TOTAL_EXERCISES;return {name:cls.name,capacity:cls.max_students||30,students:members.length,completed,rate:possible?Math.round(completed/possible*100):0,attempts:pr.reduce((a,x)=>a+(x.attempts||0),0)};});$('teacherContent').innerHTML=`<h3>Uvozi vaje SQL</h3><p class="muted small">Naloži JSON z vajami SQL. Lahko uvoziš celotno zbirko ali samo dodatek z novimi vajami. Vaje z enakimi ID-ji bodo posodobljene, druge obstoječe vaje pa bodo ostale nespremenjene. Rešitve se shranijo v zasebno tabelo exercise_keys.</p><label>Ciljni razred</label><select id="targetClass">${teacherClasses.map(c=>`<option value="${c.id}">${esc(c.name)} · SQL</option>`).join('')}</select><label>Datoteka JSON</label><input id="sqlFile" type="file" accept=".json,application/json"><div class="row" style="margin-top:10px"><button onclick="importSQLExercises()">Uvozi izbrani JSON</button><button class="secondary" onclick="exportSQLExercises()">Prenesi varnostno kopijo JSON</button></div><p class="small muted">Varnostna kopija vsebuje vsa SQL navodila in rešitve za izbrani razred (tudi skupne vaje). Shrani jo na varno mesto in je ne objavi na GitHubu.</p><p id="importMessage" class="small"></p><div class="row" style="margin-top:12px"><button class="secondary" onclick="startTeacherPractice()">Odpri vaje v učiteljskem načinu</button><button class="ghost" onclick="startTeacherFreeLab()">Odpri prosto okolje</button></div><p class="small muted">Učiteljski način posnema izkušnjo učenca: vaje lahko rešuješ in preverjaš, ne da bi beležil poskuse ali spreminjal napredek razreda.</p><h3 style="margin-top:22px">Statistika po razredih</h3><div style="overflow:auto"><table><thead><tr><th>Razred</th><th>Učenci / kapaciteta</th><th>Opravljene vaje</th><th>Povprečni napredek</th><th>Poskusi</th></tr></thead><tbody>${classStats.map(x=>`<tr><td>${esc(x.name)}</td><td>${x.students} / ${x.capacity}</td><td>${x.completed}</td><td>${x.rate}%</td><td>${x.attempts}</td></tr>`).join('')}</tbody></table></div><h3 style="margin-top:22px">Napredek posameznikov</h3><p class="small muted">Poskusi, opravljene vaje in namigi, zabeleženi za vsakega učenca.</p><div style="overflow:auto"><table><thead><tr><th>Razred</th><th>Vzdevek</th><th>Opravljeno</th><th>Poskusi</th><th>Namigi</th></tr></thead><tbody>${students.filter(st=>teacherClasses.some(x=>x.id===st.class_id)).map(st=>{const cls=teacherClasses.find(x=>x.id===st.class_id);const pr=rows.filter(x=>x.student_id===st.user_id&&x.exercise_id.startsWith('sql'));return `<tr><td>${esc(cls?.name||'')}</td><td>${esc(st.nickname)}</td><td>${pr.filter(x=>x.completed).length}/${SQL_TOTAL_EXERCISES}</td><td>${pr.reduce((a,x)=>a+(x.attempts||0),0)}</td><td>${pr.reduce((a,x)=>a+(x.hints_used||0),0)}</td></tr>`}).join('')}</tbody></table></div><p class="small muted">To okolje prikazuje samo razrede in napredek pri SQL-u. Podatki Pythona ostanejo ločeni.</p>`;}
+async function exportSQLExercises(){
+ if(!teacherUser){$('importMessage').textContent='Najprej se prijavi kot učitelj.';return;}
+ const selectedId=$('targetClass')?.value;
+ if(!selectedId){$('importMessage').textContent='Najprej izberi ciljni razred SQL.';return;}
+ const selectedClass=teacherClasses.find(c=>c.id===selectedId);
+ if(!selectedClass){$('importMessage').textContent='Izbrani razred ni veljaven.';return;}
+ const msg=$('importMessage');
+ try{
+  msg.textContent='Pripravljam varnostno kopijo SQL vaj in rešitev …';
+  const {data:rows,error}=await teacherSb.from('exercises')
+   .select('id,class_id,sort_order,topic,title,exercise_type,prompt,content,is_published')
+   .or(`class_id.is.null,class_id.eq.${selectedId}`)
+   .order('sort_order').order('id');
+  if(error)throw error;
+  const sqlRows=(rows||[]).filter(r=>String(r.id||'').toLowerCase().startsWith('sql'));
+  if(!sqlRows.length)throw Error('Za izbrani razred ni najdenih vaj SQL za izvoz.');
+  const ids=sqlRows.map(r=>r.id);
+  const {data:keyRows,error:keyError}=await teacherSb.from('exercise_keys').select('exercise_id,content').in('exercise_id',ids);
+  if(keyError)throw keyError;
+  const keyMap=new Map((keyRows||[]).map(k=>[k.exercise_id,k.content||{}]));
+  const missing=sqlRows.filter(r=>{const k=keyMap.get(r.id)||{};return typeof k.solution!=='string'||!k.solution.trim()||typeof k.expectedOutput!=='string'||!k.expectedOutput.trim();}).map(r=>r.id);
+  if(missing.length)throw Error('Backup interrotto: mancano soluzioni o risultati attesi per: '+missing.join(', ')+'. La pagina non crea una copia incompleta.');
+  const backup={
+   version:1,engine:'SQLite (sql.js)',course_type:'sql',
+   source_class:{id:selectedClass.id,name:selectedClass.name},
+   exported_at:new Date().toISOString(),
+   description:'Varnostna kopija SQL vaj skupaj z zasebnimi rešitvami. Datoteko hrani varno.',
+   exercises:sqlRows.map((r,i)=>{
+    const content=r.content||{},key=keyMap.get(r.id)||{};
+    return {...content,id:r.id,topic:r.topic,title:r.title,type:content.type||r.exercise_type||'lab',prompt:r.prompt,
+     level:content.level||'Osnovna raven',sort_order:Number(r.sort_order)||i+1,is_published:r.is_published!==false,
+     solution:key.solution,expectedOutput:key.expectedOutput,explain:key.explain||''};
+   })
+  };
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  const safeName=String(selectedClass.name||'razred').normalize('NFKD').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-|-$/g,'').toLowerCase()||'razred';
+  a.href=url;a.download=`sql-lab-backup-${safeName}-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  msg.textContent='Varnostna kopija je prenesena: '+backup.exercises.length+' vaj SQL, vključno z rešitvami. Datoteke ne objavi na GitHubu.';
+ }catch(e){msg.textContent='Izvoz ni uspel: '+(e.message||e);}
+}
+
 async function importSQLExercises(){
  const file=$('sqlFile').files[0],class_id=$('targetClass').value,msg=$('importMessage');
  if(!file||!class_id){msg.textContent='Izberi razred in datoteko JSON.';return;}
@@ -256,8 +331,8 @@ async function importSQLExercises(){
    const level=e.level||d.level||'Osnovna raven';
    return {
     exercise:{id,class_id,created_by:teacherUser.id,topic:e.topic,title:e.title,exercise_type:exerciseType,prompt:e.prompt,
-     content:{type:exerciseType,level,starter:e.starter||'',hint:e.hint||'',options:e.options||null,fragments:e.fragments||null,query:e.query||null},
-     sort_order:Number(e.sort_order)||i+1,is_published:true},
+     content:{...(e.content||{}),type:exerciseType,level,starter:e.starter??e.content?.starter??'',hint:e.hint??e.content?.hint??'',options:e.options??e.content?.options??null,fragments:e.fragments??e.content?.fragments??null,query:e.query??e.content?.query??null},
+     sort_order:Number(e.sort_order)||i+1,is_published:e.is_published!==false},
     key:{exercise_id:id,content:{solution:e.solution,expectedOutput:e.expectedOutput,explain:e.explain||''}}
    };
   });
